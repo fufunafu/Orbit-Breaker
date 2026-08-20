@@ -1,0 +1,294 @@
+# Orbit Breaker release checklist
+
+Status: Working release-control document<br>
+Target version: 1.0<br>
+Minimum iOS version in current preset and bundled native frameworks: 17.0<br>
+Bundle identifier in current preset: `com.antonio.orbitbreaker`
+
+## Status legend
+
+- **TODO:** Work or evidence is missing.
+- **READY:** Artifact or procedure exists, but final execution or account-specific confirmation remains.
+- **PASS:** Requirement was verified against the named release candidate.
+- **BLOCKED:** A named external dependency prevents verification.
+- **N/A:** Confirmed not applicable, with the reason recorded.
+
+Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before release. A checkbox is not evidence by itself. Put the command output, App Store Connect record, screenshot, device log, or review link in the Evidence column.
+
+## Release identity
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | App name is Orbit Breaker | Product owner | Match `project.godot`, Xcode product name, and App Store record | `project.godot` audited 2026-08-20 |
+| READY | Bundle identifier is final and owned by the Apple team | Apple account owner | Match signed archive and App Store record | Current preset: `com.antonio.orbitbreaker` |
+| READY | Marketing version is final | Release owner | Match Godot preset, Xcode archive, and App Store version | Current draft: 1.0 |
+| READY | Build number is unique and increasing | Release owner | Inspect uploaded archive | Current draft: 1 |
+| PASS | Copyright holder is confirmed | Project owner | Legal name replaces placeholders | `LICENSE` and metadata identify Fuanne Gao |
+| TODO | Public developer or publisher name is confirmed | Project owner | Match App Store seller or publisher details |  |
+| TODO | Availability countries and regions are selected | Product owner | App Store Connect availability record |  |
+| TODO | Price model is selected | Product owner | App Store Connect price record | Confirm free, paid, or future purchases |
+
+## Repository readiness
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | README explains controls, setup, tests, and export | Developer | Review from a clean checkout | `README.md` |
+| PASS | License notice exists | Project owner | Confirm copyright holder and terms | `LICENSE` |
+| READY | Third-party license audit is documented | Release owner | Verify every plugin and asset source against its upstream license | `THIRD_PARTY_NOTICES.md`; final completeness audit remains TODO |
+| READY | Third-party notices file exists | Release owner | Compare bundled files against license obligations | `THIRD_PARTY_NOTICES.md` |
+| READY | Release documents are present | Release owner | Check all links from README | `docs/` package |
+| PASS | Repository contains no secrets | Security owner | Secret scan plus manual inspection | Regex and manual scans found no credentials, signing files, private keys, or tokens on 2026-08-20 |
+| PASS | Unrelated generated files are excluded | Developer | Inspect clean `git status` after import and export | `.godot`, `build`, and `.DS_Store` remain ignored after final import and export checks |
+| TODO | Release commit is tagged | Release owner | Signed or annotated version tag points to submitted source |  |
+
+## Automated tests
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | Gameplay GitHub workflow exists | Developer | Inspect workflow syntax and trigger set | `.github/workflows/tests.yml` |
+| READY | Gameplay workflow pins Godot 4.7.2 | Developer | Inspect install step and engine output |  |
+| READY | Gameplay workflow runs `tests/test_runner.gd` headlessly | Developer | Successful GitHub run prints `ORBIT_BREAKER_TESTS_OK` |  |
+| READY | Release-artifact job exists | Developer | Validate CSV, links, metadata limits, and punctuation | `.github/workflows/tests.yml` |
+| TODO | Clean-checkout CI run passes | Developer | Link successful GitHub Actions run for release commit |  |
+| PASS | Local headless test run passes | Developer | Save command output and exit status | Godot 4.7.2 printed `ORBIT_BREAKER_TESTS_OK` on 2026-08-20 |
+| PASS | Test shutdown is free of leaked-instance warnings | Developer | Repeat with `--verbose` and resolve owned leaks | Godot 4.7.2 verbose run exited 0 without leaked ObjectDB instances or resources on 2026-08-20 |
+| TODO | Ten consecutive full editor runs complete without errors | QA owner | Manual test log |  |
+
+## Gameplay and fairness
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| TODO | Clockwise and counterclockwise launches use correct tangents | QA owner | Automated test plus visual device check |  |
+| TODO | Generated targets are reachable | QA owner | Automated generation test and seeded stress test |  |
+| TODO | Hazards preserve at least one valid launch window | QA owner | Automated sampling test across late-game seeds |  |
+| TODO | Asteroids appear before pulse mines | QA owner | Play through both introduction thresholds |  |
+| TODO | Combined hazards appear only after individual introductions | QA owner | Verify tuning thresholds and gameplay |  |
+| TODO | Every failure reason matches the actual cause | QA owner | Force miss, asteroid, pulse mine, wrong planet, and timeout |  |
+| TODO | Rapid taps cannot double launch | QA owner | Automated and device input test |  |
+| TODO | Replay starts the same mode immediately | QA owner | Test Classic and Daily game-over paths |  |
+| TODO | New Best appears only for a strict new high score | QA owner | Test lower, equal, and higher score cases |  |
+| TODO | Run summary totals are accurate | QA owner | Compare score, landings, perfects, combo, and reason to observed run |  |
+| TODO | Score-card PNG saves successfully | QA owner | Save and open image on each target device class |  |
+
+## Progression and persistence
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| TODO | Ship-colour unlock conditions are correct | QA owner | Reach each milestone and relaunch |  |
+| TODO | Trail unlock conditions are correct | QA owner | Reach each milestone and relaunch |  |
+| TODO | Planet-theme unlock conditions are correct | QA owner | Reach each milestone and relaunch |  |
+| TODO | Locked cosmetics cannot be selected | QA owner | Cycle each category before unlock |  |
+| TODO | Selected cosmetics persist | QA owner | Select, terminate, and relaunch |  |
+| TODO | Three score-driven zones are visually distinct | Art and QA owners | Capture same route state in each zone |  |
+| TODO | Unlocks are based on skill milestones, not time or currency | Product owner | Review catalog and build |  |
+| TODO | Version 1 save data loads after upgrade | QA owner | Install upgrade over previous build |  |
+| TODO | Corrupt save data falls back safely | QA owner | Automated test and manual device check |  |
+| TODO | App reinstall behaviour is documented | Support owner | Confirm local data removal or restore behaviour |  |
+
+## Daily Challenge
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| TODO | UTC date changes at the intended boundary | QA owner | Test before and after 00:00 UTC |  |
+| TODO | Same date and build produce the same sequence | QA owner | Compare at least three devices for 20 targets |  |
+| TODO | Classic mode remains randomly seeded | QA owner | Compare fresh Classic runs |  |
+| TODO | Daily replay preserves the same date seed | QA owner | Replay several runs before UTC rollover |  |
+| TODO | Daily local best resets by date | QA owner | Test two UTC dates |  |
+| TODO | Daily leaderboard occurrence matches the UTC date | Game Center owner | Compare in-game label and App Store configuration |  |
+| TODO | Version mismatch policy is documented | Product owner | Decide whether old builds remain eligible for comparable Daily scores |  |
+
+## Game Center
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | Game Center entitlement is enabled in the Godot preset | iOS developer | Inspect exported entitlements | Current preset requests Game Center |
+| READY | All-time identifier matches code | Game Center owner | Compare App Store Connect to code | `com.antonio.orbitbreaker.highscore` |
+| READY | Weekly identifier matches code | Game Center owner | Compare App Store Connect to code | `com.antonio.orbitbreaker.weekly` |
+| READY | Daily identifier matches code | Game Center owner | Compare App Store Connect to code | `com.antonio.orbitbreaker.daily` |
+| TODO | All-time leaderboard exists and is localized | Game Center owner | App Store Connect component record |  |
+| TODO | Weekly leaderboard recurs every seven days | Game Center owner | App Store Connect recurrence record | Confirm start day and 00:00 UTC boundary |
+| TODO | Daily leaderboard recurs every 24 hours | Game Center owner | App Store Connect recurrence record | Start at 00:00 UTC |
+| TODO | High scores sort high to low as integers | Game Center owner | Submit two ordered test scores |  |
+| TODO | Perfect Ten achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image |  |
+| TODO | Maximum Burn achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image |  |
+| TODO | Planet Runner achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image |  |
+| TODO | Achievement progress increments correctly | QA owner | Test partial and complete values on physical device |  |
+| TODO | Completion banners appear once | QA owner | Complete each achievement on test account |  |
+| TODO | Unauthenticated play remains functional | QA owner | Sign out of Game Center and complete runs |  |
+| TODO | Leaderboard button handles unavailable Game Center | QA owner | Test signed out, offline, and restricted states |  |
+| TODO | Test leaderboard data is removed before launch | Game Center owner | App Store Connect test-data action |  |
+| TODO | Game Center components are attached to the submitted app version | Game Center owner | Submission record |  |
+
+## Audio and visual identity
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| TODO | Every bundled audio file has documented rights | Audio owner | Source and license ledger |  |
+| TODO | Launch, land, perfect, fail, and UI sounds are distinct | QA owner | Listening test on device speaker and headphones |  |
+| TODO | Music intensity responds to combo and zone | QA owner | Capture transition checks |  |
+| TODO | Sound and music levels avoid clipping | Audio owner | Metered and subjective device test |  |
+| TODO | Ship, planets, asteroids, and pulse mines are recognizable | Art and QA owners | First-session identification test |  |
+| TODO | Background and palette changes communicate progression | Art and QA owners | Zone recognition results |  |
+| TODO | Effects remain readable at 60 FPS | Performance owner | Profile late-game scene on oldest target device |  |
+
+## Accessibility and settings
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| TODO | Sound toggle persists and silences effects | QA owner | Toggle, play, terminate, and relaunch |  |
+| TODO | Music toggle persists and silences music | QA owner | Toggle, play, terminate, and relaunch |  |
+| TODO | Haptic toggle persists and suppresses haptics | QA owner | Physical-device test |  |
+| TODO | Reduced Motion suppresses screen shake | QA owner | Force perfect and failure feedback |  |
+| TODO | Reduced Motion reduces background movement | QA owner | Compare all three zones |  |
+| TODO | High Contrast Guide is visibly distinct | Accessibility owner | Contrast review on target displays |  |
+| TODO | Guide Off, Tutorial, and Always behave correctly | QA owner | Test first and later runs |  |
+| TODO | Pause, resume, and restart are reachable | QA owner | Test safe-area layout on small and large screens |  |
+| TODO | Backgrounding preserves the current run | QA owner | Physical-device test during orbit and flight |  |
+| TODO | UI does not rely on colour alone for critical meaning | Accessibility owner | Manual review and user test |  |
+| TODO | Accessibility Nutrition Label claims are evidence-backed | Accessibility owner | Complete Apple's current evaluation criteria |  |
+
+## iOS export and device validation
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| PASS | iOS preset targets iPhone portrait | iOS developer | Inspect exported target and orientation | Clean exported Xcode project targets iPhone portrait |
+| PASS | Deployment target matches all bundled frameworks | iOS developer | Align preset, Xcode target, and framework `MinimumOSVersion` | Preset is 17.0; `xcrun vtool -show-build` reports `minos 17.0` for both device framework binaries |
+| PASS | Godot 4.7.2 export templates are installed | iOS developer | Successful clean export | Project-only release export succeeded on 2026-08-20 |
+| PASS | Xcode project exports without missing files | iOS developer | Export log | `tools/prepare_ios_export.sh` printed `ORBIT_BREAKER_IOS_EXPORT_READY` |
+| READY | Native Game Center frameworks are embedded and signed | iOS developer | Xcode build phases and archive validation | Both XCFrameworks link and use CodeSignOnCopy; final signed archive remains |
+| TODO | Release archive signs with intended distribution identity | Release owner | Xcode Organizer archive |  |
+| PASS | Generic iPhone arm64 build completes | iOS developer | Unsigned Xcode build log | Release device build succeeded with signing disabled on 2026-08-20 |
+| PASS | Simulator build completes | QA owner | Build log and smoke-test record | Release simulator build succeeds with `ARCHS=x86_64`; runtime smoke test remains |
+| TODO | Physical iPhone build completes | QA owner | Device install and run record |  |
+| TODO | Small and large supported iPhone layouts pass | QA owner | Screenshot matrix |  |
+| TODO | Portrait lock works on physical device | QA owner | Rotation test |  |
+| TODO | Touch response remains immediate | QA owner | Input latency observation |  |
+| TODO | Stable 60 FPS target is met | Performance owner | Frame-time profile on oldest target device |  |
+| TODO | App background and resume behaviour passes | QA owner | State preservation log |  |
+
+## Privacy and compliance
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | Privacy-policy draft covers current repository behaviour | Privacy owner | Final binary and SDK audit | `docs/PRIVACY_POLICY.md` |
+| READY | Support-page draft covers current features | Support owner | Replace contacts and verify build | `docs/SUPPORT.md` |
+| TODO | Privacy policy has no placeholders | Privacy owner | Search published source and page |  |
+| TODO | Support page has real contact information | Support owner | Open public page |  |
+| TODO | Privacy policy is published at a stable HTTPS URL | Web owner | Public browser check |  |
+| TODO | Support page is published at a stable HTTPS URL | Web owner | Public browser check |  |
+| TODO | Privacy manifest matches accessed APIs and SDK declarations | iOS and privacy owners | Inspect final archive and `PrivacyInfo.xcprivacy` files |  |
+| TODO | App Store Connect privacy answers match actual practices | Privacy owner | Compare final binary, policy, and published answers |  |
+| TODO | Third-party SDK data practices are included | Privacy owner | SDK and dependency audit | Include Apple plugin behaviour where applicable |
+| TODO | Score-card storage and sharing wording is accurate | Privacy owner | Device test final implementation |  |
+| TODO | Export-compliance answers are complete | Release owner | App Store Connect response and any documentation |  |
+| TODO | Age-rating questionnaire is complete | Product owner | App Store Connect result | Use metadata notes only as a starting point |
+| TODO | Required legal and regional trader details are complete | Account owner | App Store Connect compliance sections | Depends on distribution regions |
+
+## App Store product page
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | App name draft is within 30 characters | Marketing owner | Count characters and reserve name | `Orbit Breaker` |
+| READY | Subtitle options are within 30 characters | Marketing owner | Automated byte or character check | `docs/APP_STORE_METADATA.md` |
+| READY | Promotional text options are within 170 characters | Marketing owner | Automated character check |  |
+| READY | Description is within 4,000 characters | Marketing owner | Automated character check |  |
+| READY | Keyword draft is within 100 bytes | Marketing owner | UTF-8 byte count |  |
+| TODO | Final metadata contains no pending claims | Product owner | Compare each claim to release build |  |
+| TODO | Support URL is entered | Release owner | App Store Connect version record |  |
+| TODO | Privacy-policy URL is entered | Release owner | App Store Connect app privacy record |  |
+| TODO | Copyright is final | Project owner | App Store Connect record |  |
+| TODO | Primary and secondary categories are final | Product owner | App Store Connect record |  |
+| TODO | Review contact is complete | Release owner | App Review Information |  |
+| READY | App Review notes draft exists | Release owner | Update against final build | `docs/APP_STORE_METADATA.md` |
+
+## Icon, screenshots, and previews
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | App icon meets current App Store requirements | Art and release owners | Asset validation in Xcode and App Store Connect | `marketing/app-icon-1024.png` is 1024 by 1024 RGB with no alpha; Xcode and upload validation remain |
+| PASS | Icon has no unintended transparency or clipped content | Art owner | Inspect exported 1024 by 1024 asset | `sips` reports 1024 by 1024 RGB and `hasAlpha: no` on 2026-08-20 |
+| READY | Eight-shot screenshot story exists | Marketing owner | Review feature coverage | `docs/SCREENSHOT_PLAN.md` |
+| PASS | Final 6.9-inch screenshots are captured | Marketing owner | Validate dimensions and alpha channel | All four marketing PNGs are 1320 by 2868 RGB with no alpha |
+| TODO | Screenshots show only implemented features | Product owner | Compare to release build |  |
+| TODO | Screenshot captions are readable and accurate | Marketing and accessibility owners | Thumbnail review |  |
+| TODO | Game Center captures contain no unintended personal data | Privacy owner | Inspect final files |  |
+| READY | Preview storyboard exists | Marketing owner | Review timing and claims | `docs/SCREENSHOT_PLAN.md` |
+| PASS | Preview video is 15 to 30 seconds with valid codec, audio, size, and frame rate | Marketing owner | Inspect the final video stream | Current file: 30 sec, H.264, 886 by 1920, 30 fps, AAC stereo, about 38 MB |
+| TODO | Media rights are documented | Release owner | Asset ledger |  |
+
+## TestFlight
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| READY | Validation plan exists | QA owner | Review protocol and gates | `docs/TESTFLIGHT_PLAN.md` |
+| READY | Session log schema exists | QA owner | Parse CSV and inspect fields | `docs/TESTFLIGHT_SESSION_LOG.csv` |
+| TODO | Beta description, What to Test, and feedback email are entered | Release owner | App Store Connect Test Information |  |
+| TODO | Internal smoke group passes | QA owner | Completed smoke log |  |
+| TODO | First external build passes Beta App Review if required | Release owner | TestFlight build status |  |
+| TODO | 20 to 30 testers are invited | QA owner | App Store Connect tester count |  |
+| TODO | At least 20 valid first-session rows are recorded | Research owner | CSV row count and validation |  |
+| TODO | First-launch comprehension reaches 80 percent | Research owner | Cohort analysis |  |
+| TODO | Second-run rate reaches 70 percent | Research owner | Cohort analysis |  |
+| TODO | Five-run completion reaches 50 percent | Research owner | Cohort analysis |  |
+| TODO | Failure understanding reaches 90 percent | Research owner | Cohort analysis |  |
+| TODO | Crash and session metrics are reviewed | QA owner | App Store Connect build metrics |  |
+| TODO | Common complaints are ranked | Product owner | Beta findings report |  |
+| TODO | Difficulty changes cite actual observations | Design owner | Build comparison log |  |
+| TODO | Failed critical gates are fixed and retested | QA owner | Retest evidence |  |
+
+## Submission and release
+
+| Status | Item | Owner | Verification | Evidence |
+| --- | --- | --- | --- | --- |
+| TODO | Final archive passes Xcode validation | Release owner | Organizer validation result |  |
+| TODO | Correct build is selected in App Store Connect | Release owner | Version page |  |
+| TODO | Game Center components are included in submission | Game Center owner | Submission contents |  |
+| TODO | Required screenshots are uploaded | Marketing owner | Product page preview |  |
+| TODO | App preview poster frame is selected | Marketing owner | App Store Connect preview |  |
+| TODO | App privacy details are published | Privacy owner | Product page preview |  |
+| TODO | Review notes match final behaviour | Release owner | Final copy review |  |
+| TODO | Manual release is selected for version 1.0 | Product owner | Version release setting | Recommended for controlled launch |
+| TODO | App Review submission is complete | Release owner | Submission status and timestamp |  |
+| TODO | Approval result and any reviewer correspondence are archived | Release owner | Release folder or issue link |  |
+| TODO | Public privacy and support pages are monitored after launch | Support owner | Page availability check |  |
+| TODO | Launch build crash, review, and leaderboard signals are monitored | Product owner | First 72-hour report |  |
+
+## Current known release blockers
+
+These items are known to require external state or owner decisions:
+
+1. Provide support, privacy, TestFlight, and review contact details.
+2. Publish the privacy and support pages at stable HTTPS URLs.
+3. Run the new GitHub workflow and attach a successful CI result.
+4. Configure and submit Game Center leaderboards and achievements in App Store Connect.
+5. Complete the three achievement images.
+6. Sign, archive, and install the iOS release candidate.
+7. Run the 20 to 30 person TestFlight validation.
+8. Complete the final privacy, age-rating, export-compliance, regional-compliance, and third-party-license audits.
+9. Replace the installed Godot simulator export template with an arm64-compatible build, or run the current x86_64 simulator build with Rosetta.
+
+## Go or no-go record
+
+| Field | Value |
+| --- | --- |
+| Candidate version and build | `[VERSION] ([BUILD])` |
+| Decision | `[GO / CONDITIONAL GO / NO-GO]` |
+| Decision date UTC | `[DATE]` |
+| Product owner | `[OWNER]` |
+| Engineering owner | `[OWNER]` |
+| QA owner | `[OWNER]` |
+| Privacy owner | `[OWNER]` |
+| Open conditions | `[NONE OR LIST]` |
+| Evidence bundle | `[LINK OR PATH]` |
+
+No release is a go while any Critical TestFlight gate, privacy-policy requirement, signing requirement, or App Review submission requirement remains unverified.
+
+## Apple references
+
+- App Review Guidelines: https://developer.apple.com/app-store/review/guidelines/
+- App privacy management: https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy/
+- Screenshot specifications: https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications
+- App preview specifications: https://developer.apple.com/help/app-store-connect/reference/app-information/app-preview-specifications
+- TestFlight overview: https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview
+- Game Center testing: https://developer.apple.com/help/app-store-connect/configure-game-center/overview-of-testing-game-center
+- Recurring leaderboards: https://developer.apple.com/documentation/gamekit/creating-recurring-leaderboards

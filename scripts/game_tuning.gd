@@ -31,6 +31,13 @@ extends Resource
 @export var maximum_hazard_chance: float = 0.72
 @export var minimum_hazard_radius: float = 25.0
 @export var maximum_hazard_radius: float = 42.0
+@export var pulse_hazards_begin_at_landing: int = 20
+@export var combined_hazards_begin_at_landing: int = 30
+@export var minimum_safe_launch_samples: int = 5
+
+@export_category("Progression")
+@export var nebula_zone_score: int = 10
+@export var sunforge_zone_score: int = 25
 
 @export_category("Camera and feedback")
 @export var camera_follow_speed: float = 5.5

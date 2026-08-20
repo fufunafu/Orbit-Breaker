@@ -29,7 +29,7 @@ Create a fast, portrait-mode iPhone game in the existing Godot 4.7.2 project. Th
 - Define a launch input action shared by touch, mouse click, and Space for editor testing.
 - Use a GameState enum and signals for run_started, landed, perfect_landed, score_changed, and run_ended.
 - Save data in user://save.cfg with a version number and best_score integer. Missing or invalid data starts at zero without blocking play.
-- Configure the app as Orbit Breaker, bundle identifier com.antonio.orbitbreaker, portrait only, and iOS 16 or newer.
+- Configure the app as Orbit Breaker, bundle identifier com.antonio.orbitbreaker, portrait only, and iOS 17 or newer.
 - Install matching Godot 4.7.2 export templates, export an Xcode project, and use the installed Xcode 26.6 toolchain for iPhone builds.
 - Keep monetization, accounts, leaderboards, achievements, cosmetics, levels, advertisements, and App Store submission outside this prototype.
 

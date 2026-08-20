@@ -10,6 +10,18 @@ var orbit_direction: int = 1
 var velocity: Vector2 = Vector2.ZERO
 var trail_points: PackedVector2Array = PackedVector2Array()
 var thruster_time: float = 0.0
+var body_color := Color("e9feff")
+var accent_color := Color("72faff")
+var trail_color := Color("6ffcff")
+
+
+func set_appearance(ship_color_id: String, trail_id: String) -> void:
+	var ship_style := CosmeticCatalog.find_item(CosmeticCatalog.SHIP_COLORS, ship_color_id)
+	var trail_style := CosmeticCatalog.find_item(CosmeticCatalog.TRAILS, trail_id)
+	body_color = ship_style.color
+	accent_color = ship_style.accent
+	trail_color = trail_style.color
+	queue_redraw()
 
 
 func attach_to_planet(center: Vector2, new_orbit_radius: float, contact_angle: float, direction: int) -> void:
@@ -65,7 +77,7 @@ func _draw() -> void:
 			local_trail.append(to_local(point))
 		for index in range(1, local_trail.size()):
 			var alpha := float(index) / float(local_trail.size()) * 0.42
-			draw_line(local_trail[index - 1], local_trail[index], Color("6ffcff", alpha), 7.0, true)
+			draw_line(local_trail[index - 1], local_trail[index], Color(trail_color, alpha), 7.0, true)
 
 	var flame_length := 19.0 + sin(thruster_time * 22.0) * 5.0
 	draw_colored_polygon(
@@ -74,9 +86,9 @@ func _draw() -> void:
 			Vector2(-radius - flame_length, 0.0),
 			Vector2(-radius * 0.75, 7.0),
 		]),
-		Color("ff4fd8", 0.88)
+		Color(accent_color, 0.88)
 	)
-	draw_circle(Vector2.ZERO, radius + 10.0, Color("72faff", 0.08))
+	draw_circle(Vector2.ZERO, radius + 10.0, Color(accent_color, 0.08))
 	draw_colored_polygon(
 		PackedVector2Array([
 			Vector2(radius + 8.0, 0.0),
@@ -84,7 +96,7 @@ func _draw() -> void:
 			Vector2(-radius * 0.38, 0.0),
 			Vector2(-radius * 0.72, radius * 0.7),
 		]),
-		Color("e9feff")
+		body_color
 	)
 	draw_polyline(
 		PackedVector2Array([
@@ -94,8 +106,8 @@ func _draw() -> void:
 			Vector2(-radius * 0.72, radius * 0.7),
 			Vector2(radius + 8.0, 0.0),
 		]),
-		Color("72faff"),
+		accent_color,
 		3.0,
 		true
 	)
-	draw_circle(Vector2(2.0, 0.0), 5.0, Color("ff64db"))
+	draw_circle(Vector2(2.0, 0.0), 5.0, trail_color)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Resource" path="res://resources/game_tuning.tres" id="2_tuning"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="6_hud"]
 [ext_resource type="Script" path="res://scripts/audio_controller.gd" id="7_audio"]
 [ext_resource type="Script" path="res://scripts/aim_guide.gd" id="8_aim"]
+[ext_resource type="Script" path="res://scripts/game_center_service.gd" id="9_game_center"]
 
 [node name="Game" type="Node"]
 process_mode = 3
@@ -45,3 +46,6 @@ layer = 20
 
 [node name="AudioController" type="Node" parent="."]
 script = ExtResource("7_audio")
+
+[node name="GameCenter" type="Node" parent="."]
+script = ExtResource("9_game_center")

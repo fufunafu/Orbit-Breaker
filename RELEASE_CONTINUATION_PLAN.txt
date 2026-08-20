@@ -1,0 +1,51 @@
+ORBIT BREAKER RELEASE CONTINUATION PLAN
+=======================================
+
+Current repository milestone
+----------------------------
+
+- Target iOS 17.0 in the Godot export preset and bundled native frameworks.
+- Keep Godot exports project-only, then prepare them with
+  tools/prepare_ios_export.sh before building in Xcode.
+- Run the Godot 4.7.2 headless suite and verify clean shutdown.
+- Validate an unsigned arm64 device build and an x86_64 simulator build.
+- Commit and push the combined release upgrade after the final diff review.
+
+
+Immediate completion sequence
+-----------------------------
+
+1. Check the entire worktree for secrets, placeholders, oversized files, stale
+   release claims, invalid links, and formatting errors.
+2. Repeat the headless import and test suite with Godot 4.7.2.
+3. Verify the iOS export preset, preparation script, Game Center identifiers,
+   media dimensions, and GitHub workflow syntax.
+4. Commit the complete reviewed worktree to main.
+5. Push main to origin and verify that GitHub receives the commit and starts CI.
+
+
+External release work after the push
+------------------------------------
+
+1. Enable GitHub Pages and publish the privacy and support URLs.
+2. Replace contact placeholders with the owner-approved support, privacy,
+   TestFlight, and App Review contact information.
+3. Configure the three leaderboards and three achievements in App Store Connect.
+4. Produce and upload three 1024 by 1024 achievement images.
+5. Sign, archive, validate, and install the release candidate on a physical
+   iPhone.
+6. Complete simulator, safe-area, backgrounding, persistence, haptic,
+   accessibility, performance, and Game Center tests.
+7. Run the seven-day TestFlight study, tune failed gates, and retest.
+8. Complete App Store metadata, compliance, media, Game Center attachment, and
+   manual-release submission.
+
+
+Known validation boundaries
+---------------------------
+
+- The installed Godot 4.7.2 simulator template contains an x86_64 engine
+  library. Native arm64 simulator validation requires a compatible template.
+- Distribution signing, App Store Connect configuration, GitHub Pages settings,
+  physical-device testing, and TestFlight recruitment require external account
+  access or human participation.

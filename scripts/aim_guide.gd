@@ -9,6 +9,7 @@ var target_radius: float = 80.0
 var ship_radius: float = 18.0
 var perfect_ratio: float = 0.42
 var pulse_time: float = 0.0
+var high_contrast: bool = false
 
 
 func configure(
@@ -35,6 +36,11 @@ func hide_guide() -> void:
 	queue_redraw()
 
 
+func set_high_contrast(value: bool) -> void:
+	high_contrast = value
+	queue_redraw()
+
+
 func _process(delta: float) -> void:
 	pulse_time += delta
 	if active:
@@ -53,6 +59,8 @@ func _draw() -> void:
 		guide_color = Color("ff67dc", 0.9)
 	elif will_land:
 		guide_color = Color("72faff", 0.85)
+	if high_contrast:
+		guide_color = Color.WHITE if not will_be_perfect else Color("ff3ccf")
 
 	var distance_to_target := origin.distance_to(target)
 	var line_length := clampf(distance_to_target + target_radius, 420.0, 820.0)
@@ -65,7 +73,7 @@ func _draw() -> void:
 			origin + direction * cursor,
 			origin + direction * segment_end,
 			guide_color,
-			5.0,
+			8.0 if high_contrast else 5.0,
 			true
 		)
 		cursor += dash_length + gap_length

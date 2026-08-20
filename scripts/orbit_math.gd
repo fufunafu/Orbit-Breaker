@@ -78,3 +78,72 @@ static func layout_is_reachable(
 		and distance <= maximum_distance
 		and tangent_launch_window(origin, orbit_radius, target, target_radius) > 0.0
 	)
+
+
+static func ray_circle_hit_distance(origin: Vector2, direction: Vector2, center: Vector2, radius: float) -> float:
+	var normalized_direction := direction.normalized()
+	var offset := origin - center
+	if offset.length_squared() <= radius * radius:
+		return 0.0
+	var half_b := offset.dot(normalized_direction)
+	var discriminant := half_b * half_b - (offset.length_squared() - radius * radius)
+	if discriminant < 0.0:
+		return -1.0
+	var distance := -half_b - sqrt(discriminant)
+	return distance if distance >= 0.0 else -1.0
+
+
+static func safe_launch_sample_count(
+	orbit_center: Vector2,
+	orbit_radius: float,
+	orbit_direction: int,
+	target: Vector2,
+	capture_radius: float,
+	hazard: Vector2,
+	hazard_radius: float,
+	sample_count: int = 180
+) -> int:
+	return safe_launch_sample_count_for_hazards(
+		orbit_center,
+		orbit_radius,
+		orbit_direction,
+		target,
+		capture_radius,
+		[{"position": hazard, "radius": hazard_radius}],
+		sample_count
+	)
+
+
+static func safe_launch_sample_count_for_hazards(
+	orbit_center: Vector2,
+	orbit_radius: float,
+	orbit_direction: int,
+	target: Vector2,
+	capture_radius: float,
+	hazards: Array,
+	sample_count: int = 180
+) -> int:
+	var safe_samples := 0
+	for index in sample_count:
+		var angle := TAU * float(index) / float(sample_count)
+		var origin := orbit_position(orbit_center, orbit_radius, angle)
+		var direction := tangent_for_angle(angle, orbit_direction)
+		var target_distance := ray_circle_hit_distance(origin, direction, target, capture_radius)
+		if target_distance < 0.0:
+			continue
+		var blocked := false
+		for hazard_data in hazards:
+			if not hazard_data is Dictionary:
+				continue
+			var hazard_distance := ray_circle_hit_distance(
+				origin,
+				direction,
+				Vector2(hazard_data.get("position", Vector2.ZERO)),
+				float(hazard_data.get("radius", 0.0))
+			)
+			if hazard_distance >= 0.0 and hazard_distance < target_distance:
+				blocked = true
+				break
+		if not blocked:
+			safe_samples += 1
+	return safe_samples

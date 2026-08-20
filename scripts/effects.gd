@@ -2,12 +2,14 @@ class_name OrbitEffects
 extends Node2D
 
 var particles: Array[Dictionary] = []
+var reduced_motion: bool = false
 
 
 func burst(world_position: Vector2, color: Color, count: int, power: float = 260.0) -> void:
 	var local_rng := RandomNumberGenerator.new()
 	local_rng.seed = Time.get_ticks_usec()
-	for index in count:
+	var effective_count := mini(count, 8) if reduced_motion else count
+	for index in effective_count:
 		var direction := Vector2.from_angle(local_rng.randf_range(0.0, TAU))
 		var lifetime := local_rng.randf_range(0.34, 0.72)
 		particles.append({
@@ -43,4 +45,3 @@ func _draw() -> void:
 		particle_color.a = life_ratio
 		var draw_position := to_local(Vector2(particle.position))
 		draw_circle(draw_position, float(particle.size) * life_ratio, particle_color)
-

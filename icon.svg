@@ -20,7 +20,7 @@
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
-  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
   <circle cx="180" cy="206" r="7" fill="#c8fbff" opacity=".8"/>
   <circle cx="826" cy="218" r="5" fill="#c8fbff" opacity=".72"/>
   <circle cx="806" cy="776" r="8" fill="#ff8ce6" opacity=".58"/>

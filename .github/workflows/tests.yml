@@ -1,0 +1,162 @@
+name: Release artifact checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: 4.7.2
+
+jobs:
+  gameplay-tests:
+    name: Headless GDScript tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Godot
+        shell: bash
+        run: |
+          archive="Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          url="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/${archive}"
+          mkdir -p "${RUNNER_TEMP}/godot"
+          curl --fail --location --retry 3 --output "${RUNNER_TEMP}/${archive}" "${url}"
+          unzip -q "${RUNNER_TEMP}/${archive}" -d "${RUNNER_TEMP}/godot"
+          mv "${RUNNER_TEMP}/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64" "${RUNNER_TEMP}/godot/godot"
+          chmod +x "${RUNNER_TEMP}/godot/godot"
+          echo "${RUNNER_TEMP}/godot" >> "${GITHUB_PATH}"
+
+      - name: Show engine version
+        run: godot --version
+
+      - name: Import project resources
+        run: godot --headless --path . --import --log-file "${RUNNER_TEMP}/godot-import.log"
+
+      - name: Run tests
+        run: godot --headless --path . --script res://tests/test_runner.gd --log-file "${RUNNER_TEMP}/godot-tests.log"
+
+      - name: Upload Godot logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-test-logs
+          path: |
+            ${{ runner.temp }}/godot-import.log
+            ${{ runner.temp }}/godot-tests.log
+          if-no-files-found: ignore
+
+  validate-release-artifacts:
+    name: Validate release artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate TestFlight CSV
+        shell: bash
+        run: |
+          ruby -rcsv -e '
+            rows = CSV.read("docs/TESTFLIGHT_SESSION_LOG.csv")
+            abort "missing CSV header" if rows.empty?
+            widths = rows.map(&:length).uniq
+            abort "inconsistent CSV row widths: #{widths.inspect}" unless widths.length == 1
+            abort "duplicate CSV headers" unless rows[0].uniq.length == rows[0].length
+            abort "unexpected TestFlight field count" unless rows[0].length == 45
+            puts "CSV valid: #{rows[0].length} fields"
+          '
+
+      - name: Validate README links
+        shell: bash
+        run: |
+          ruby -e '
+            links = File.read("README.md").scan(/\[[^\]]+\]\(([^)]+)\)/).flatten
+            local = links.reject { |path| path.start_with?("http") }
+            missing = local.reject { |path| File.exist?(path) }
+            abort "missing local links: #{missing.join(", ")}" unless missing.empty?
+            puts "README local links valid: #{local.length}"
+          '
+
+      - name: Validate App Store copy limits
+        shell: bash
+        run: |
+          ruby -e '
+            text = File.read("docs/APP_STORE_METADATA.md")
+            subtitle_section = text[/## Subtitle options\n(.*?)\n## Promotional text options/m, 1]
+            promo_section = text[/## Promotional text options\n(.*?)\n## Description/m, 1]
+            description = text[/## Description\n\n(.*?)\n## Keywords/m, 1]
+            keyword = text[/```text\n([^\n]+)\n```/, 1]
+            abort "metadata section missing" unless subtitle_section && promo_section && description && keyword
+            subtitles = subtitle_section.scan(/^\d+\. (.+)$/).flatten
+            promotions = promo_section.scan(/^Thread .+$|^One tap .+$|^Chase .+$/)
+            abort "subtitle over 30 characters" if subtitles.any? { |value| value.length > 30 }
+            abort "promotional text over 170 characters" if promotions.any? { |value| value.length > 170 }
+            abort "description over 4,000 characters" if description.length > 4_000
+            abort "keywords over 100 bytes" if keyword.bytesize > 100
+            puts "metadata valid: #{subtitles.length} subtitles, #{promotions.length} promotions"
+          '
+
+      - name: Validate App Store images
+        shell: bash
+        run: |
+          ruby -e '
+            def png_info(path)
+              bytes = File.binread(path, 26)
+              abort "invalid PNG: #{path}" unless bytes.start_with?("\x89PNG\r\n\x1a\n".b)
+              [bytes[16, 4].unpack1("N"), bytes[20, 4].unpack1("N"), bytes.getbyte(25)]
+            end
+            icon = png_info("marketing/app-icon-1024.png")
+            abort "icon must be 1024 by 1024" unless icon[0, 2] == [1024, 1024]
+            abort "icon must not include alpha" if [4, 6].include?(icon[2])
+            screenshots = Dir["marketing/screenshots/*.png"].sort
+            abort "screenshot count must be 1 through 10" unless (1..10).cover?(screenshots.length)
+            screenshots.each do |path|
+              info = png_info(path)
+              abort "unsupported screenshot size: #{path}" unless info[0, 2] == [1320, 2868]
+              abort "screenshot must not include alpha: #{path}" if [4, 6].include?(info[2])
+            end
+            puts "images valid: 1 icon, #{screenshots.length} screenshots"
+          '
+
+      - name: Validate App Store preview
+        shell: bash
+        run: |
+          command -v ffprobe >/dev/null
+          ffprobe -v error -show_entries \
+            stream=codec_type,codec_name,profile,level,bit_rate,width,height,r_frame_rate,sample_rate,channels:format=duration,size \
+            -of json marketing/app-preview.mp4 > "${RUNNER_TEMP}/preview.json"
+          ruby -rjson -e '
+            data = JSON.parse(File.read(ARGV[0]))
+            video = data.fetch("streams").find { |stream| stream["codec_type"] == "video" }
+            audio = data.fetch("streams").find { |stream| stream["codec_type"] == "audio" }
+            duration = data.fetch("format").fetch("duration").to_f
+            size = data.fetch("format").fetch("size").to_i
+            abort "preview duration must be 15 through 30 seconds" unless duration.between?(15.0, 30.0)
+            abort "preview must not exceed 500 MB" unless size <= 500_000_000
+            abort "preview must use H.264" unless video && video["codec_name"] == "h264"
+            abort "preview must be 886 by 1920" unless [video["width"], video["height"]] == [886, 1920]
+            abort "preview must use High Profile Level 4.0 or lower" unless video["profile"] == "High" && video["level"].to_i <= 40
+            fps = video.fetch("r_frame_rate").split("/").map(&:to_f).then { |parts| parts[0] / parts[1] }
+            abort "preview must not exceed 30 fps" unless fps <= 30.0
+            bitrate = video.fetch("bit_rate").to_i
+            abort "preview video bitrate must target 10 to 12 Mbps" unless bitrate.between?(9_500_000, 12_500_000)
+            abort "preview must use AAC stereo" unless audio && audio["codec_name"] == "aac" && audio["channels"].to_i == 2
+            abort "preview audio sample rate must be 44.1 or 48 kHz" unless [44_100, 48_000].include?(audio["sample_rate"].to_i)
+            puts "preview valid: #{duration.round(3)} seconds, #{fps.round(2)} fps"
+          ' "${RUNNER_TEMP}/preview.json"
+
+      - name: Reject em dashes in release text
+        shell: bash
+        run: |
+          if grep -RIn --include='*.md' --include='*.txt' '—' README.md LICENSE docs marketing; then
+            echo "Release text contains an em dash."
+            exit 1
+          fi

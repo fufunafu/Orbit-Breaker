@@ -1,0 +1,400 @@
+ORBIT BREAKER PARALLEL RELEASE PLAN
+===================================
+
+Purpose
+-------
+
+Prepare the repository, App Store materials, and TestFlight validation process
+without modifying files currently being changed by the other Codex.
+
+
+SAFE WORK BOUNDARY
+------------------
+
+Create only new documentation and automation files.
+
+Safe files to create:
+
+- README.md
+- LICENSE
+- .github/workflows/tests.yml
+- docs/APP_STORE_METADATA.md
+- docs/PRIVACY_POLICY.md
+- docs/SUPPORT.md
+- docs/TESTFLIGHT_PLAN.md
+- docs/TESTFLIGHT_SESSION_LOG.csv
+- docs/RELEASE_CHECKLIST.md
+- docs/SCREENSHOT_PLAN.md
+
+Do not modify during parallel work:
+
+- project.godot
+- export_presets.cfg
+- icon.svg
+- Any file in scripts/
+- Any file in scenes/
+- Any file in assets/
+- Any file in tests/
+- Any generated Xcode export or iOS build file
+
+
+IMMEDIATE WORK PLAN
+-------------------
+
+1. Create the project README
+
+Include:
+
+- Short description of Orbit Breaker
+- Current feature summary
+- Controls for iPhone and desktop testing
+- Godot 4.7.2 setup requirements
+- How to open and run the project
+- How to run the headless test suite
+- iOS export prerequisites and instructions
+- Repository structure
+- Known limitations
+- Placeholder section for final screenshots
+
+Completion criteria:
+
+- A new developer can open, run, and test the project from the README alone.
+- No gameplay or project configuration files are changed.
+
+
+2. Add the license
+
+Actions:
+
+- Confirm the desired license with the project owner.
+- Add the chosen license as LICENSE.
+- Reference the license from README.md.
+
+Recommended default:
+
+- Use an all-rights-reserved notice if the game is intended to remain private or
+  commercial and no open-source license has been selected.
+- Use MIT only if the owner explicitly wants others to reuse and redistribute the
+  source code.
+
+Completion criteria:
+
+- Repository usage rights are clear.
+
+
+3. Add automated GitHub tests
+
+Create .github/workflows/tests.yml that:
+
+- Runs on pushes and pull requests.
+- Installs or downloads the matching Godot version.
+- Imports the project headlessly.
+- Runs tests/test_runner.gd.
+- Fails when the test runner returns a nonzero status.
+- Uses dependency caching only if it remains simple and reliable.
+
+Important constraint:
+
+- The workflow may invoke the existing test suite, but it must not edit it while
+  the other Codex is working.
+
+Completion criteria:
+
+- Workflow syntax is valid.
+- The command matches the repository's local headless test command.
+- The workflow contains no signing secrets or App Store credentials.
+
+
+4. Draft App Store metadata
+
+Create docs/APP_STORE_METADATA.md containing:
+
+- App name: Orbit Breaker
+- Subtitle options
+- Promotional text options
+- Full description
+- Keyword candidates within Apple's character limit
+- Primary and secondary category recommendations
+- Age-rating questionnaire notes
+- Copyright placeholder
+- Support URL placeholder
+- Privacy-policy URL placeholder
+- Review notes template
+- Game Center feature summary
+
+The copy should emphasize:
+
+- One-tap orbital gameplay
+- Skill-based perfect landings and combos
+- Fair daily challenges
+- Immediate replayability
+- Unlockable visual rewards
+- Game Center leaderboards and achievements
+- Accessibility and control settings
+
+Completion criteria:
+
+- Every App Store text field has a ready-to-review draft.
+- Unknown account-specific information is clearly marked as a placeholder.
+- Claims describe implemented behavior only, or are marked as pending.
+
+
+5. Draft privacy and support pages
+
+Create docs/PRIVACY_POLICY.md and docs/SUPPORT.md.
+
+Privacy policy draft should cover:
+
+- Local save data
+- Game Center data handled through Apple
+- Daily challenge behavior
+- Whether analytics or diagnostics are collected
+- Data retention and deletion
+- Children's privacy
+- Contact information placeholder
+- Effective-date placeholder
+
+Support page draft should cover:
+
+- Controls and basic gameplay help
+- Audio, music, haptic, motion, and guide settings
+- Game Center troubleshooting
+- Save-data troubleshooting
+- How to report a bug
+- Required diagnostic details
+- Support email placeholder
+
+Important constraint:
+
+- Do not claim that the app collects no data until the completed Game Center,
+  analytics, crash-reporting, and third-party SDK setup has been audited.
+
+Completion criteria:
+
+- Both documents are ready to publish after owner details and final data practices
+  are confirmed.
+- The release checklist identifies all unresolved privacy decisions.
+
+
+6. Build the TestFlight validation package
+
+Create docs/TESTFLIGHT_PLAN.md and docs/TESTFLIGHT_SESSION_LOG.csv.
+
+Tester group:
+
+- Recruit 20 to 30 people.
+- Include both frequent mobile-game players and less experienced players.
+- Include multiple supported iPhone sizes and iOS versions.
+
+First-session questions:
+
+- Did the player understand how to begin without help?
+- Did the player understand when to launch?
+- Did the player understand why each run ended?
+- Did the player notice perfect landings and combos?
+- Did the player immediately choose to replay?
+- Did any text, effect, motion, sound, or haptic cause difficulty?
+
+Metrics to record:
+
+- Device and iOS version
+- First-launch comprehension without assistance
+- First-run score
+- Average score
+- Highest score
+- Average run duration
+- Restarts per session
+- Time from game over to restart
+- Total landings
+- Perfect landings
+- Highest combo
+- Failure-reason counts
+- Daily-challenge attempts
+- Game Center sign-in success
+- Crashes, freezes, and severe frame-rate drops
+- Accessibility settings used
+- Most common complaint
+- Most requested improvement
+
+Suggested success criteria for the first beta:
+
+- At least 80 percent understand the first launch without assistance.
+- At least 70 percent start a second run.
+- At least 50 percent complete five or more runs in one session.
+- At least 90 percent correctly understand their failure reason.
+- No reproducible progress-loss issue.
+- No blocker affecting Game Center authentication or score submission.
+- No critical crash across the tester group.
+
+Completion criteria:
+
+- The test can be run consistently by every tester.
+- Results can be compared without requiring gameplay code changes.
+- Each observation leads to a specific tuning or usability decision.
+
+
+7. Create the screenshot and preview plan
+
+Create docs/SCREENSHOT_PLAN.md containing a shot list, captions, required game
+states, device sizes, and capture checklist.
+
+Proposed screenshot story:
+
+1. Core one-tap launch mechanic
+2. Perfect landing and combo feedback
+3. A visually distinct later space zone
+4. Hazard navigation at higher difficulty
+5. Daily challenge and fair shared layout
+6. Game Center leaderboard or achievement
+7. Unlockable ship colors, trails, or planet themes
+8. Clear end-of-run statistics and immediate replay
+
+Preview video outline:
+
+- Begin with gameplay immediately.
+- Show a successful launch and landing.
+- Show a perfect landing and rising combo.
+- Show a hazard and a clear failure reason.
+- Show immediate replay.
+- End on daily challenge or leaderboard competition.
+
+Important constraint:
+
+- Plan the media now, but wait to capture final media until the visual work, HUD,
+  icon, and gameplay presentation are stable.
+
+Completion criteria:
+
+- Every planned image demonstrates a distinct player benefit.
+- Captions avoid unimplemented or misleading claims.
+- Final capture sizes follow Apple's current screenshot specifications.
+
+
+8. Create the release checklist
+
+Create docs/RELEASE_CHECKLIST.md with sections for:
+
+- Repository readiness
+- Automated tests
+- Godot import and headless test pass
+- iPhone and simulator validation
+- Signing and provisioning
+- Bundle identifier and versioning
+- App icon validation
+- Privacy manifest and privacy disclosures
+- Privacy-policy and support URLs
+- Accessibility checks
+- Game Center leaderboards and achievements
+- Daily challenge date and time-zone behavior
+- Save migration and corrupt-save recovery
+- App Store metadata
+- Screenshots and preview videos
+- Age rating and export compliance
+- TestFlight beta review information
+- App Review notes
+- Final archive and upload
+
+Completion criteria:
+
+- Every release requirement has an owner, status, and verification method.
+- Pending implementation items are not presented as complete.
+
+
+RECOMMENDED ORDER
+-----------------
+
+Phase 1, start immediately:
+
+1. README.md
+2. docs/TESTFLIGHT_PLAN.md
+3. docs/TESTFLIGHT_SESSION_LOG.csv
+4. docs/RELEASE_CHECKLIST.md
+5. docs/APP_STORE_METADATA.md
+6. docs/PRIVACY_POLICY.md
+7. docs/SUPPORT.md
+8. docs/SCREENSHOT_PLAN.md
+
+Phase 2, after confirming the project owner choices:
+
+1. LICENSE
+2. Replace contact, copyright, and URL placeholders.
+3. Confirm analytics and data-collection statements.
+
+Phase 3, after the other Codex finishes runtime work:
+
+1. Recheck the README against the final features and controls.
+2. Add the GitHub workflow using the confirmed final test command.
+3. Run the full automated test suite.
+4. Audit final Game Center and privacy behavior.
+5. Capture screenshots and preview video.
+6. Complete a real TestFlight round.
+7. Tune difficulty and onboarding using observed results.
+
+
+INFORMATION NEEDED FROM THE PROJECT OWNER
+-----------------------------------------
+
+- Public developer or publisher name
+- Copyright holder and year
+- Support email address
+- Privacy contact email address
+- Intended public support URL
+- Intended public privacy-policy URL
+- License choice
+- Whether analytics or crash reporting will be included
+- Supported iPhone and iOS versions
+- App Store availability countries or regions
+- Whether the app will be free, paid, or include purchases
+
+These details are not required to start drafting. Use visible placeholders until
+the owner confirms them.
+
+
+COORDINATION RULES
+------------------
+
+- Check git status before every work session.
+- Create only the files listed in the safe work boundary.
+- Never overwrite, revert, stage, or commit another worker's changes.
+- Avoid formatting commands that touch the whole repository.
+- Do not edit generated imports or build output.
+- If the other Codex begins editing one of the safe files, stop editing that file
+  and coordinate ownership before continuing.
+- Review all documentation again after gameplay work is complete.
+
+
+APPLE REFERENCES
+----------------
+
+Game Center:
+https://developer.apple.com/game-center/
+
+Onboarding guidance:
+https://developer.apple.com/design/human-interface-guidelines/onboarding
+
+Privacy and data use:
+https://developer.apple.com/app-store/user-privacy-and-data-use/
+
+App Review Guidelines:
+https://developer.apple.com/app-store/review/guidelines/
+
+App previews and screenshots:
+https://developer.apple.com/help/app-store-connect/manage-app-information/upload-app-previews-and-screenshots/
+
+Screenshot specifications:
+https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications
+
+
+DEFINITION OF DONE
+------------------
+
+This parallel release-preparation task is complete when:
+
+- All planned new documents exist and have been reviewed.
+- The repository has clear setup and testing instructions.
+- App Store copy is drafted with no unsupported claims.
+- Privacy and support pages are ready for final owner details and publication.
+- TestFlight has a repeatable procedure, metrics sheet, and success criteria.
+- Screenshot capture has a complete shot list.
+- The release checklist exposes every unresolved launch requirement.
+- No existing gameplay, scene, asset, test, project, or export file was changed.

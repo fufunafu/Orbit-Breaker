@@ -20,6 +20,9 @@ func _run_all() -> void:
 	_test_orbit_math()
 	_test_rules()
 	_test_save_store()
+	_test_daily_challenge()
+	_test_progression()
+	_test_playtest_metrics()
 	await _test_gameplay_integration()
 
 	if failures.is_empty():
@@ -80,6 +83,26 @@ func _test_orbit_math() -> void:
 		OrbitMath.segment_circle_hit_fraction(Vector2.ZERO, Vector2(100.0, 0.0), Vector2(50.0, 20.0), 10.0) < 0.0,
 		"Swept collision must reject a missed circle."
 	)
+	var open_window_count := OrbitMath.safe_launch_sample_count_for_hazards(
+		Vector2.ZERO,
+		100.0,
+		1,
+		Vector2(0.0, -400.0),
+		95.0,
+		[],
+		180
+	)
+	var blocked_window_count := OrbitMath.safe_launch_sample_count_for_hazards(
+		Vector2.ZERO,
+		100.0,
+		1,
+		Vector2(0.0, -400.0),
+		95.0,
+		[{"position": Vector2(0.0, -260.0), "radius": 420.0}],
+		180
+	)
+	_check(open_window_count > 0, "An unobstructed target must expose sampled launch windows.")
+	_check(blocked_window_count == 0, "A fully blocked route must expose no safe launch windows.")
 
 
 func _test_rules() -> void:
@@ -113,10 +136,72 @@ func _test_rules() -> void:
 
 func _test_save_store() -> void:
 	_check(SaveStore.load_best_score("res://tests/fixtures/corrupt_save.cfg") == 0, "Corrupt save data must fall back to zero.")
-	var test_path := "user://orbit_breaker_test_save.cfg"
+	var test_path := "res://.godot/orbit_breaker_test_save.cfg"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_path))
 	_check(SaveStore.save_best_score(37, test_path) == OK, "Best score must save successfully.")
 	_check(SaveStore.load_best_score(test_path) == 37, "Best score must load after saving.")
+	var profile := SaveStore.load_profile(test_path)
+	profile.reduced_screen_shake = true
+	profile.guide_mode = 2
+	profile.selected_ship_color = "nova"
+	profile.unlocked_ship_colors = PackedStringArray(["ion", "nova"])
+	_check(SaveStore.save_profile(profile, test_path) == OK, "Complete profile must save successfully.")
+	var restored := SaveStore.load_profile(test_path)
+	_check(bool(restored.reduced_screen_shake), "Reduced screen shake must persist.")
+	_check(int(restored.guide_mode) == 2, "Guide visibility must persist.")
+	_check(String(restored.selected_ship_color) == "nova", "Selected cosmetics must persist.")
+	_check((restored.unlocked_ship_colors as PackedStringArray).has("nova"), "Unlocked cosmetics must persist.")
+	var tied_run := SaveStore.record_run(restored, 37, 0, 0, 1, false, "")
+	_check(not bool(tied_run.new_best), "An equal score must not be marked as a new best.")
+	var higher_run := SaveStore.record_run(tied_run.profile, 38, 0, 0, 1, false, "")
+	_check(bool(higher_run.new_best), "A strictly higher score must be marked as a new best.")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_path))
+
+
+func _test_daily_challenge() -> void:
+	_check(DailyChallenge.utc_date_key(0) == "1970-01-01", "Daily date keys must use UTC calendar dates.")
+	var first_seed := DailyChallenge.seed_for_date("2026-08-20")
+	_check(first_seed == DailyChallenge.seed_for_date("2026-08-20"), "The same UTC date must always produce the same seed.")
+	_check(first_seed != DailyChallenge.seed_for_date("2026-08-21"), "Different UTC dates must produce different seeds.")
+	var first_rng := RandomNumberGenerator.new()
+	var second_rng := RandomNumberGenerator.new()
+	first_rng.seed = first_seed
+	second_rng.seed = first_seed
+	for index in 32:
+		_check(first_rng.randi() == second_rng.randi(), "Daily random sequence item %d must be deterministic." % index)
+
+
+func _test_progression() -> void:
+	var profile := SaveStore.default_profile()
+	profile.total_perfect_landings = 10
+	profile.highest_combo = 5
+	profile.best_score = 25
+	profile.total_landings = 50
+	var unlocked := CosmeticCatalog.refresh_unlocks(profile)
+	_check(unlocked.size() == 6, "All six skill rewards must unlock at their milestones.")
+	_check((profile.unlocked_ship_colors as PackedStringArray).has("nova"), "Ten perfect landings must unlock the Nova ship.")
+	_check((profile.unlocked_ship_colors as PackedStringArray).has("solar"), "A 5x combo must unlock the Solar ship.")
+	_check((profile.unlocked_trails as PackedStringArray).has("plasma"), "Ten perfect landings must unlock the Plasma trail.")
+	_check((profile.unlocked_trails as PackedStringArray).has("comet"), "A score of 25 must unlock the Comet trail.")
+	_check((profile.unlocked_planet_themes as PackedStringArray).has("nebula"), "Twenty-five landings must unlock Nebula.")
+	_check((profile.unlocked_planet_themes as PackedStringArray).has("sunforge"), "Fifty landings must unlock Sunforge.")
+	_check(CosmeticCatalog.refresh_unlocks(profile).is_empty(), "Unlocked rewards must not be granted twice.")
+
+
+func _test_playtest_metrics() -> void:
+	var path := "res://.godot/orbit_breaker_test_metrics.json"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	_check(PlaytestMetrics.record_run(0, 0, 10.0, "miss", false, path) == OK, "A failed first launch must be recorded.")
+	_check(PlaytestMetrics.record_run(7, 3, 20.0, "asteroid", true, path) == OK, "A successful first launch must be recorded.")
+	_check(PlaytestMetrics.record_restart(path) == OK, "Restarts must be recorded.")
+	var report := PlaytestMetrics.summary(path)
+	_check(int(report.completed_runs) == 2, "Playtest report must count completed runs.")
+	_check(is_equal_approx(float(report.average_run_seconds), 15.0), "Playtest report must calculate average run length.")
+	_check(is_equal_approx(float(report.restart_rate), 0.5), "Playtest report must calculate restart rate.")
+	_check(is_equal_approx(float(report.first_launch_success_rate), 0.5), "Playtest report must measure first-launch success directly.")
+	_check(int(report.score_buckets["0"]) == 1 and int(report.score_buckets["5-9"]) == 1, "Playtest report must retain score distribution.")
+	_check(int(report.failure_reasons.get("miss", 0)) == 1 and int(report.failure_reasons.get("asteroid", 0)) == 1, "Playtest report must retain common failure reasons.")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 
 
 func _test_gameplay_integration() -> void:
@@ -128,14 +213,27 @@ func _test_gameplay_integration() -> void:
 	_check(game != null, "Main game scene must instantiate.")
 	if game == null:
 		return
+	var integration_save_path := "res://.godot/orbit_breaker_integration_test_save.cfg"
+	var integration_metrics_path := "res://.godot/orbit_breaker_integration_test_metrics.json"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(integration_save_path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(integration_metrics_path))
+	game.save_path = integration_save_path
+	game.metrics_path = integration_metrics_path
 	root.add_child(game)
 	await process_frame
 	await process_frame
 	game.audio_controller.playback_enabled = false
+	_check(not game.game_center.authenticated, "Game Center must degrade safely outside iOS.")
+	_check(not game.hud.settings_panel.visible, "Settings must begin closed.")
+	_check(game.hud.settings_panel.find_child("PrivacyButton", true, false) != null, "Settings must expose the privacy policy.")
+	_check(game.hud.settings_panel.find_child("SupportButton", true, false) != null, "Settings must expose support.")
+	_check(OrbitGame.PRIVACY_URL.begins_with("https://"), "The in-app privacy action must use HTTPS.")
+	_check(OrbitGame.SUPPORT_URL.begins_with("https://"), "The in-app support action must use HTTPS.")
 
 	_check(game.state == OrbitGame.GameState.READY, "Game must begin in READY state.")
 	game._handle_primary_action()
 	_check(game.state == OrbitGame.GameState.ORBITING, "First tap must start in orbit without launching.")
+	_check(game.run_started_msec > 0, "The initial Classic run must start the run-length timer.")
 	_check(game.aim_guide.active, "First run must show the trajectory guide.")
 	_check(game.hud.tutorial_label.visible, "First run must keep the launch tutorial visible.")
 	game._handle_primary_action()
@@ -155,6 +253,7 @@ func _test_gameplay_integration() -> void:
 	game._update_flight(0.0)
 	_check(game.state == OrbitGame.GameState.ORBITING, "Target contact must return to ORBITING state.")
 	_check(game.score == 2 and game.combo == 2, "Perfect landing must update score and combo.")
+	_check(game.first_launch_succeeded, "Landing the first launch must be captured for playtest analysis.")
 
 	game._launch_ship()
 	game.launch_predicted_perfect = false
@@ -182,6 +281,7 @@ func _test_gameplay_integration() -> void:
 	game.flight_time = game.tuning.flight_timeout
 	game._update_flight(0.001)
 	_check(game.state == OrbitGame.GameState.GAME_OVER, "Flight timeout must end the run.")
+	_check(game.hud.failure_label.text == "SIGNAL TIMED OUT", "A flight timeout must display its specific failure reason.")
 
 	game._reset_world(true)
 	var state_before_pause := game.state
@@ -189,6 +289,16 @@ func _test_gameplay_integration() -> void:
 	_check(game.paused_by_os and game.state == state_before_pause, "Background pause must preserve the run state.")
 	game._notification(NOTIFICATION_APPLICATION_RESUMED)
 	_check(not game.paused_by_os and game.state == state_before_pause, "Resume must restore the same run state.")
+	game._pause_run()
+	_check(game.manually_paused and game.audio_controller.music_paused, "Manual pause must pause music playback.")
+	_check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Manual pause must freeze the gameplay world.")
+	if game.audio_controller.base_player.stream != null:
+		_check(game.audio_controller.base_player.stream_paused, "Manual pause must pause the active base music player.")
+	game._restart_from_pause()
+	_check(not game.manually_paused and not game.audio_controller.music_paused, "Restarting from pause must resume music playback.")
+	_check(game.world.process_mode == Node.PROCESS_MODE_INHERIT, "Restarting from pause must resume the gameplay world.")
+	if game.audio_controller.base_player.stream != null:
+		_check(not game.audio_controller.base_player.stream_paused, "Restarting from pause must resume the active base music player.")
 
 	_check(game.end_run("test"), "Active run must enter GAME_OVER state.")
 	_check(game.state == OrbitGame.GameState.GAME_OVER, "Failure must show GAME_OVER state.")
@@ -227,7 +337,26 @@ func _test_gameplay_integration() -> void:
 			"Generated layout %d must provide a real tangent launch window." % generation
 		)
 
+	game._reset_world(false)
+	_check(game.start_run(true), "Daily Challenge must start from the ready screen.")
+	var first_daily_target := game.target_planet.global_position
+	var first_daily_radius := game.target_planet.radius
+	_check(game.end_run("miss"), "A Daily Challenge run must be able to end.")
+	game._replay_current_mode()
+	_check(game.is_daily_run, "Immediate replay must preserve Daily Challenge mode.")
+	_check(_close_enough(game.target_planet.global_position, first_daily_target), "Daily replay must reproduce the first target position.")
+	_check(is_equal_approx(game.target_planet.radius, first_daily_radius), "Daily replay must reproduce the first target size.")
+	game.end_run("miss")
+	var score_card_image := Image.create(320, 320, false, Image.FORMAT_RGB8)
+	score_card_image.fill(Color("08152f"))
+	var score_card_path := game.save_score_image(score_card_image, "res://.godot/orbit_breaker_test_score_card.png")
+	_check(not score_card_path.is_empty() and FileAccess.file_exists(score_card_path), "A shareable score-card PNG must be generated.")
+	if not score_card_path.is_empty():
+		DirAccess.remove_absolute(score_card_path)
+
 	game.queue_free()
 	await process_frame
 	await process_frame
 	await process_frame
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(integration_save_path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(integration_metrics_path))
