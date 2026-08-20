@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="48%" cy="38%" r="72%">
+      <stop offset="0" stop-color="#172d64"/>
+      <stop offset="0.58" stop-color="#080d28"/>
+      <stop offset="1" stop-color="#030615"/>
+    </radialGradient>
+    <radialGradient id="planet" cx="35%" cy="28%" r="75%">
+      <stop offset="0" stop-color="#8ffcff"/>
+      <stop offset="0.28" stop-color="#2fd9ed"/>
+      <stop offset="0.68" stop-color="#17639d"/>
+      <stop offset="1" stop-color="#14275d"/>
+    </radialGradient>
+    <filter id="cyanGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="pinkGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="15" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+  <circle cx="180" cy="206" r="7" fill="#c8fbff" opacity=".8"/>
+  <circle cx="826" cy="218" r="5" fill="#c8fbff" opacity=".72"/>
+  <circle cx="806" cy="776" r="8" fill="#ff8ce6" opacity=".58"/>
+  <circle cx="194" cy="744" r="4" fill="#c8fbff" opacity=".68"/>
+  <ellipse cx="512" cy="520" rx="356" ry="210" fill="none" stroke="#54f3ff" stroke-width="18" opacity=".25" filter="url(#cyanGlow)" transform="rotate(-26 512 520)"/>
+  <ellipse cx="512" cy="520" rx="356" ry="210" fill="none" stroke="#88faff" stroke-width="10" opacity=".92" transform="rotate(-26 512 520)"/>
+  <circle cx="512" cy="520" r="188" fill="#4cf2ff" opacity=".18" filter="url(#cyanGlow)"/>
+  <circle cx="512" cy="520" r="164" fill="url(#planet)" stroke="#a8fdff" stroke-width="12"/>
+  <path d="M414 426c48-52 122-76 192-56" fill="none" stroke="#d7ffff" stroke-width="17" stroke-linecap="round" opacity=".55"/>
+  <g transform="translate(770 322) rotate(16)" filter="url(#pinkGlow)">
+    <path d="M-78 0-18-39 66 0-18 39z" fill="#f6ffff" stroke="#71f8ff" stroke-width="9" stroke-linejoin="round"/>
+    <path d="M-72-19-122 0-72 19z" fill="#ff4fd8"/>
+    <circle cx="8" cy="0" r="15" fill="#ff4fd8"/>
+  </g>
+</svg>

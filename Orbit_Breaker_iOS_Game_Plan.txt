@@ -1,0 +1,56 @@
+# Orbit Breaker iOS Prototype Plan
+
+## Summary
+
+Create a fast, portrait-mode iPhone game in the existing Godot 4.7.2 project. The player taps to launch a ship from one orbiting planet to the next, earning points until a missed jump or hazard ends the run.
+
+## Core Game
+
+- Use a 1080 x 1920 portrait reference resolution with responsive scaling and safe-area-aware UI.
+- Implement four states: READY, ORBITING, IN_FLIGHT, and GAME_OVER.
+- While orbiting, the ship moves automatically around the current planet.
+- A screen tap launches the ship along its current tangent at a fixed speed.
+- Touching the highlighted target planet captures the ship into a new orbit.
+- Missing the target, leaving the play area, exceeding the flight timeout, or touching a hazard ends the run.
+- Restart immediately from the game-over screen with one tap.
+- Generate reachable planets continuously above the player and move the camera upward after successful landings.
+- Begin adding hazards after 10 landings.
+- Increase orbital speed, reduce average planet size, and tighten placement windows every 5 landings.
+- Award one point multiplied by the current combo. A trajectory passing through the target planet's inner perfect zone increases the combo, up to 5x. A normal landing resets it to 1x.
+- Store the best score locally between sessions.
+
+## Presentation and Technical Structure
+
+- Build the game from Godot scenes for the game controller, ship, planets, hazards, effects, and HUD.
+- Use procedural circles, gradients, glow, trails, particles, camera shake, and screen flashes for the neon-space style. No external artwork is required for the prototype.
+- Display the current score, best score, combo, start prompt, and game-over panel.
+- Add short launch, landing, perfect-hit, and failure sounds. Include light iPhone haptics for launches, stronger feedback for perfect landings, and failure feedback.
+- Pause safely when the app moves into the background and resume without changing the current run.
+- Define a launch input action shared by touch, mouse click, and Space for editor testing.
+- Use a GameState enum and signals for run_started, landed, perfect_landed, score_changed, and run_ended.
+- Save data in user://save.cfg with a version number and best_score integer. Missing or invalid data starts at zero without blocking play.
+- Configure the app as Orbit Breaker, bundle identifier com.antonio.orbitbreaker, portrait only, and iOS 16 or newer.
+- Install matching Godot 4.7.2 export templates, export an Xcode project, and use the installed Xcode 26.6 toolchain for iPhone builds.
+- Keep monetization, accounts, leaderboards, achievements, cosmetics, levels, advertisements, and App Store submission outside this prototype.
+
+## Test and Acceptance Plan
+
+- Verify launches use the correct tangent in both clockwise and counterclockwise orbits.
+- Confirm every generated target has at least one valid launch window and unreachable layouts are rejected.
+- Test normal landings, perfect landings, combo growth, combo reset, difficulty steps, hazards, misses, and flight timeout.
+- Confirm rapid taps cannot launch twice or restart into an invalid state.
+- Confirm the best score persists after closing and reopening the app and corrupt save data fails safely.
+- Test touch controls and readable safe-area UI on small and large iPhone screen sizes.
+- Confirm backgrounding does not end or advance a run unexpectedly.
+- Maintain stable performance at 60 FPS with particles and several planets visible.
+- Complete at least ten consecutive full runs in the Godot editor without errors.
+- Export successfully to Xcode and complete at least one run on an iPhone or iOS simulator.
+- On a physical iPhone, verify portrait locking, touch response, audio, haptics, pause behavior, and instant restart.
+
+## Assumptions
+
+- The first milestone is a playable prototype, not a public App Store release.
+- Runs are endless, use one-hit failure, and focus entirely on high-score replayability.
+- The existing Godot project remains the implementation base.
+- A free or paid Apple developer team and a connected iPhone may be needed for physical-device signing.
+- Difficulty constants will be exposed in one configuration resource so they can be tuned without rewriting gameplay code.

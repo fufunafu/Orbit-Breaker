@@ -1,0 +1,47 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="Resource" path="res://resources/game_tuning.tres" id="2_tuning"]
+[ext_resource type="PackedScene" path="res://scenes/ship.tscn" id="3_ship"]
+[ext_resource type="PackedScene" path="res://scenes/effects.tscn" id="4_effects"]
+[ext_resource type="PackedScene" path="res://scenes/starfield.tscn" id="5_stars"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="6_hud"]
+[ext_resource type="Script" path="res://scripts/audio_controller.gd" id="7_audio"]
+[ext_resource type="Script" path="res://scripts/aim_guide.gd" id="8_aim"]
+
+[node name="Game" type="Node"]
+process_mode = 3
+script = ExtResource("1_game")
+tuning = ExtResource("2_tuning")
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -10
+
+[node name="Starfield" parent="Background" instance=ExtResource("5_stars")]
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Planets" type="Node2D" parent="World"]
+
+[node name="Hazards" type="Node2D" parent="World"]
+z_index = 5
+
+[node name="Effects" parent="World" instance=ExtResource("4_effects")]
+
+[node name="AimGuide" type="Node2D" parent="World"]
+z_index = 12
+script = ExtResource("8_aim")
+
+[node name="Ship" parent="World" instance=ExtResource("3_ship")]
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(540, 960)
+position_smoothing_enabled = false
+
+[node name="Interface" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="HUD" parent="Interface" instance=ExtResource("6_hud")]
+
+[node name="AudioController" type="Node" parent="."]
+script = ExtResource("7_audio")
