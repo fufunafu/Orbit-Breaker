@@ -181,7 +181,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | TODO | Third-party SDK data practices are included | Privacy owner | SDK and dependency audit | Include Apple plugin behaviour where applicable |
 | TODO | Score-card storage and sharing wording is accurate | Privacy owner | Device test final implementation |  |
 | TODO | Export-compliance answers are complete | Release owner | App Store Connect response and any documentation |  |
-| TODO | Age-rating questionnaire is complete | Product owner | App Store Connect result | Use metadata notes only as a starting point |
+| PASS | Age-rating questionnaire is complete | Product owner | App Store Connect result | Saved on 2026-08-20; App Store Connect shows 12+ and 13+ regional results and a legacy global 12+ rating |
 | TODO | Required legal and regional trader details are complete | Account owner | App Store Connect compliance sections | Depends on distribution regions |
 
 ## App Store product page

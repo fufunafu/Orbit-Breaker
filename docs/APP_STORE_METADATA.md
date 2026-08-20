@@ -15,8 +15,8 @@ Do not paste claims marked **Pending** into App Store Connect until their checkl
 | Version | 1.0 | Confirm before upload |
 | Copyright | 2026 Fuanne Gao | Confirm it matches the App Store seller record |
 | Primary category | Games | Recommended |
-| Primary game subcategory | Action | Confirm available App Store Connect fields |
-| Secondary game subcategory | Arcade | Confirm available App Store Connect fields |
+| Primary game subcategory | Action | Available in the current App Store Connect form |
+| Secondary game subcategory | Casual | Available in the current App Store Connect form |
 | Secondary category | Entertainment | Optional fallback if a non-game secondary category is desired |
 
 ## Subtitle options

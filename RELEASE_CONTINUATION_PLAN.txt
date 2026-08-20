@@ -495,3 +495,39 @@ August 20 CI completion audit
   store validation.
 - The workflow fix still needs to be committed and pushed before an
   authoritative GitHub run can verify the Linux runner result.
+
+
+August 20 App Store Connect continuation audit
+-----------------------------------------------
+
+- App Store Connect record Orbit Breaker exists with Apple ID 6803624188,
+  bundle identifier com.antonio.orbitbreaker, SKU orbit-breaker-ios-1, and
+  primary language English (Canada).
+- The current age-rating questionnaire is complete. Orbit Breaker declares
+  frequent contests because Daily Challenge and Game Center leaderboards let
+  players compete for rankings; the remaining content categories are absent.
+- App Store Connect shows 12+ and 13+ regional results and a global 12+ rating
+  for operating systems before version 26.
+- A fresh App Store Connect tab proves that the earlier product-page and app
+  information drafts had not been saved. Subtitle, categories, content rights,
+  promotional text, description, keywords, support and marketing URLs,
+  copyright, review notes, release mode, and review contact remain unset.
+- The current App Store Connect form offers Action and Casual as game
+  subcategories. It does not offer the repository's stale Arcade choice, so the
+  release metadata now uses Action and Casual with Entertainment as the
+  optional secondary category.
+- App Privacy still needs the published privacy-policy URL and the no-data-
+  collected declaration. Apple states that developers do not disclose data
+  collected by Apple services; Orbit Breaker sends Game Center data only to
+  Apple's Game Center service and has no developer-operated collection.
+- Game Center contains no leaderboard or achievement records yet.
+- Pricing and storefront availability are not configured.
+- TestFlight contains no uploaded build and its test information is blank.
+- The four 1320 by 2868 screenshots fit the current iPhone 6.9-inch media slot.
+- The prepared App Store IPA remains available at
+  /private/tmp/orbit-app-store-export-20260820/Orbit Breaker.ipa with SHA-256
+  8d737cf045e44e42564b6194a78562baeffb8ad70cede6380005269c78171122.
+- The connected iPhone 16 Pro is still locked, and iOS denied the latest launch
+  request for that reason.
+- Local commit 51694a2 contains the Linux CI isolation fix. Its push was denied
+  because it needs explicit owner approval naming that commit.

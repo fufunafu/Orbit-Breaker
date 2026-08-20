@@ -6,40 +6,46 @@ Orbit Breaker
 
 ## Subtitle
 
-One tap. Perfect timing.
+One Tap. Perfect Orbit.
 
 ## Promotional text
 
-Master the orbit, chain perfect landings, and take on today's shared daily challenge.
+One tap decides everything. Read the orbit, launch at the right instant, and climb from the Ion Veil to the Sunforge.
 
 ## Description
 
-Orbit Breaker is a fast one-tap arcade challenge built around timing, focus, and the irresistible pull of one more run.
+One tap. One launch window. How high can you climb?
 
-Circle vibrant planets, watch your launch line, and tap at exactly the right moment to cross the void. Hit the center of a target to grow your combo, then keep your nerve as planets shrink, orbit speed rises, and asteroids and pulse mines close in.
+Orbit Breaker is a fast portrait arcade game about reading motion and committing at exactly the right moment. Your ship circles each planet automatically. Tap to break orbit, cross open space, and land on the highlighted world above.
+
+Hit the perfect zone to raise your combo and score faster. Miss the planet, strike an asteroid, or get caught in a pulse mine and the run ends immediately. Every attempt teaches you to read the angle a little better, and Replay Now gets you back into orbit without delay.
 
 FEATURES
 
-• One-tap play made for portrait mode
-• Endless classic runs
-• A shared daily challenge with the same layout for everyone
-• Perfect landings and score multipliers up to 5x
-• All-time, weekly, and daily Game Center leaderboards
-• Skill-based achievements and cosmetic unlocks
-• Three reactive space zones
-• Original adaptive music, sound, and haptic feedback
-• Reduced motion, high contrast, and trajectory-guide options
+• Simple one-tap play with precise, skill-based timing
+• Perfect landings and combos up to 5x
+• Classic endless runs and a shared UTC daily challenge
+• Clear end-of-run statistics and failure feedback
+• All-time, weekly, and daily Game Center competition
+• Game Center achievements for orbital milestones
+• Unlockable ship colors, trails, and planet themes earned through skill
+• Three distinct space zones as your score rises
+• Adaptive music and responsive sound and haptic feedback
+• Sound, music, haptic, reduced-motion, high-contrast, and guide settings
+• Pause, restart, immediate replay, and locally saved score cards
 
-How far can you carry the signal?
+There is no grinding for currency. New looks are unlocked by reaching meaningful skill milestones, including perfect landings, high combos, and total planets reached.
+
+The route is clear. The timing is yours.
 
 ## Keywords
 
-arcade,space,orbit,timing,one tap,daily challenge,high score,casual,reflex,neon
+arcade,space,orbit,one tap,high score,daily challenge,leaderboard,reflex,skill,neon
 
 ## Category
 
-- Primary: Games, Casual
-- Secondary: Games, Arcade
+- Primary: Games, Action and Casual
+- Secondary: Entertainment
 
 ## Age rating notes
 
