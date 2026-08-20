@@ -54,3 +54,5 @@ Ask each tester:
 - Game Center submissions succeed for at least 90 percent of authenticated testers
 
 Tune difficulty only after reviewing both the local aggregate report and tester comments.
+
+Enter one pseudonymous row per session in `docs/TESTFLIGHT_SESSION_LOG.csv`, then run `ruby tools/analyze_testflight.rb`. The generated `docs/TESTFLIGHT_REPORT.md` remains not ready until at least 20 unique external testers have valid first-session evidence.

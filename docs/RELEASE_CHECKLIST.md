@@ -45,11 +45,11 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
-| READY | Gameplay GitHub workflow exists | Developer | Inspect workflow syntax and trigger set | `.github/workflows/tests.yml` |
-| READY | Gameplay workflow pins Godot 4.7.2 | Developer | Inspect install step and engine output |  |
-| READY | Gameplay workflow runs `tests/test_runner.gd` headlessly | Developer | Successful GitHub run prints `ORBIT_BREAKER_TESTS_OK` |  |
-| READY | Release-artifact job exists | Developer | Validate CSV, links, metadata limits, and punctuation | `.github/workflows/tests.yml` |
-| TODO | Clean-checkout CI run passes | Developer | Link successful GitHub Actions run for release commit |  |
+| PASS | Gameplay GitHub workflow exists | Developer | Inspect workflow syntax and trigger set | `.github/workflows/tests.yml` |
+| PASS | Gameplay workflow pins Godot 4.7.2 | Developer | Inspect install step and engine output | GitHub run 32408952489 used Godot 4.7.2 |
+| PASS | Gameplay workflow runs `tests/test_runner.gd` headlessly | Developer | Successful GitHub run prints `ORBIT_BREAKER_TESTS_OK` | GitHub run 32408952489 passed the headless gameplay job |
+| PASS | Release-artifact job exists | Developer | Validate CSV, links, metadata limits, and punctuation | GitHub run 32408952489 passed release-artifact validation |
+| PASS | Clean-checkout CI run passes | Developer | Link successful GitHub Actions run for release commit | `https://github.com/fufunafu/Orbit-Breaker/actions/runs/32408952489` passed for 5ac55a9 |
 | PASS | Local headless test run passes | Developer | Save command output and exit status | Godot 4.7.2 printed `ORBIT_BREAKER_TESTS_OK` on 2026-08-20 |
 | PASS | Test shutdown is free of leaked-instance warnings | Developer | Repeat with `--verbose` and resolve owned leaks | Godot 4.7.2 verbose run exited 0 without leaked ObjectDB instances or resources on 2026-08-20 |
 | TODO | Ten consecutive full editor runs complete without errors | QA owner | Manual test log |  |
@@ -222,6 +222,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | --- | --- | --- | --- | --- |
 | READY | Validation plan exists | QA owner | Review protocol and gates | `docs/TESTFLIGHT_PLAN.md` |
 | READY | Session log schema exists | QA owner | Parse CSV and inspect fields | `docs/TESTFLIGHT_SESSION_LOG.csv` |
+| READY | Session analyzer and findings report exist | Research owner | Run analyzer tests and regenerate report | `tools/analyze_testflight.rb` and `docs/TESTFLIGHT_REPORT.md` |
 | TODO | Beta description, What to Test, and feedback email are entered | Release owner | App Store Connect Test Information |  |
 | TODO | Internal smoke group passes | QA owner | Completed smoke log |  |
 | TODO | First external build passes Beta App Review if required | Release owner | TestFlight build status |  |

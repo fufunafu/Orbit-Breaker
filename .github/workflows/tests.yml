@@ -89,9 +89,18 @@ jobs:
             widths = rows.map(&:length).uniq
             abort "inconsistent CSV row widths: #{widths.inspect}" unless widths.length == 1
             abort "duplicate CSV headers" unless rows[0].uniq.length == rows[0].length
-            abort "unexpected TestFlight field count" unless rows[0].length == 45
+            abort "unexpected TestFlight field count" unless rows[0].length == 50
             puts "CSV valid: #{rows[0].length} fields"
           '
+
+      - name: Validate TestFlight analysis
+        shell: bash
+        run: |
+          ruby tests/test_testflight_analysis.rb
+          ruby tools/analyze_testflight.rb \
+            docs/TESTFLIGHT_SESSION_LOG.csv \
+            "${RUNNER_TEMP}/TESTFLIGHT_REPORT.md"
+          diff -u docs/TESTFLIGHT_REPORT.md "${RUNNER_TEMP}/TESTFLIGHT_REPORT.md"
 
       - name: Validate README links
         shell: bash

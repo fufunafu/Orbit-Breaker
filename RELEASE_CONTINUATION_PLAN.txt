@@ -584,3 +584,37 @@ August 20 accessibility and documentation continuation
 - The next commit will contain this accessibility, documentation, test, and
   refreshed-media batch. It must be included in the exact commit list approved
   for the pending origin/main push.
+
+
+August 20 TestFlight analysis continuation
+-------------------------------------------
+
+- Local main and origin/main both point to 5ac55a9 after the CI, App Store,
+  regression, accessibility, documentation, and refreshed-media batches were
+  pushed.
+- GitHub release checks run 32408952489 passed both the Godot 4.7.2 headless
+  gameplay job and release-artifact validation for 5ac55a9.
+- GitHub Pages run 32408952584 passed and published the matching privacy and
+  support sources.
+- Added a standard-library Ruby analyzer for the TestFlight session log and a
+  deterministic Markdown findings report.
+- Expanded the session schema from 45 to 50 fields so every run score and every
+  measured game-over-to-restart interval can be analyzed without relying on
+  averages of averages.
+- Added explicit zone-recognition, impossible-hazard, and reproducible-layout
+  fields for experience and fairness gates that previously had no structured
+  evidence path.
+- The analyzer validates field names, types, enums, dates, calculated totals,
+  score sequences, restart timing medians, progression bounds, Daily state,
+  duplicate tester/date/build rows, and impossible-hazard references.
+- Behavioural percentages use each tester's earliest external session. Later
+  sessions remain included in stability, run-length, restart, Game Center,
+  device, complaint, and critical-signal evidence.
+- The report includes sample sizes, behavioural gates, complete run-score
+  distribution, average run length, restart rate, critical signals, cohort and
+  device coverage, and ranked feedback.
+- Automated analyzer tests pass on the system Ruby 2.6 runtime, and the empty
+  source log regenerates the committed report exactly.
+- The report currently states NOT READY because no external first-session rows
+  exist. Real TestFlight distribution and 20 to 30 human testers remain
+  required before the final brief item can be completed.

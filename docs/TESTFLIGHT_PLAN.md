@@ -173,7 +173,7 @@ Record one row per tester session in `TESTFLIGHT_SESSION_LOG.csv`.
 
 - `tester_id`: Pseudonymous ID only
 - `session_date_utc`: ISO date in UTC
-- `cohort`: frequent, occasional, rare, or accessibility
+- `cohort`: frequent, occasional, rare, accessibility, internal, or smoke
 - `app_version` and `build_number`: Tested release identifiers
 - `device_model` and `ios_version`: Physical test environment
 - `mode_sequence`: Order played, for example `classic|daily`
@@ -190,6 +190,7 @@ Record one row per tester session in `TESTFLIGHT_SESSION_LOG.csv`.
 ### Run metrics
 
 - `first_run_score`: Score from the first unassisted run
+- `run_scores`: Every completed run score in order, separated with pipes
 - `total_runs`: Completed runs in the session
 - `total_score`: Sum of all run scores
 - `average_score`: Total score divided by total runs
@@ -197,6 +198,7 @@ Record one row per tester session in `TESTFLIGHT_SESSION_LOG.csv`.
 - `average_run_seconds`: Mean duration from run start to game over
 - `restarts`: Number of replays or restarts after the first run
 - `restart_rate_pct`: Restarts divided by completed runs, expressed as a percentage
+- `game_over_to_restart_seconds`: Every measured game-over-to-next-run interval in order, separated with pipes
 - `median_game_over_to_restart_seconds`: Median time from game over to the next run
 - `total_landings`, `perfect_landings`, and `highest_combo`: Session totals or maximum as named
 
@@ -227,8 +229,11 @@ The sum should equal `total_runs` unless a run was abandoned, the app crashed, o
 - `severe_frame_drop_count`: Visibly severe or measured frame-rate incidents
 - `progress_loss`: yes or no
 - `accessibility_settings_used`: Pipe-separated setting names
-- `most_common_complaint`: The primary problem expressed or observed
-- `most_requested_improvement`: The highest-priority requested change
+- `zone_change_noticed`: yes, no, or not_reached. Use not_reached when the session did not reach the first zone threshold.
+- `hazard_felt_impossible`: yes, no, or not_reached
+- `hazard_layout_reference`: Build, mode, UTC date, score, and any sequence detail needed to reproduce every yes response for `hazard_felt_impossible`
+- `most_common_complaint`: The primary normalized issue category. Prefer none, onboarding, guide_visibility, failure_clarity, hazard_fairness, performance, accessibility, game_center, daily_mismatch, progression, or audio.
+- `most_requested_improvement`: The highest-priority normalized request theme, or none when no change was requested
 - `moderator_help_count`: Number of times the moderator had to explain or intervene
 - `notes`: Short factual context
 
@@ -264,6 +269,15 @@ The first beta passes only when all critical gates and the required behavioural 
 
 ## Analysis procedure
 
+Validate the log and regenerate the findings report with:
+
+```sh
+ruby tests/test_testflight_analysis.rb
+ruby tools/analyze_testflight.rb
+```
+
+The analyzer rejects malformed rows, inconsistent calculated fields, duplicate tester/date/build records, and impossible-hazard reports without a reproducible layout reference. It derives behavioural gates from each tester's earliest external session and retains later sessions for stability and aggregate evidence. It writes `docs/TESTFLIGHT_REPORT.md` with behavioural gates, average run length, restart rate, complete run-score distribution, critical failures, device and cohort coverage, and ranked complaints.
+
 1. Validate every CSV row before calculating results.
 2. Exclude smoke-test rows from onboarding percentages, but keep them for stability evidence.
 3. Calculate metrics for the full group and separately by cohort and device size.
@@ -284,8 +298,10 @@ Recommended report:
 | Perfect landing understood |  | 70% |  |  |
 | Combo understood |  | 70% |  |  |
 | Median restart time |  | 5 sec |  |  |
+| Zone change noticed |  | 60% |  |  |
 | Critical crashes |  | 0 |  |  |
 | Progress-loss cases |  | 0 |  |  |
+| Impossible-hazard reports |  | 0 |  |  |
 
 ## Difficulty-tuning rules
 
