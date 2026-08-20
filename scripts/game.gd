@@ -102,6 +102,7 @@ func _connect_hud() -> void:
 	hud.export_metrics_requested.connect(_on_export_metrics_requested)
 	hud.privacy_requested.connect(func() -> void: _open_external_url(PRIVACY_URL))
 	hud.support_requested.connect(func() -> void: _open_external_url(SUPPORT_URL))
+	hud.ui_sound_requested.connect(func() -> void: audio_controller.play(OrbitAudioController.Sound.UI))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -292,6 +293,7 @@ func _complete_landing(perfect: bool) -> void:
 		next_direction
 	)
 	state = GameState.ORBITING
+	_retire_completed_segment_hazards()
 	_update_zone()
 	target_planet = _spawn_target_from(current_planet)
 	_spawn_hazard_for_segment(current_planet, target_planet)
@@ -325,6 +327,11 @@ func _complete_landing(perfect: bool) -> void:
 	score_changed.emit(score, combo)
 	hud.set_score(score, combo, best_score)
 	_cleanup_world()
+
+
+func _retire_completed_segment_hazards() -> void:
+	for hazard_node in hazards.get_children():
+		hazard_node.queue_free()
 
 
 func end_run(reason: String = "miss") -> bool:

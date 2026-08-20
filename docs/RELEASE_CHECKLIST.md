@@ -123,7 +123,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
-| TODO | Every bundled audio file has documented rights | Audio owner | Source and license ledger |  |
+| PASS | Every bundled audio file has documented rights | Audio owner | Source and license ledger | Original music plus Kenney CC0 effect mappings in `THIRD_PARTY_NOTICES.md` |
 | TODO | Launch, land, perfect, fail, and UI sounds are distinct | QA owner | Listening test on device speaker and headphones |  |
 | TODO | Music intensity responds to combo and zone | QA owner | Capture transition checks |  |
 | TODO | Sound and music levels avoid clipping | Audio owner | Metered and subjective device test |  |
@@ -155,11 +155,11 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | Deployment target matches all bundled frameworks | iOS developer | Align preset, Xcode target, and framework `MinimumOSVersion` | Preset is 17.0; `xcrun vtool -show-build` reports `minos 17.0` for both device framework binaries |
 | PASS | Godot 4.7.2 export templates are installed | iOS developer | Successful clean export | Project-only release export succeeded on 2026-08-20 |
 | PASS | Xcode project exports without missing files | iOS developer | Export log | `tools/prepare_ios_export.sh` printed `ORBIT_BREAKER_IOS_EXPORT_READY` |
-| READY | Native Game Center frameworks are embedded and signed | iOS developer | Xcode build phases and archive validation | Both XCFrameworks link and use CodeSignOnCopy; final signed archive remains |
-| TODO | Release archive signs with intended distribution identity | Release owner | Xcode Organizer archive |  |
+| PASS | Native Game Center frameworks are embedded and signed | iOS developer | Xcode build phases and archive validation | Fresh automatically signed archive embeds and signs both XCFrameworks on 2026-08-20 |
+| PASS | App Store package signs with intended distribution identity | Release owner | Xcode App Store export | 31 MB IPA signed by Apple Distribution: 15041074 Canada Inc on 2026-08-20 |
 | PASS | Generic iPhone arm64 build completes | iOS developer | Unsigned Xcode build log | Release device build succeeded with signing disabled on 2026-08-20 |
 | PASS | Simulator build completes | QA owner | Build log and smoke-test record | Release simulator build succeeds with `ARCHS=x86_64`; runtime smoke test remains |
-| TODO | Physical iPhone build completes | QA owner | Device install and run record |  |
+| READY | Physical iPhone build completes | QA owner | Device install and run record | Signed Release build installed on iPhone 16 Pro; unlock and launch validation remain |
 | TODO | Small and large supported iPhone layouts pass | QA owner | Screenshot matrix |  |
 | TODO | Portrait lock works on physical device | QA owner | Rotation test |  |
 | TODO | Touch response remains immediate | QA owner | Input latency observation |  |
@@ -172,10 +172,10 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | --- | --- | --- | --- | --- |
 | READY | Privacy-policy draft covers current repository behaviour | Privacy owner | Final binary and SDK audit | `docs/PRIVACY_POLICY.md` |
 | READY | Support-page draft covers current features | Support owner | Replace contacts and verify build | `docs/SUPPORT.md` |
-| TODO | Privacy policy has no placeholders | Privacy owner | Search published source and page |  |
-| TODO | Support page has real contact information | Support owner | Open public page |  |
-| TODO | Privacy policy is published at a stable HTTPS URL | Web owner | Public browser check |  |
-| TODO | Support page is published at a stable HTTPS URL | Web owner | Public browser check |  |
+| PASS | Privacy policy has no placeholders | Privacy owner | Search published source and page | Published policy identifies Fuanne Gao and links to the public support channel |
+| PASS | Support page has real contact information | Support owner | Open public page | Public page links to the Orbit Breaker GitHub issue tracker |
+| PASS | Privacy policy is published at a stable HTTPS URL | Web owner | Public browser check | `https://fufunafu.github.io/Orbit-Breaker/privacy.html` returned HTTP 200 |
+| PASS | Support page is published at a stable HTTPS URL | Web owner | Public browser check | `https://fufunafu.github.io/Orbit-Breaker/support.html` returned HTTP 200 |
 | TODO | Privacy manifest matches accessed APIs and SDK declarations | iOS and privacy owners | Inspect final archive and `PrivacyInfo.xcprivacy` files |  |
 | TODO | App Store Connect privacy answers match actual practices | Privacy owner | Compare final binary, policy, and published answers |  |
 | TODO | Third-party SDK data practices are included | Privacy owner | SDK and dependency audit | Include Apple plugin behaviour where applicable |

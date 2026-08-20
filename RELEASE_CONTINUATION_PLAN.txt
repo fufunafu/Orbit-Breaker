@@ -313,3 +313,119 @@ External work still blocked on owner or Apple access
   records across at least seven days.
 - Complete App Store privacy, age rating, category, export compliance, regional
   compliance, review notes, Game Center attachment, and manual release setup.
+
+
+Active continuation checkpoint
+------------------------------
+
+- The branch contains three unpublished release commits after origin/main:
+  8def233, f80eac4, and the current integrated continuation batch.
+- The worktree was clean before this checkpoint update.
+- Commit f80eac4 and all three achievement images were reviewed again.
+- Apple currently requires achievement images to be 1024 by 1024 pixels, at
+  least 72 ppi, and RGB. All three prepared images satisfy those requirements.
+- The latest verbose Godot run prints ORBIT_BREAKER_TESTS_OK without ObjectDB or
+  retained-resource leaks.
+- The achievement image checks and GitHub workflow YAML pass locally.
+- A push of 8def233 and f80eac4 was blocked by the managed reviewer pending an
+  explicit user approval naming both commits.
+- No App Store Connect connector or suitable CLI is available, so browser-based
+  configuration is required.
+- A fresh August 20 continuation run passed the Godot 4.7.2 suite again with
+  ORBIT_BREAKER_TESTS_OK, no ObjectDB leaks, and no retained resources.
+- The current release validation also passed workflow YAML parsing, TestFlight
+  CSV structure, preview inspection, image dimensions, alpha checks, 72 ppi
+  checks, shell syntax, secret-pattern scanning, and the em dash text guard.
+- The standalone Godot import process hit the known restricted macOS certificate
+  lookup failure, while the direct verbose test execution completed successfully.
+- The managed reviewer rejected a second push attempt because the active request
+  did not explicitly approve commits 8def233 and f80eac4 by name.
+- Chrome is connected and an App Store Connect login tab is open for handoff.
+  The Apple session is signed out, so the owner must complete Apple Account and
+  any passkey or two-factor authentication before configuration can continue.
+- Xcode detects a connected physical device named iPhone de Fuanne Gao running
+  iOS 26.6.
+- The keychain contains two valid Apple Development identities but no local
+  Apple Distribution identity. Xcode can use cloud-managed distribution signing
+  during the authenticated Organizer workflow.
+- The existing development provisioning profile initially lacked Game Center.
+  Xcode refreshed it successfully for team 94BK7NCPL9 and bundle identifier
+  com.antonio.orbitbreaker.
+- A development-signed arm64 Release build now succeeds for the connected
+  iPhone. Its signature is valid, targets iOS 17.0, includes the Game Center
+  entitlement, and embeds both required native frameworks.
+- The signed build was installed successfully on the connected iPhone as Orbit
+  Breaker 1.0 build 1. Device launch verification remains pending because the
+  iPhone is locked.
+- A development-signed Release archive completed successfully at
+  /private/tmp/Orbit-Breaker-1.0-development-20260820.xcarchive. The archive is
+  107 MB, passes strict deep signature verification, contains the Game Center
+  entitlement, and excludes the release-only achievement artwork.
+- A new audit found that Godot still generated Apple Distribution as the Release
+  code-signing identity while also enabling automatic signing. Xcode rejected
+  that combination as conflicting provisioning settings.
+- export_presets.cfg now sets Apple Development for the Release identity, the
+  preparation script rejects future automatic exports that hard-code Apple
+  Distribution, and CI validates the preset value.
+- Fresh project-only export directory:
+  /private/tmp/orbit-signing-fix.jdzq6m
+- The fresh project uses Apple Development with automatic signing in every build
+  configuration, passes tools/prepare_ios_export.sh, and archives successfully
+  without any command-line code-signing override.
+- Fresh automatically signed archive:
+  /private/tmp/Orbit-Breaker-1.0-auto-20260820.xcarchive
+- The fresh archive contains the current worktree, was installed successfully on
+  the connected iPhone, and remains ready for launch after the device is unlocked.
+- Xcode cloud-managed distribution signing succeeded without a local Apple
+  Distribution identity. The resulting 31 MB App Store package is at:
+  /private/tmp/orbit-app-store-export-20260820/Orbit Breaker.ipa
+- The IPA passes strict deep signature verification, is signed by Apple
+  Distribution: 15041074 Canada Inc for team 94BK7NCPL9, targets iOS 17.0,
+  includes Game Center, disables get-task-allow, and uses an App Store profile
+  with beta-reports-active enabled.
+- The managed reviewer rejected Apple validation-only transmission because the
+  user has not explicitly approved sending the proprietary app package to
+  Apple's validation service.
+- App Store validation and upload still require explicit transmission approval
+  and authenticated App Store Connect or Xcode Organizer access.
+- The integrated continuation batch is committed locally with message:
+  Polish release candidate and fix automatic signing.
+- Next actions are: obtain explicit push approval, push all unpublished commits,
+  verify CI,
+  unlock the connected iPhone and complete launch validation, complete App Store
+  Connect authentication, then configure the legal URLs, Game Center components,
+  achievement images, and available submission metadata.
+
+
+August 20 implementation continuation
+-------------------------------------
+
+- Retired hazards as soon as their route segment is completed, closing the
+  remaining edge case where a prior hazard could intersect a later launch path.
+- Added a regression assertion that completed-segment hazards are gone before
+  the next launch window.
+- Replaced the five generated short tones with authored Kenney CC0 effects for
+  launch, landing, perfect landing, failure, and interface actions.
+- Connected every standard HUD button to the authored interface cue.
+- Preserved the two original adaptive music layers and narrowed the audio
+  generator so it only rebuilds those music layers.
+- Documented every effect's source mapping and CC0 license in
+  THIRD_PARTY_NOTICES.md and assets/audio/README.md.
+- Removed stale public-document placeholders and updated achievement metadata
+  to point to the prepared artwork.
+- Strengthened the test runner with required-resource loading checks and made
+  CI reject Godot script or engine errors even if an erroneous run prints the
+  success sentinel.
+- A fresh cache-free project copy imported every asset and passed the Godot
+  4.7.2 suite with ORBIT_BREAKER_TESTS_OK.
+- A fresh project-only iOS export passed tools/prepare_ios_export.sh with
+  ORBIT_BREAKER_IOS_EXPORT_READY. The PCK contains the new audio and excludes
+  the App Store Connect-only achievement artwork.
+- The fresh unsigned arm64 iPhone Release build completed with BUILD SUCCEEDED,
+  embedded both Game Center frameworks, targeted iOS 17.0, and completed the
+  shallow store validation step.
+- The public landing, privacy, and support URLs each returned HTTP 200 over
+  HTTPS on August 20, 2026.
+- App Store Connect remains at Apple's sign-in screen. Account configuration,
+  signed device launch confirmation, and the real 20 to 30 person TestFlight
+  study still require owner interaction and human participation.

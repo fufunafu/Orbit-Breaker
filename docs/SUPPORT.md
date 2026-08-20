@@ -1,7 +1,6 @@
 # Orbit Breaker Support
 
-Status: Draft for publication<br>
-Support email: `[SUPPORT EMAIL]`<br>
+Public support: https://fufunafu.github.io/Orbit-Breaker/support.html<br>
 App version: 1.0
 
 ## How to play
@@ -106,7 +105,7 @@ If saving fails, include that fact in a bug report along with the device, iOS ve
 
 ## Report a bug
 
-Email `[SUPPORT EMAIL]` with:
+Open an issue at https://github.com/fufunafu/Orbit-Breaker/issues with:
 
 - Orbit Breaker version and build number
 - iPhone model
@@ -129,9 +128,6 @@ Read the [Orbit Breaker Privacy Policy](PRIVACY_POLICY.md). The published suppor
 
 ## Contact
 
-Support email: `[SUPPORT EMAIL]`<br>
-Developer or publisher: `[DEVELOPER OR PUBLISHER LEGAL NAME]`<br>
-Response target: `[SUPPORT RESPONSE TIME, FOR EXAMPLE 3 BUSINESS DAYS]`<br>
-Postal address if required: `[POSTAL ADDRESS]`
-
-Before using this page as the App Store support URL, replace all placeholders and publish it at a stable public HTTPS address with real contact information.
+Developer: Fuanne Gao<br>
+Support page: https://fufunafu.github.io/Orbit-Breaker/support.html<br>
+Issue tracker: https://github.com/fufunafu/Orbit-Breaker/issues

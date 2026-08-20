@@ -1,9 +1,8 @@
 # Orbit Breaker Privacy Policy
 
-Status: Draft for owner review and publication<br>
-Effective date: `[EFFECTIVE DATE]`<br>
-Developer: `[DEVELOPER OR PUBLISHER LEGAL NAME]`<br>
-Contact: `[PRIVACY CONTACT EMAIL]`
+Effective date: August 20, 2026<br>
+Developer: Fuanne Gao<br>
+Contact: [Orbit Breaker support](https://fufunafu.github.io/Orbit-Breaker/support.html)
 
 This Privacy Policy explains how Orbit Breaker handles information when you use the iOS application.
 
@@ -70,7 +69,7 @@ The developer does not sell the local game profile or score-card images. Data su
 
 Local game data remains in the app's container until it is reset by the app, removed through an available system action, or deleted when the app is uninstalled, subject to iOS backup and restore behaviour.
 
-To manage or delete Game Center data, use the controls Apple provides for your Apple Account and Game Center. For privacy questions or deletion requests concerning information directly held by the developer, contact `[PRIVACY CONTACT EMAIL]`. The developer cannot delete information controlled solely by Apple.
+To manage or delete Game Center data, use the controls Apple provides for your Apple Account and Game Center. For privacy questions concerning information directly held by the developer, use the public [Orbit Breaker support page](https://fufunafu.github.io/Orbit-Breaker/support.html). The developer cannot delete information controlled solely by Apple.
 
 ## Children
 
@@ -92,15 +91,13 @@ This policy may be updated when the app's features, data practices, third-party 
 
 For privacy questions, contact:
 
-`[DEVELOPER OR PUBLISHER LEGAL NAME]`<br>
-`[PRIVACY CONTACT EMAIL]`<br>
-`[POSTAL ADDRESS IF REQUIRED]`
+Fuanne Gao<br>
+[Orbit Breaker support](https://fufunafu.github.io/Orbit-Breaker/support.html)
 
 ## Publication checklist
 
 Before publishing this policy:
 
-- Replace every bracketed placeholder.
 - Audit the final release binary and all embedded SDKs.
 - Confirm whether any diagnostics, analytics, or crash data is sent outside Apple TestFlight.
 - Confirm Game Center data flows on a physical device.

@@ -13,7 +13,7 @@ Orbit Breaker is a fast portrait arcade game for iPhone. Tap at the right moment
 - Persistent scores, settings, accessibility preferences, and progression
 - Game Center all-time, weekly, and daily leaderboards
 - Game Center achievements
-- Adaptive original music, sound effects, haptics, particles, and screen feedback
+- Original adaptive music, polished sound effects, haptics, particles, and screen feedback
 - Shareable end-of-run score cards
 - Local, privacy-preserving playtest metrics
 

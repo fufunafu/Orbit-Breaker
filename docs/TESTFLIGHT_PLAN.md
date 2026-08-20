@@ -102,7 +102,7 @@ Orbit Breaker is a one-tap orbital arcade game. Time each launch, land on the hi
 
 Please complete at least five runs. On your first run, do not ask for instructions. Tell us whether the first launch made sense, whether each failure reason was clear, and whether Replay Now felt immediate. Try Classic and Daily modes, change at least one accessibility setting, save a score card, and open Game Center leaderboards. Report any crash, progress loss, incorrect daily layout, failed Game Center submission, unreadable text, delayed input, or severe frame-rate drop.
 
-Feedback email: `[TESTFLIGHT FEEDBACK EMAIL]`
+Enter the account holder's monitored feedback address directly in App Store Connect. The public issue tracker is https://github.com/fufunafu/Orbit-Breaker/issues.
 
 ## First-session protocol
 

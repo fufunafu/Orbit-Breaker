@@ -40,7 +40,14 @@ jobs:
         run: godot --headless --path . --import --log-file "${RUNNER_TEMP}/godot-import.log"
 
       - name: Run tests
-        run: godot --headless --path . --script res://tests/test_runner.gd --log-file "${RUNNER_TEMP}/godot-tests.log"
+        shell: bash
+        run: |
+          godot --headless --path . --script res://tests/test_runner.gd --log-file "${RUNNER_TEMP}/godot-tests.log"
+          grep -q "ORBIT_BREAKER_TESTS_OK" "${RUNNER_TEMP}/godot-tests.log"
+          if grep -E "SCRIPT ERROR|ERROR:" "${RUNNER_TEMP}/godot-tests.log"; then
+            echo "Godot reported an engine or script error."
+            exit 1
+          fi
 
       - name: Upload Godot logs on failure
         if: failure()
@@ -101,6 +108,7 @@ jobs:
               "Game Center entitlement" => "entitlements/game_center=true",
               "Files app export access" => "user_data/accessible_from_files_app=true",
               "iPhone-only device family" => "application/targeted_device_family=0",
+              "automatic development signing" => %q(application/code_sign_identity_release="Apple Development"),
             }
             missing = required.reject { |_name, setting| preset.include?(setting) }.keys
             abort "missing iOS release settings: #{missing.join(", ")}" unless missing.empty?

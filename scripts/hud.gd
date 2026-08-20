@@ -14,6 +14,7 @@ signal cosmetic_cycle_requested(category: String)
 signal export_metrics_requested
 signal privacy_requested
 signal support_requested
+signal ui_sound_requested
 
 var score_label: Label
 var best_label: Label
@@ -308,6 +309,7 @@ func _make_button(text_value: String, font_size: int, minimum_size: Vector2) -> 
 	button.add_theme_stylebox_override("normal", normal)
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", hover)
+	button.pressed.connect(func() -> void: ui_sound_requested.emit())
 	return button
 
 

@@ -100,12 +100,7 @@ The GitHub Pages workflow publishes these files from `docs/`. Confirm all three 
 
 ## App Review contact
 
-| Field | Value |
-| --- | --- |
-| First name | `[REVIEW CONTACT FIRST NAME]` |
-| Last name | `[REVIEW CONTACT LAST NAME]` |
-| Phone | `[REVIEW CONTACT PHONE]` |
-| Email | `[REVIEW CONTACT EMAIL]` |
+Enter the account holder's verified first name, last name, phone number, and email directly in App Store Connect. These private account fields are intentionally not stored in the public repository.
 
 ## App Review notes draft
 
@@ -173,9 +168,9 @@ Suggested localized title format:
 | Maximum Burn | `com.antonio.orbitbreaker.combo5` | 25 | Reach a 5x combo. | You reached a 5x combo. |
 | Planet Runner | `com.antonio.orbitbreaker.planets50` | 50 | Land on 50 planets across all runs. | You landed on 50 planets. |
 
-Achievement images must be 1024 by 1024 pixels, RGB, and supplied in an accepted image format. Create these after the final icon and visual identity are locked.
+The prepared achievement images are 1024 by 1024 RGB PNG files at 72 ppi without alpha. They are stored in `marketing/game-center-achievements/` and mapped in `marketing/game-center-configuration.md`.
 
-**Pending:** Create, localize, add images, test progress reporting, and submit all three achievements for review.
+**Pending:** Create and localize the App Store Connect achievement records, upload the prepared images, test progress reporting on a physical device, and submit all three achievements for review.
 
 ## TestFlight metadata
 
@@ -189,7 +184,7 @@ Please complete at least five runs. On your first run, do not ask for instructio
 
 ### Feedback email
 
-`[TESTFLIGHT FEEDBACK EMAIL]`
+Enter the account holder's monitored feedback address directly in App Store Connect. The public issue tracker remains available at https://github.com/fufunafu/Orbit-Breaker/issues.
 
 ## Localization plan
 

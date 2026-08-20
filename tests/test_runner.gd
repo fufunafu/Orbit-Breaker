@@ -17,6 +17,7 @@ func _close_enough(actual: Vector2, expected: Vector2, tolerance: float = 0.001)
 
 
 func _run_all() -> void:
+	_test_resource_integrity()
 	_test_orbit_math()
 	_test_rules()
 	_test_save_store()
@@ -33,6 +34,22 @@ func _run_all() -> void:
 		push_error("TEST FAILURE: %s" % failure)
 	print("ORBIT_BREAKER_TESTS_FAILED: %d" % failures.size())
 	quit(1)
+
+
+func _test_resource_integrity() -> void:
+	for path in [
+		"res://scripts/audio_controller.gd",
+		"res://scripts/game.gd",
+		"res://scenes/game.tscn",
+		"res://assets/audio/launch.wav",
+		"res://assets/audio/land.wav",
+		"res://assets/audio/perfect.wav",
+		"res://assets/audio/fail.wav",
+		"res://assets/audio/ui.wav",
+		"res://assets/audio/music_base.wav",
+		"res://assets/audio/music_drive.wav",
+	]:
+		_check(load(path) != null, "Required resource must load: %s" % path)
 
 
 func _test_orbit_math() -> void:
@@ -255,12 +272,18 @@ func _test_gameplay_integration() -> void:
 	_check(game.score == 2 and game.combo == 2, "Perfect landing must update score and combo.")
 	_check(game.first_launch_succeeded, "Landing the first launch must be captured for playtest analysis.")
 
+	var completed_segment_hazard := game.HAZARD_SCENE.instantiate() as OrbitHazard
+	game.hazards.add_child(completed_segment_hazard)
+	completed_segment_hazard.global_position = game.current_planet.global_position + Vector2(420.0, 180.0)
+	completed_segment_hazard.configure(30.0, 11)
 	game._launch_ship()
 	game.launch_predicted_perfect = false
 	game.ship.velocity = Vector2.UP * game.tuning.launch_speed
 	game.ship.global_position = game.target_planet.global_position + Vector2(game.target_planet.radius + game.ship.radius - 1.0, 0.0)
 	game._update_flight(0.0)
 	_check(game.score == 3 and game.combo == 1, "Normal landing must add one and reset combo.")
+	await process_frame
+	_check(game.hazards.get_child_count() == 0, "Hazards from a completed segment must retire before the next launch window.")
 
 	game._launch_ship()
 	var hazard := game.HAZARD_SCENE.instantiate() as OrbitHazard

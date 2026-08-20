@@ -40,6 +40,16 @@ remove_empty_key "$info_file" "NSPhotoLibraryUsageDescription"
 
 plutil -lint "$entitlements_file" "$info_file" >/dev/null
 
+if grep -q 'CODE_SIGN_IDENTITY = "Apple Distribution";' "$project_file"; then
+	echo "The exported Xcode project hard-codes Apple Distribution signing." >&2
+	exit 1
+fi
+
+if ! grep -q 'CODE_SIGN_IDENTITY = "Apple Development";' "$project_file"; then
+	echo "The exported Xcode project is missing the automatic development signing identity." >&2
+	exit 1
+fi
+
 if [ "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.game-center' "$entitlements_file")" != "true" ]; then
 	echo "Game Center entitlement is missing." >&2
 	exit 1
