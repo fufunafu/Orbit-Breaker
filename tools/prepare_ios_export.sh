@@ -45,6 +45,11 @@ if [ "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.game-center' "$en
 	exit 1
 fi
 
+if [ "$(/usr/libexec/PlistBuddy -c 'Print :LSSupportsOpeningDocumentsInPlace' "$info_file")" != "true" ]; then
+	echo "Files app document access is missing." >&2
+	exit 1
+fi
+
 if ! grep -q 'IPHONEOS_DEPLOYMENT_TARGET = 17.0;' "$project_file"; then
 	echo "The exported Xcode project does not target iOS 17.0." >&2
 	exit 1

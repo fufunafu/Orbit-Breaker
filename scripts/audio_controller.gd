@@ -69,6 +69,8 @@ func set_intensity(combo: int, zone: int) -> void:
 	drive_player.pitch_scale = base_player.pitch_scale
 	if music_enabled:
 		drive_player.volume_db = lerpf(-34.0, -8.0, intensity)
+	else:
+		drive_player.volume_db = -80.0
 
 
 func set_music_paused(value: bool) -> void:

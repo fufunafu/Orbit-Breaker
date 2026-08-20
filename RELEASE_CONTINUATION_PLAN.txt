@@ -49,3 +49,203 @@ Known validation boundaries
 - Distribution signing, App Store Connect configuration, GitHub Pages settings,
   physical-device testing, and TestFlight recruitment require external account
   access or human participation.
+
+
+DETAILED PROGRESS CHECKPOINT
+============================
+
+Checkpoint time
+---------------
+
+August 20, 2026, approximately 13:30 America/Toronto.
+
+
+Repository and commits
+----------------------
+
+- Repository path:
+  /Users/fuannegao/Documents/PERSONAL_WEBSITE/ANTONIORUN2/antonio-2-godot
+- Branch: main
+- Remote: https://github.com/fufunafu/Orbit-Breaker.git
+- Original repository commit: 1c02531
+- Reviewed release milestone commit: 1b849e3
+- Commit message: Prepare Orbit Breaker for iOS release
+- Commit 1b849e3 contains 140 changed files, 8,400 insertions, and 189
+  deletions.
+- Commit 1b849e3 was pushed successfully to origin/main.
+- The worktree currently contains a second staged batch that must still be
+  committed and pushed after final validation.
+
+
+Completed implementation and release work
+-----------------------------------------
+
+- Added Classic and deterministic Daily Challenge modes.
+- Added progression, cosmetics, three visual zones, audio, haptics, effects,
+  accessibility settings, score cards, and local playtest metrics.
+- Added Game Center service integration with all-time, weekly, and daily
+  leaderboards plus three achievements.
+- Bundled the Godot Apple Game Center and Swift runtime frameworks.
+- Added release documentation, privacy and support pages, App Store copy,
+  TestFlight plans, screenshot plans, legal notices, and automation.
+- Added valid App Store media:
+  - 1024 by 1024 RGB icon without alpha.
+  - Four 1320 by 2868 RGB screenshots without alpha.
+  - 29.967 second H.264 High Profile Level 4.0 preview at 886 by 1920,
+    30 fps, AAC stereo, and about 38 MB.
+- Added GitHub workflows for tests, release artifact validation, and Pages.
+- Added tools/prepare_ios_export.sh to remove empty Godot-generated plist keys
+  and validate the iOS target, Game Center entitlement, and frameworks.
+
+
+iOS deployment and Xcode validation completed
+---------------------------------------------
+
+- export_presets.cfg targets iOS 17.0.
+- Both device framework binaries report minos 17.0 with xcrun vtool.
+- The export preset uses project-only export to keep signing in Xcode.
+- Automatic signing is no longer paired with a hard-coded distribution
+  identity.
+- Clean Godot 4.7.2 project-only iOS exports succeed.
+- The generated Xcode project contains the Game Center entitlement.
+- Both native XCFrameworks are referenced with CodeSignOnCopy.
+- All generated Xcode deployment target entries are 17.0.
+- An unsigned generic arm64 iPhone Release build succeeded.
+- An x86_64 simulator build succeeded.
+- The installed Godot 4.7.2 simulator engine archive is x86_64-only, so native
+  arm64 simulator validation needs a compatible export template.
+- A final fresh export after the second preset batch exists at:
+  /tmp/orbit-breaker-release-export.JXZvDa
+- Running tools/prepare_ios_export.sh on that export prints:
+  ORBIT_BREAKER_IOS_EXPORT_READY
+- The prepared Info.plist has no camera, microphone, or photo-library purpose
+  strings.
+- The prepared Info.plist has LSSupportsOpeningDocumentsInPlace = true because
+  user_data/accessible_from_files_app is enabled.
+- UIFileSharingEnabled remains false because iTunes sharing is intentionally
+  disabled. Godot documents the Files option and iTunes option separately.
+
+
+Automated test progress
+-----------------------
+
+- Godot version: 4.7.2.stable.official.ed1daf0bf.
+- The headless suite prints ORBIT_BREAKER_TESTS_OK and exits with status 0.
+- The original six leaked objects and two retained resources were removed.
+- The suite uses test-only files under res://.godot and disables Game Center.
+- Restarting from pause now resumes music and has a regression assertion.
+- The latest test expansion adds 300 hazard-layout samples, verifies hazard
+  introduction boundaries, verifies safe launch windows, and verifies adaptive
+  music resets on replay.
+- A temporary test mistake enabled sound effects during repeated run cycles and
+  produced 26 playback leaks. It was corrected by keeping sound playback
+  disabled while testing the music setting.
+- The most recent verbose test run is clean of ObjectDB instance leaks and
+  retained resources. Its log is:
+  /tmp/orbit-breaker-second-tests-clean.log
+- Remaining local noise is limited to the macOS certificate lookup warning in
+  the restricted sandbox and two engine StringName entries at exit.
+
+
+GitHub and Pages progress
+-------------------------
+
+- origin/main points to 1b849e3427e369bcd66587edd0d81772f359475a.
+- GitHub Actions is enabled and both workflows are active.
+- Original push test run: 32397457822.
+- Original push Pages run: 32397457823.
+- The original test run failed only because ffprobe was not installed on the
+  current ubuntu-latest runner.
+- The original Pages run failed because the Pages site did not exist yet.
+- GitHub Pages is now enabled with GitHub Actions as its build source.
+- Public Pages base URL:
+  https://fufunafu.github.io/Orbit-Breaker/
+- HTTPS enforcement is enabled.
+- Manually dispatched test run: 32397534055.
+- Manually dispatched Pages run: 32397536669.
+- The workflow fix adds an explicit apt installation of ffmpeg before preview
+  inspection. This fix is staged but not yet pushed.
+- The manually dispatched runs target the previous commit and may still show the
+  old ffprobe failure. The next pushed commit must trigger authoritative runs.
+
+
+Current staged batch
+--------------------
+
+The current index contains changes to these files:
+
+- .github/workflows/tests.yml
+- README.md
+- SUPPORT.md
+- docs/support.html
+- export_presets.cfg
+- marketing/testflight-validation.md
+- scripts/audio_controller.gd
+- scripts/game.gd
+- scripts/hud.gd
+- tests/test_runner.gd
+- tools/prepare_ios_export.sh
+- RELEASE_CONTINUATION_PLAN.txt after this checkpoint update
+
+The staged batch does the following:
+
+- Installs ffmpeg explicitly on the CI runner.
+- Validates iOS 17, Game Center, iPhone-only targeting, Files access, and empty
+  unused privacy descriptions in CI.
+- Enables Files app access for explicit score-card and playtest-report exports.
+- Updates player and tester instructions for retrieving exports from Files.
+- Keeps disabled music muted when adaptive intensity changes.
+- Resets adaptive music intensity at restart and after profile application.
+- Shows a clear iOS Files location after exporting a report or score card.
+- Expands hazard-generation and audio regression coverage.
+
+
+Immediate next actions
+----------------------
+
+1. Re-add RELEASE_CONTINUATION_PLAN.txt to the index.
+2. Confirm the shared worktree has stopped changing.
+3. Run git diff --cached --check and review the entire second staged diff.
+4. Run the final verbose Godot test and confirm no leaked instances or retained
+   resources.
+5. Use the fresh Xcode export to run an unsigned generic arm64 device build.
+6. Commit the second batch with a focused CI and export-fix message.
+7. Push main.
+8. Monitor the new Release artifact checks and Pages runs to completion.
+9. Open the public privacy and support URLs over HTTPS.
+10. Record the final commit, workflow run URLs, Pages URLs, and clean worktree in
+    this checkpoint file.
+
+
+Latest validation after checkpoint creation
+-------------------------------------------
+
+- tools/prepare_ios_export.sh now also verifies that the generated Info.plist
+  enables Files app document access.
+- The fresh project-only export passed the preparation script again.
+- The fresh prepared Xcode project completed an unsigned generic arm64 iPhone
+  Release build with BUILD SUCCEEDED.
+- The build used Xcode SDK iphoneos26.5 and deployment target iOS 17.0.
+- The app linked and embedded GodotApplePluginsGameCenter.framework and
+  SwiftGodotRuntime.framework successfully.
+- The generated app passed Xcode's shallow store validation step during the
+  unsigned build.
+
+
+External work still blocked on owner or Apple access
+---------------------------------------------------
+
+- Provide the real support, privacy, TestFlight feedback, and App Review contact
+  details that still use bracketed placeholders.
+- Add the public privacy and support URLs to App Store Connect.
+- Create and localize the three Game Center leaderboards.
+- Create and localize Perfect Ten, Maximum Burn, and Planet Runner.
+- Produce three 1024 by 1024 achievement images.
+- Sign, archive, validate, upload, and install on a physical iPhone.
+- Complete real-device safe-area, backgrounding, persistence, haptic,
+  accessibility, performance, authentication, recurrence, score, achievement,
+  and completion-banner tests.
+- Recruit 20 to 30 TestFlight testers and collect at least 20 valid first-session
+  records across at least seven days.
+- Complete App Store privacy, age rating, category, export compliance, regional
+  compliance, review notes, Game Center attachment, and manual release setup.

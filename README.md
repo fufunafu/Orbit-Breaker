@@ -17,6 +17,8 @@ Orbit Breaker is a fast portrait arcade game for iPhone. Tap at the right moment
 - Shareable end-of-run score cards
 - Local, privacy-preserving playtest metrics
 
+On iPhone, saved score cards and explicitly exported playtest reports appear in **Files > On My iPhone > Orbit Breaker**. The game does not request access to the photo library.
+
 ## Controls
 
 - iPhone: tap to start and launch

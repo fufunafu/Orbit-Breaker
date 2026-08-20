@@ -20,6 +20,8 @@ Open a GitHub issue at <https://github.com/fufunafu/Orbit-Breaker/issues> and in
 
 TestFlight testers can also use **Send Beta Feedback** in the TestFlight app.
 
+Saved score cards and exported playtest reports are available in **Files > On My iPhone > Orbit Breaker**. Attach them from Files when sharing a score or sending test feedback.
+
 ## Privacy
 
 Read the [Orbit Breaker privacy policy](PRIVACY.md).

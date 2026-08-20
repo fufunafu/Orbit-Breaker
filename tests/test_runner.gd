@@ -299,6 +299,14 @@ func _test_gameplay_integration() -> void:
 	_check(game.world.process_mode == Node.PROCESS_MODE_INHERIT, "Restarting from pause must resume the gameplay world.")
 	if game.audio_controller.base_player.stream != null:
 		_check(not game.audio_controller.base_player.stream_paused, "Restarting from pause must resume the active base music player.")
+	game.audio_controller.apply_settings(false, false)
+	game.audio_controller.set_intensity(5, 2)
+	_check(
+		is_equal_approx(game.audio_controller.drive_player.volume_db, -80.0),
+		"Changing intensity must not unmute disabled music."
+	)
+	game.audio_controller.apply_settings(false, true)
+	game.audio_controller.set_intensity(1, 0)
 
 	_check(game.end_run("test"), "Active run must enter GAME_OVER state.")
 	_check(game.state == OrbitGame.GameState.GAME_OVER, "Failure must show GAME_OVER state.")
@@ -337,7 +345,60 @@ func _test_gameplay_integration() -> void:
 			"Generated layout %d must provide a real tangent launch window." % generation
 		)
 
+	await process_frame
+	var original_base_hazard_chance := game.tuning.base_hazard_chance
+	var original_hazard_chance_per_tier := game.tuning.hazard_chance_per_tier
+	var original_maximum_hazard_chance := game.tuning.maximum_hazard_chance
+	game.tuning.base_hazard_chance = 1.0
+	game.tuning.hazard_chance_per_tier = 0.0
+	game.tuning.maximum_hazard_chance = 1.0
+	for landing_stage in [9, 10, 20, 30, 60]:
+		for hazard_generation in 60:
+			for child in game.hazards.get_children():
+				child.free()
+			game.landings = landing_stage
+			game.layout_rng.seed = landing_stage * 1000 + hazard_generation
+			game._spawn_hazard_for_segment(game.current_planet, game.target_planet)
+			var hazard_data: Array[Dictionary] = []
+			for hazard_node in game.hazards.get_children():
+				var generated_hazard := hazard_node as OrbitHazard
+				if generated_hazard == null:
+					continue
+				hazard_data.append({
+					"position": generated_hazard.global_position,
+					"radius": generated_hazard.radius * 1.12,
+				})
+				if landing_stage < game.tuning.pulse_hazards_begin_at_landing:
+					_check(generated_hazard.kind == OrbitHazard.Kind.ASTEROID, "Pulse mines must not appear before their introduction.")
+			if landing_stage < game.tuning.hazards_begin_at_landing:
+				_check(hazard_data.is_empty(), "Hazards must not appear before their introduction.")
+			if landing_stage < game.tuning.combined_hazards_begin_at_landing:
+				_check(hazard_data.size() <= 1, "Combined hazards must not appear before both kinds are introduced.")
+			var safe_samples := OrbitMath.safe_launch_sample_count_for_hazards(
+				game.current_planet.global_position,
+				game.current_planet.radius + game.tuning.orbit_clearance,
+				game.ship.orbit_direction,
+				game.target_planet.global_position,
+				game.target_planet.radius + game.ship.radius,
+				hazard_data,
+				180
+			)
+			_check(
+				safe_samples >= game.tuning.minimum_safe_launch_samples,
+				"Hazard layout at landing %d, seed %d must preserve a valid launch window." % [landing_stage, hazard_generation]
+			)
+	game.tuning.base_hazard_chance = original_base_hazard_chance
+	game.tuning.hazard_chance_per_tier = original_hazard_chance_per_tier
+	game.tuning.maximum_hazard_chance = original_maximum_hazard_chance
+	for child in game.hazards.get_children():
+		child.free()
+
+	game.audio_controller.set_intensity(5, 2)
+	game._reset_world(true)
+	_check(is_equal_approx(game.audio_controller.drive_player.volume_db, -34.0), "A replay must reset adaptive music intensity.")
+	game.end_run("miss")
 	game._reset_world(false)
+
 	_check(game.start_run(true), "Daily Challenge must start from the ready screen.")
 	var first_daily_target := game.target_planet.global_position
 	var first_daily_radius := game.target_planet.radius

@@ -381,6 +381,7 @@ func _reset_world(begin_running: bool) -> void:
 	audio_controller.set_music_paused(false)
 	zone_index = _selected_theme_zone()
 	_apply_zone()
+	audio_controller.set_intensity(combo, zone_index)
 	var start_position := Vector2(540.0, 1370.0)
 	current_planet = _create_planet(start_position, 118.0, false, true)
 	target_planet = _spawn_target_from(current_planet)
@@ -606,6 +607,7 @@ func _apply_profile() -> void:
 	aim_guide.set_high_contrast(bool(profile.high_contrast))
 	effects.reduced_motion = bool(profile.reduced_motion)
 	audio_controller.apply_settings(bool(profile.sound_enabled), bool(profile.music_enabled))
+	audio_controller.set_intensity(combo, zone_index)
 	hud.update_settings(profile)
 	_apply_zone()
 
@@ -722,7 +724,12 @@ func save_score_image(image: Image, path_override: String = "") -> String:
 
 func _on_export_metrics_requested() -> void:
 	var path := PlaytestMetrics.export_report("user://orbit-breaker-playtest-report.json", metrics_path)
-	hud.show_tip("PLAYTEST REPORT SAVED\n%s" % path, 4.0)
+	if path.is_empty():
+		hud.show_tip("UNABLE TO SAVE PLAYTEST REPORT", 4.0)
+	elif OS.get_name() == "iOS":
+		hud.show_tip("PLAYTEST REPORT SAVED\nFILES > ON MY IPHONE > ORBIT BREAKER", 4.0)
+	else:
+		hud.show_tip("PLAYTEST REPORT SAVED\n%s" % path, 4.0)
 
 
 func _open_external_url(url: String) -> void:

@@ -30,6 +30,8 @@ Use the in-game **Export Playtest Report** action to collect aggregate, non-pers
 - Score distribution
 - Failure-reason distribution
 
+On iPhone, retrieve the exported JSON report from **Files > On My iPhone > Orbit Breaker** and attach it to the tester's feedback.
+
 Use TestFlight feedback for common complaints and qualitative notes. Consolidate responses without attaching player identities to gameplay metrics.
 
 ## Survey

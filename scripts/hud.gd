@@ -414,7 +414,10 @@ func show_tip(text_value: String, duration: float = 2.4) -> void:
 
 
 func show_share_status(path: String) -> void:
-	share_status_label.text = "SCORE CARD SAVED\n%s" % path
+	if OS.get_name() == "iOS":
+		share_status_label.text = "SCORE CARD SAVED TO FILES\nON MY IPHONE > ORBIT BREAKER"
+	else:
+		share_status_label.text = "SCORE CARD SAVED\n%s" % path
 
 
 func flash(color: Color, strength: float = 0.35) -> void:

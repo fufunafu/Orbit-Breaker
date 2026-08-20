@@ -61,6 +61,12 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Install preview inspection tools
+        shell: bash
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install --no-install-recommends -y ffmpeg
+
       - name: Validate TestFlight CSV
         shell: bash
         run: |
@@ -83,6 +89,26 @@ jobs:
             missing = local.reject { |path| File.exist?(path) }
             abort "missing local links: #{missing.join(", ")}" unless missing.empty?
             puts "README local links valid: #{local.length}"
+          '
+
+      - name: Validate iOS release preset
+        shell: bash
+        run: |
+          ruby -e '
+            preset = File.read("export_presets.cfg")
+            required = {
+              "iOS 17 target" => %q(application/min_ios_version="17.0"),
+              "Game Center entitlement" => "entitlements/game_center=true",
+              "Files app export access" => "user_data/accessible_from_files_app=true",
+              "iPhone-only device family" => "application/targeted_device_family=0",
+            }
+            missing = required.reject { |_name, setting| preset.include?(setting) }.keys
+            abort "missing iOS release settings: #{missing.join(", ")}" unless missing.empty?
+            %w[camera microphone photolibrary].each do |permission|
+              key = "privacy/#{permission}_usage_description"
+              abort "unexpected protected-resource purpose string: #{key}" unless preset.include?(%Q(#{key}=""))
+            end
+            puts "iOS release preset valid"
           '
 
       - name: Validate App Store copy limits
