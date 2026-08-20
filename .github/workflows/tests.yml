@@ -104,6 +104,8 @@ jobs:
             }
             missing = required.reject { |_name, setting| preset.include?(setting) }.keys
             abort "missing iOS release settings: #{missing.join(", ")}" unless missing.empty?
+            abort "Game Center artwork must stay out of the app bundle" unless preset.include?("marketing/game-center-achievements/*")
+            abort "Game Center artwork must stay out of Godot imports" unless File.exist?("marketing/game-center-achievements/.gdignore")
             %w[camera microphone photolibrary].each do |permission|
               key = "privacy/#{permission}_usage_description"
               abort "unexpected protected-resource purpose string: #{key}" unless preset.include?(%Q(#{key}=""))
@@ -149,7 +151,14 @@ jobs:
               abort "unsupported screenshot size: #{path}" unless info[0, 2] == [1320, 2868]
               abort "screenshot must not include alpha: #{path}" if [4, 6].include?(info[2])
             end
-            puts "images valid: 1 icon, #{screenshots.length} screenshots"
+            achievements = Dir["marketing/game-center-achievements/*.png"].sort
+            abort "exactly three achievement images are required" unless achievements.length == 3
+            achievements.each do |path|
+              info = png_info(path)
+              abort "achievement image must be 1024 by 1024: #{path}" unless info[0, 2] == [1024, 1024]
+              abort "achievement image must not include alpha: #{path}" if [4, 6].include?(info[2])
+            end
+            puts "images valid: 1 icon, #{screenshots.length} screenshots, #{achievements.length} achievements"
           '
 
       - name: Validate App Store preview

@@ -31,7 +31,7 @@ External release work after the push
 2. Replace contact placeholders with the owner-approved support, privacy,
    TestFlight, and App Review contact information.
 3. Configure the three leaderboards and three achievements in App Store Connect.
-4. Produce and upload three 1024 by 1024 achievement images.
+4. Upload the three prepared 1024 by 1024 achievement images.
 5. Sign, archive, validate, and install the release candidate on a physical
    iPhone.
 6. Complete simulator, safe-area, backgrounding, persistence, haptic,
@@ -57,7 +57,7 @@ DETAILED PROGRESS CHECKPOINT
 Checkpoint time
 ---------------
 
-August 20, 2026, approximately 13:30 America/Toronto.
+August 20, 2026, approximately 13:45 America/Toronto.
 
 
 Repository and commits
@@ -73,8 +73,8 @@ Repository and commits
 - Commit 1b849e3 contains 140 changed files, 8,400 insertions, and 189
   deletions.
 - Commit 1b849e3 was pushed successfully to origin/main.
-- The worktree currently contains a second staged batch that must still be
-  committed and pushed after final validation.
+- Local HEAD is 8def233, one commit ahead of the last observed origin/main.
+- The current artwork batch is reviewed and ready for a local commit.
 
 
 Completed implementation and release work
@@ -93,6 +93,11 @@ Completed implementation and release work
   - Four 1320 by 2868 RGB screenshots without alpha.
   - 29.967 second H.264 High Profile Level 4.0 preview at 886 by 1920,
     30 fps, AAC stereo, and about 38 MB.
+- Added three distinct Game Center achievement images for Perfect Ten, Maximum
+  Burn, and Planet Runner. Each is a 1024 by 1024 RGB PNG at 72 ppi without
+  alpha, with important content centered for Apple's circular mask.
+- Excluded the App Store Connect-only achievement artwork from Godot exports and
+  added a CI guard so the files remain release assets rather than app content.
 - Added GitHub workflows for tests, release artifact validation, and Pages.
 - Added tools/prepare_ios_export.sh to remove empty Godot-generated plist keys
   and validate the iOS target, Game Center entitlement, and frameworks.
@@ -143,6 +148,7 @@ Automated test progress
 - The most recent verbose test run is clean of ObjectDB instance leaks and
   retained resources. Its log is:
   /tmp/orbit-breaker-second-tests-clean.log
+- The post-artwork test run still prints ORBIT_BREAKER_TESTS_OK.
 - Remaining local noise is limited to the macOS certificate lookup warning in
   the restricted sandbox and two engine StringName entries at exit.
 
@@ -176,56 +182,33 @@ GitHub and Pages progress
   - https://fufunafu.github.io/Orbit-Breaker/support.html
 
 
-Current staged batch
---------------------
+Current artwork batch
+---------------------
 
-The current index contains changes to these files:
+The current batch does the following:
 
-- .github/workflows/tests.yml
-- README.md
-- SUPPORT.md
-- docs/support.html
-- export_presets.cfg
-- marketing/testflight-validation.md
-- scripts/audio_controller.gd
-- scripts/game.gd
-- scripts/hud.gd
-- tests/test_runner.gd
-- tools/prepare_ios_export.sh
-- RELEASE_CONTINUATION_PLAN.txt after this checkpoint update
-
-The staged batch does the following:
-
-- Installs ffmpeg explicitly on the CI runner.
-- Validates iOS 17, Game Center, iPhone-only targeting, Files access, and empty
-  unused privacy descriptions in CI.
-- Enables Files app access for explicit score-card and playtest-report exports.
-- Updates player and tester instructions for retrieving exports from Files.
-- Keeps disabled music muted when adaptive intensity changes.
-- Resets adaptive music intensity at restart and after profile application.
-- Shows a clear iOS Files location after exporting a report or score card.
-- Expands hazard-generation and audio regression coverage.
+- Adds distinct final artwork for Perfect Ten, Maximum Burn, and Planet Runner.
+- Documents the identifiers, English localizations, completion rules, and image
+  mapping needed in App Store Connect.
+- Validates the three images in GitHub Actions.
+- Keeps the release-only artwork outside Godot imports and iOS app bundles.
+- Records the fresh headless test, iOS export, and unsigned arm64 build evidence.
 
 
 Immediate next actions
 ----------------------
 
-1. Re-add RELEASE_CONTINUATION_PLAN.txt to the index.
-2. Confirm the shared worktree has stopped changing.
-3. Run git diff --cached --check and review the entire second staged diff.
-4. Run the final verbose Godot test and confirm no leaked instances or retained
-   resources.
-5. Use the fresh Xcode export to run an unsigned generic arm64 device build.
-6. Commit the second batch with a focused CI and export-fix message.
-7. Push main.
-8. Monitor the new Release artifact checks and Pages runs to completion.
-9. Open the public privacy and support URLs over HTTPS.
-10. Record the final commit, workflow run URLs, Pages URLs, and clean worktree in
-    this checkpoint file.
+1. Commit the reviewed achievement artwork batch locally.
+2. Reauthenticate GitHub CLI or otherwise confirm permission before pushing.
+3. Push local main and monitor Release artifact checks to completion.
+4. Upload the achievement images while configuring Game Center in App Store
+   Connect.
+5. Sign, archive, install, and validate the release candidate on an iPhone.
+6. Recruit the TestFlight cohort and run the documented seven-day study.
 
 
-Latest validation after checkpoint creation
--------------------------------------------
+Validation for the second release batch
+---------------------------------------
 
 - tools/prepare_ios_export.sh now also verifies that the generated Info.plist
   enables Files app document access.
@@ -237,6 +220,26 @@ Latest validation after checkpoint creation
   SwiftGodotRuntime.framework successfully.
 - The generated app passed Xcode's shallow store validation step during the
   unsigned build.
+
+
+Achievement artwork validation
+------------------------------
+
+- All three images are distinct 1024 by 1024 RGB PNG files at 72 ppi without
+  alpha.
+- Visual inspection confirms exactly ten landing sparks for Perfect Ten and
+  exactly five energy rings for Maximum Burn.
+- GitHub workflow YAML parses and the new image checks pass locally.
+- A final Godot import did not generate import metadata inside the ignored
+  artwork folder.
+- The final Godot 4.7.2 test run prints ORBIT_BREAKER_TESTS_OK and exits 0.
+- Fresh project-only iOS export directory:
+  /private/tmp/orbit-achievement-export.Rp3zwh
+- tools/prepare_ios_export.sh prints ORBIT_BREAKER_IOS_EXPORT_READY.
+- The exported PCK contains no achievement artwork paths or names.
+- The unsigned generic arm64 iPhone Release build prints BUILD SUCCEEDED.
+- The build embeds both required Game Center frameworks, targets iOS 17.0, and
+  completes Xcode's shallow store validation.
 
 
 Local commit and push state
@@ -290,19 +293,18 @@ Repository milestone status
 - GitHub Pages is enabled, published, HTTPS-enforced, and verified.
 - The legal page URLs are ready to enter in App Store Connect.
 - The remaining work is external Apple configuration, real-device testing,
-  TestFlight execution, contact-detail replacement, achievement artwork, and App
-  Store submission.
+  TestFlight execution, account-level contact completion, achievement artwork
+  upload, and App Store submission.
 
 
 External work still blocked on owner or Apple access
 ---------------------------------------------------
 
-- Provide the real support, privacy, TestFlight feedback, and App Review contact
-  details that still use bracketed placeholders.
+- Provide the account-level TestFlight feedback and App Review contact details.
 - Add the public privacy and support URLs to App Store Connect.
 - Create and localize the three Game Center leaderboards.
 - Create and localize Perfect Ten, Maximum Burn, and Planet Runner.
-- Produce three 1024 by 1024 achievement images.
+- Upload the three prepared 1024 by 1024 achievement images.
 - Sign, archive, validate, upload, and install on a physical iPhone.
 - Complete real-device safe-area, backgrounding, persistence, haptic,
   accessibility, performance, authentication, recurrence, score, achievement,

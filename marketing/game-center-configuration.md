@@ -14,13 +14,23 @@ Use integer points with a minimum score of 0. Set the all-time leaderboard as de
 
 ## Achievements
 
-| Name | Identifier | Points | Completion rule |
-| --- | --- | --- | --- |
-| Perfect Ten | `com.antonio.orbitbreaker.perfect10` | 25 | Complete 10 perfect landings across runs |
-| Maximum Burn | `com.antonio.orbitbreaker.combo5` | 25 | Reach a 5x combo |
-| Planet Runner | `com.antonio.orbitbreaker.planets50` | 50 | Land on 50 planets across runs |
+| Name | Identifier | Points | Completion rule | Image |
+| --- | --- | --- | --- | --- |
+| Perfect Ten | `com.antonio.orbitbreaker.perfect10` | 25 | Complete 10 perfect landings across runs | `game-center-achievements/perfect-ten.png` |
+| Maximum Burn | `com.antonio.orbitbreaker.combo5` | 25 | Reach a 5x combo | `game-center-achievements/maximum-burn.png` |
+| Planet Runner | `com.antonio.orbitbreaker.planets50` | 50 | Land on 50 planets across runs | `game-center-achievements/planet-runner.png` |
 
-Add localized title, achieved description, unachieved description, and artwork for every Game Center component. Submit the components with the app version for review.
+Configure all three as visible, non-repeatable achievements.
+
+### English localization
+
+| Name | Pre-earned description | Earned description |
+| --- | --- | --- |
+| Perfect Ten | Complete 10 perfect landings. | You completed 10 perfect landings. |
+| Maximum Burn | Reach a 5x combo in one run. | You reached maximum burn with a 5x combo. |
+| Planet Runner | Land on 50 planets across all runs. | You landed on 50 planets and carried the signal onward. |
+
+The three supplied images are 1024 by 1024 RGB PNG files at 72 ppi without alpha. They keep their important content centered for Game Center's circular mask. Add localized title, pre-earned description, earned description, and the matching image for every achievement, then submit the components with the app version for review.
 
 ## Verification
 
