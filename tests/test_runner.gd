@@ -158,13 +158,23 @@ func _test_save_store() -> void:
 	_check(SaveStore.save_best_score(37, test_path) == OK, "Best score must save successfully.")
 	_check(SaveStore.load_best_score(test_path) == 37, "Best score must load after saving.")
 	var profile := SaveStore.load_profile(test_path)
+	profile.sound_enabled = false
+	profile.music_enabled = false
+	profile.haptics_enabled = false
+	profile.reduced_motion = true
 	profile.reduced_screen_shake = true
+	profile.high_contrast = true
 	profile.guide_mode = 2
 	profile.selected_ship_color = "nova"
 	profile.unlocked_ship_colors = PackedStringArray(["ion", "nova"])
 	_check(SaveStore.save_profile(profile, test_path) == OK, "Complete profile must save successfully.")
 	var restored := SaveStore.load_profile(test_path)
+	_check(not bool(restored.sound_enabled), "The sound setting must persist.")
+	_check(not bool(restored.music_enabled), "The music setting must persist.")
+	_check(not bool(restored.haptics_enabled), "The haptic setting must persist.")
+	_check(bool(restored.reduced_motion), "Reduced motion must persist.")
 	_check(bool(restored.reduced_screen_shake), "Reduced screen shake must persist.")
+	_check(bool(restored.high_contrast), "High contrast must persist.")
 	_check(int(restored.guide_mode) == 2, "Guide visibility must persist.")
 	_check(String(restored.selected_ship_color) == "nova", "Selected cosmetics must persist.")
 	_check((restored.unlocked_ship_colors as PackedStringArray).has("nova"), "Unlocked cosmetics must persist.")
@@ -172,11 +182,34 @@ func _test_save_store() -> void:
 	_check(not bool(tied_run.new_best), "An equal score must not be marked as a new best.")
 	var higher_run := SaveStore.record_run(tied_run.profile, 38, 0, 0, 1, false, "")
 	_check(bool(higher_run.new_best), "A strictly higher score must be marked as a new best.")
+	var first_daily := SaveStore.record_run(higher_run.profile, 12, 4, 1, 2, true, "2026-08-20")
+	_check(int(first_daily.profile.daily_best_score) == 12, "The first Daily score must become that date's local best.")
+	var lower_daily := SaveStore.record_run(first_daily.profile, 8, 3, 0, 1, true, "2026-08-20")
+	_check(int(lower_daily.profile.daily_best_score) == 12, "A lower Daily score must not replace the same date's best.")
+	var next_daily := SaveStore.record_run(lower_daily.profile, 5, 2, 0, 1, true, "2026-08-21")
+	_check(String(next_daily.profile.daily_date) == "2026-08-21", "A new UTC date must replace the Daily date key.")
+	_check(int(next_daily.profile.daily_best_score) == 5, "A new UTC date must reset the Daily local best before recording the run.")
+
+	var legacy_path := "res://.godot/orbit_breaker_test_legacy_save.cfg"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(legacy_path))
+	var legacy_config := ConfigFile.new()
+	legacy_config.set_value("save", "version", 1)
+	legacy_config.set_value("save", "best_score", 19)
+	legacy_config.set_value("progress", "total_landings", 23)
+	legacy_config.set_value("settings", "sound_enabled", false)
+	_check(legacy_config.save(legacy_path) == OK, "A version 1 migration fixture must save.")
+	var migrated := SaveStore.load_profile(legacy_path)
+	_check(int(migrated.best_score) == 19, "Version 1 best score data must load after upgrade.")
+	_check(int(migrated.total_landings) == 23, "Version 1 progression data must load after upgrade.")
+	_check(not bool(migrated.sound_enabled), "Version 1 settings data must load after upgrade.")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(legacy_path))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_path))
 
 
 func _test_daily_challenge() -> void:
 	_check(DailyChallenge.utc_date_key(0) == "1970-01-01", "Daily date keys must use UTC calendar dates.")
+	_check(DailyChallenge.utc_date_key(1787270399) == "2026-08-20", "The Daily date must remain stable through 23:59:59 UTC.")
+	_check(DailyChallenge.utc_date_key(1787270400) == "2026-08-21", "The Daily date must change exactly at 00:00:00 UTC.")
 	var first_seed := DailyChallenge.seed_for_date("2026-08-20")
 	_check(first_seed == DailyChallenge.seed_for_date("2026-08-20"), "The same UTC date must always produce the same seed.")
 	_check(first_seed != DailyChallenge.seed_for_date("2026-08-21"), "Different UTC dates must produce different seeds.")
@@ -189,6 +222,24 @@ func _test_daily_challenge() -> void:
 
 
 func _test_progression() -> void:
+	var locked_profile := SaveStore.default_profile()
+	locked_profile.total_perfect_landings = 9
+	locked_profile.highest_combo = 4
+	locked_profile.best_score = 24
+	locked_profile.total_landings = 24
+	_check(CosmeticCatalog.refresh_unlocks(locked_profile).is_empty(), "Skill rewards must remain locked below every milestone.")
+	_check(
+		String(CosmeticCatalog.next_unlocked(CosmeticCatalog.SHIP_COLORS, locked_profile.unlocked_ship_colors, "ion").id) == "ion",
+		"Cycling ship colours must not select a locked reward."
+	)
+	_check(
+		String(CosmeticCatalog.next_unlocked(CosmeticCatalog.TRAILS, locked_profile.unlocked_trails, "ion").id) == "ion",
+		"Cycling trails must not select a locked reward."
+	)
+	_check(
+		String(CosmeticCatalog.next_unlocked(CosmeticCatalog.PLANET_THEMES, locked_profile.unlocked_planet_themes, "cosmic").id) == "cosmic",
+		"Cycling planet themes must not select a locked reward."
+	)
 	var profile := SaveStore.default_profile()
 	profile.total_perfect_landings = 10
 	profile.highest_combo = 5
@@ -203,6 +254,10 @@ func _test_progression() -> void:
 	_check((profile.unlocked_planet_themes as PackedStringArray).has("nebula"), "Twenty-five landings must unlock Nebula.")
 	_check((profile.unlocked_planet_themes as PackedStringArray).has("sunforge"), "Fifty landings must unlock Sunforge.")
 	_check(CosmeticCatalog.refresh_unlocks(profile).is_empty(), "Unlocked rewards must not be granted twice.")
+	_check(
+		String(CosmeticCatalog.next_unlocked(CosmeticCatalog.SHIP_COLORS, profile.unlocked_ship_colors, "ion").id) == "nova",
+		"Cycling an unlocked ship category must advance in catalog order."
+	)
 
 
 func _test_playtest_metrics() -> void:
@@ -246,6 +301,16 @@ func _test_gameplay_integration() -> void:
 	_check(game.hud.settings_panel.find_child("SupportButton", true, false) != null, "Settings must expose support.")
 	_check(OrbitGame.PRIVACY_URL.begins_with("https://"), "The in-app privacy action must use HTTPS.")
 	_check(OrbitGame.SUPPORT_URL.begins_with("https://"), "The in-app support action must use HTTPS.")
+	var sound_resource_paths := {}
+	for sound in OrbitAudioController.SOUND_STREAMS:
+		var sound_stream := OrbitAudioController.SOUND_STREAMS[sound] as AudioStreamWAV
+		if sound_stream:
+			sound_resource_paths[sound_stream.resource_path] = true
+	_check(sound_resource_paths.size() == 5, "Launch, landing, perfect, failure, and interface actions must use distinct audio resources.")
+	_check(
+		OrbitAudioController.MUSIC_BASE.resource_path != OrbitAudioController.MUSIC_DRIVE.resource_path,
+		"The two adaptive music layers must use distinct resources."
+	)
 
 	_check(game.state == OrbitGame.GameState.READY, "Game must begin in READY state.")
 	game._handle_primary_action()
@@ -305,6 +370,11 @@ func _test_gameplay_integration() -> void:
 	game._update_flight(0.001)
 	_check(game.state == OrbitGame.GameState.GAME_OVER, "Flight timeout must end the run.")
 	_check(game.hud.failure_label.text == "SIGNAL TIMED OUT", "A flight timeout must display its specific failure reason.")
+	_check(game._failure_reason_text("asteroid") == "STRUCK AN ASTEROID", "Asteroid failures must use the asteroid explanation.")
+	_check(game._failure_reason_text("pulse_mine") == "CAUGHT IN A PULSE MINE", "Pulse-mine failures must use the pulse-mine explanation.")
+	_check(game._failure_reason_text("wrong_planet") == "COLLIDED WITH A DEAD ORBIT", "Wrong-planet failures must use the dead-orbit explanation.")
+	_check(game._failure_reason_text("timeout") == "SIGNAL TIMED OUT", "Timeout failures must use the timeout explanation.")
+	_check(game._failure_reason_text("miss") == "DRIFTED INTO DEEP SPACE", "Miss failures must use the deep-space explanation.")
 
 	game._reset_world(true)
 	var state_before_pause := game.state
@@ -330,6 +400,38 @@ func _test_gameplay_integration() -> void:
 	)
 	game.audio_controller.apply_settings(false, true)
 	game.audio_controller.set_intensity(1, 0)
+	game.profile.guide_mode = 0
+	game.profile.tutorial_completed = false
+	_check(not game._tutorial_should_show() and not game._guide_should_show(), "Guide Off must hide both tutorial and persistent guide modes.")
+	game.profile.guide_mode = 1
+	_check(game._tutorial_should_show() and game._guide_should_show(), "Guide Tutorial must show before tutorial completion.")
+	game.profile.tutorial_completed = true
+	_check(not game._tutorial_should_show() and not game._guide_should_show(), "Guide Tutorial must hide after tutorial completion.")
+	game.profile.guide_mode = 2
+	_check(game._guide_should_show(), "Guide Always must remain visible after tutorial completion.")
+	game.profile.reduced_motion = true
+	game.profile.reduced_screen_shake = false
+	game.shake_time = 0.0
+	game._start_shake(18.0)
+	_check(is_zero_approx(game.shake_time), "Reduced Motion must suppress screen shake.")
+	game.profile.reduced_motion = false
+	game.profile.reduced_screen_shake = true
+	game._start_shake(18.0)
+	_check(is_zero_approx(game.shake_time), "Reduced Screen Shake must suppress screen shake.")
+	game.profile.reduced_screen_shake = false
+	game._start_shake(18.0)
+	_check(game.shake_time > 0.0, "Screen shake must remain available when both reduction settings are off.")
+	game.profile.high_contrast = true
+	game.profile.reduced_motion = true
+	game.profile.sound_enabled = false
+	game.profile.music_enabled = false
+	game._apply_profile()
+	_check(game.aim_guide.high_contrast, "High Contrast must apply to the trajectory guide.")
+	_check(game.effects.reduced_motion and game.starfield.reduced_motion, "Reduced Motion must apply to particles and background parallax.")
+	game.profile.high_contrast = false
+	game.profile.reduced_motion = false
+	game.profile.music_enabled = true
+	game._apply_profile()
 
 	_check(game.end_run("test"), "Active run must enter GAME_OVER state.")
 	_check(game.state == OrbitGame.GameState.GAME_OVER, "Failure must show GAME_OVER state.")
@@ -344,6 +446,7 @@ func _test_gameplay_integration() -> void:
 		game._update_flight(0.001)
 		_check(game.state == OrbitGame.GameState.GAME_OVER, "Restart cycle %d must end on timeout." % cycle)
 
+	game.layout_rng.seed = 246813579
 	for generation in 100:
 		game._reset_world(false)
 		var distance := game.current_planet.global_position.distance_to(game.target_planet.global_position)
@@ -431,12 +534,35 @@ func _test_gameplay_integration() -> void:
 	_check(_close_enough(game.target_planet.global_position, first_daily_target), "Daily replay must reproduce the first target position.")
 	_check(is_equal_approx(game.target_planet.radius, first_daily_radius), "Daily replay must reproduce the first target size.")
 	game.end_run("miss")
+	game.is_daily_run = false
+	game._reset_world(true)
+	_check(game.end_run("miss"), "A Classic run must be able to end.")
+	game._replay_current_mode()
+	_check(not game.is_daily_run and game.state == OrbitGame.GameState.ORBITING, "Immediate replay must preserve Classic mode and restart at once.")
+	game.end_run("miss")
 	var score_card_image := Image.create(320, 320, false, Image.FORMAT_RGB8)
 	score_card_image.fill(Color("08152f"))
 	var score_card_path := game.save_score_image(score_card_image, "res://.godot/orbit_breaker_test_score_card.png")
 	_check(not score_card_path.is_empty() and FileAccess.file_exists(score_card_path), "A shareable score-card PNG must be generated.")
 	if not score_card_path.is_empty():
 		DirAccess.remove_absolute(score_card_path)
+	game.profile = SaveStore.default_profile()
+	game.best_score = 0
+	game._reset_world(true)
+	game.score = 42
+	game.landings = 17
+	game.perfect_landings = 9
+	game.run_highest_combo = 5
+	_check(game.end_run("asteroid"), "A populated summary run must end normally.")
+	_check(game.hud.new_best_label.visible, "A strict new best must show the New Best label.")
+	_check(game.hud.failure_label.text == "STRUCK AN ASTEROID", "The run summary must retain the observed failure reason.")
+	_check(game.hud.final_score_label.text == "SCORE 42   •   BEST 42", "The run summary must display matching score and best values.")
+	_check(game.hud.stats_label.text == "LANDINGS 17   •   PERFECT 9\nMAX COMBO 5x", "The run summary must display observed landing and combo totals.")
+	_check(game.hud.unlock_label.text.contains("SOLAR") and game.hud.unlock_label.text.contains("COMET"), "The run summary must display newly unlocked rewards.")
+	game._reset_world(true)
+	game.score = 42
+	_check(game.end_run("miss"), "An equal-score summary run must end normally.")
+	_check(not game.hud.new_best_label.visible, "A non-record run must hide the New Best label.")
 
 	game.queue_free()
 	await process_frame

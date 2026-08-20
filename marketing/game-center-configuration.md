@@ -12,6 +12,17 @@ Enable Game Center for bundle identifier `com.antonio.orbitbreaker` in Certifica
 
 Use integer points with a minimum score of 0. Set the all-time leaderboard as default.
 
+### Daily version compatibility
+
+Version 1 uses the three identifiers above for every 1.x build whose scoring,
+physics, hazard timing, and Daily layout generation remain competitively
+equivalent. A future build that materially changes any of those rules must not
+mix its Daily scores into the existing recurring occurrence. Before releasing
+such a build, create a versioned Daily leaderboard identifier, update the code
+and metadata together, and begin the new recurrence at 00:00 UTC. Cosmetic,
+copy, accessibility, and crash-only updates may keep the current identifiers
+when they do not affect score comparability.
+
 ## Achievements
 
 | Name | Identifier | Points | Completion rule | Image |

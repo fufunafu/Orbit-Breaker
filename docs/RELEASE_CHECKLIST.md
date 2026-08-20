@@ -58,44 +58,44 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
-| TODO | Clockwise and counterclockwise launches use correct tangents | QA owner | Automated test plus visual device check |  |
-| TODO | Generated targets are reachable | QA owner | Automated generation test and seeded stress test |  |
-| TODO | Hazards preserve at least one valid launch window | QA owner | Automated sampling test across late-game seeds |  |
-| TODO | Asteroids appear before pulse mines | QA owner | Play through both introduction thresholds |  |
-| TODO | Combined hazards appear only after individual introductions | QA owner | Verify tuning thresholds and gameplay |  |
-| TODO | Every failure reason matches the actual cause | QA owner | Force miss, asteroid, pulse mine, wrong planet, and timeout |  |
-| TODO | Rapid taps cannot double launch | QA owner | Automated and device input test |  |
-| TODO | Replay starts the same mode immediately | QA owner | Test Classic and Daily game-over paths |  |
-| TODO | New Best appears only for a strict new high score | QA owner | Test lower, equal, and higher score cases |  |
-| TODO | Run summary totals are accurate | QA owner | Compare score, landings, perfects, combo, and reason to observed run |  |
-| TODO | Score-card PNG saves successfully | QA owner | Save and open image on each target device class |  |
+| READY | Clockwise and counterclockwise launches use correct tangents | QA owner | Automated test plus visual device check | Unit assertions cover both tangent directions; device observation remains |
+| PASS | Generated targets are reachable | QA owner | Automated generation test and seeded stress test | Deterministic 100-layout integration stress test validates reachability and launch windows |
+| PASS | Hazards preserve at least one valid launch window | QA owner | Automated sampling test across late-game seeds | 300 seeded layouts across five progression stages retain the configured safe sample count |
+| PASS | Asteroids appear before pulse mines | QA owner | Play through both introduction thresholds | Automated generation checks every pre-pulse hazard is an asteroid |
+| PASS | Combined hazards appear only after individual introductions | QA owner | Verify tuning thresholds and gameplay | Automated generation rejects multi-hazard segments before the combined threshold |
+| READY | Every failure reason matches the actual cause | QA owner | Force miss, asteroid, pulse mine, wrong planet, and timeout | Automated collision and label checks cover miss, asteroid, and timeout; device forcing remains for pulse mine and wrong planet |
+| READY | Rapid taps cannot double launch | QA owner | Automated and device input test | Duplicate input and repeated launch calls are rejected in integration tests; device tapping remains |
+| PASS | Replay starts the same mode immediately | QA owner | Test Classic and Daily game-over paths | Integration tests cover immediate Classic and deterministic Daily replay |
+| PASS | New Best appears only for a strict new high score | QA owner | Test lower, equal, and higher score cases | Save and HUD integration assertions cover equal and higher scores |
+| PASS | Run summary totals are accurate | QA owner | Compare score, landings, perfects, combo, and reason to observed run | End-run integration verifies score, best, landings, perfects, combo, failure, and unlock text |
+| READY | Score-card PNG saves successfully | QA owner | Save and open image on each target device class | RGB PNG generation and filesystem persistence pass headlessly; device Files verification remains |
 
 ## Progression and persistence
 
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
-| TODO | Ship-colour unlock conditions are correct | QA owner | Reach each milestone and relaunch |  |
-| TODO | Trail unlock conditions are correct | QA owner | Reach each milestone and relaunch |  |
-| TODO | Planet-theme unlock conditions are correct | QA owner | Reach each milestone and relaunch |  |
-| TODO | Locked cosmetics cannot be selected | QA owner | Cycle each category before unlock |  |
-| TODO | Selected cosmetics persist | QA owner | Select, terminate, and relaunch |  |
+| PASS | Ship-colour unlock conditions are correct | QA owner | Reach each milestone and relaunch | Boundary tests cover 10 perfect landings and a 5x combo |
+| PASS | Trail unlock conditions are correct | QA owner | Reach each milestone and relaunch | Boundary tests cover 10 perfect landings and score 25 |
+| PASS | Planet-theme unlock conditions are correct | QA owner | Reach each milestone and relaunch | Boundary tests cover 25 and 50 total landings |
+| PASS | Locked cosmetics cannot be selected | QA owner | Cycle each category before unlock | Catalog cycling tests remain on defaults below every threshold |
+| PASS | Selected cosmetics persist | QA owner | Select, terminate, and relaunch | Complete profile save and reload retains selections and unlock arrays |
 | TODO | Three score-driven zones are visually distinct | Art and QA owners | Capture same route state in each zone |  |
-| TODO | Unlocks are based on skill milestones, not time or currency | Product owner | Review catalog and build |  |
-| TODO | Version 1 save data loads after upgrade | QA owner | Install upgrade over previous build |  |
-| TODO | Corrupt save data falls back safely | QA owner | Automated test and manual device check |  |
+| PASS | Unlocks are based on skill milestones, not time or currency | Product owner | Review catalog and build | Catalog logic and boundary tests use only score, combo, perfects, and landings |
+| READY | Version 1 save data loads after upgrade | QA owner | Install upgrade over previous build | Version 1 fixture preserves score, progression, and settings; installed upgrade remains |
+| READY | Corrupt save data falls back safely | QA owner | Automated test and manual device check | Corrupt fixture returns defaults; device observation remains |
 | TODO | App reinstall behaviour is documented | Support owner | Confirm local data removal or restore behaviour |  |
 
 ## Daily Challenge
 
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
-| TODO | UTC date changes at the intended boundary | QA owner | Test before and after 00:00 UTC |  |
-| TODO | Same date and build produce the same sequence | QA owner | Compare at least three devices for 20 targets |  |
+| PASS | UTC date changes at the intended boundary | QA owner | Test before and after 00:00 UTC | Exact 23:59:59 and 00:00:00 UTC boundary assertions pass |
+| READY | Same date and build produce the same sequence | QA owner | Compare at least three devices for 20 targets | Deterministic seed and random sequence assertions pass; cross-device comparison remains |
 | TODO | Classic mode remains randomly seeded | QA owner | Compare fresh Classic runs |  |
-| TODO | Daily replay preserves the same date seed | QA owner | Replay several runs before UTC rollover |  |
-| TODO | Daily local best resets by date | QA owner | Test two UTC dates |  |
+| PASS | Daily replay preserves the same date seed | QA owner | Replay several runs before UTC rollover | Integration replay reproduces the first target position and size |
+| PASS | Daily local best resets by date | QA owner | Test two UTC dates | Save-store assertions preserve same-day best and reset on the next UTC date |
 | TODO | Daily leaderboard occurrence matches the UTC date | Game Center owner | Compare in-game label and App Store configuration |  |
-| TODO | Version mismatch policy is documented | Product owner | Decide whether old builds remain eligible for comparable Daily scores |  |
+| PASS | Version mismatch policy is documented | Product owner | Decide whether old builds remain eligible for comparable Daily scores | `marketing/game-center-configuration.md` requires versioned IDs after material scoring or layout changes |
 
 ## Game Center
 
@@ -124,7 +124,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
 | PASS | Every bundled audio file has documented rights | Audio owner | Source and license ledger | Original music plus Kenney CC0 effect mappings in `THIRD_PARTY_NOTICES.md` |
-| TODO | Launch, land, perfect, fail, and UI sounds are distinct | QA owner | Listening test on device speaker and headphones |  |
+| READY | Launch, land, perfect, fail, and UI sounds are distinct | QA owner | Listening test on device speaker and headphones | Automated resource assertions prove five distinct files; device listening remains |
 | TODO | Music intensity responds to combo and zone | QA owner | Capture transition checks |  |
 | TODO | Sound and music levels avoid clipping | Audio owner | Metered and subjective device test |  |
 | TODO | Ship, planets, asteroids, and pulse mines are recognizable | Art and QA owners | First-session identification test |  |
@@ -135,15 +135,15 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
-| TODO | Sound toggle persists and silences effects | QA owner | Toggle, play, terminate, and relaunch |  |
-| TODO | Music toggle persists and silences music | QA owner | Toggle, play, terminate, and relaunch |  |
-| TODO | Haptic toggle persists and suppresses haptics | QA owner | Physical-device test |  |
-| TODO | Reduced Motion suppresses screen shake | QA owner | Force perfect and failure feedback |  |
-| TODO | Reduced Motion reduces background movement | QA owner | Compare all three zones |  |
-| TODO | High Contrast Guide is visibly distinct | Accessibility owner | Contrast review on target displays |  |
-| TODO | Guide Off, Tutorial, and Always behave correctly | QA owner | Test first and later runs |  |
-| TODO | Pause, resume, and restart are reachable | QA owner | Test safe-area layout on small and large screens |  |
-| TODO | Backgrounding preserves the current run | QA owner | Physical-device test during orbit and flight |  |
+| READY | Sound toggle persists and silences effects | QA owner | Toggle, play, terminate, and relaunch | Persistence and playback gating pass automatically; device listening remains |
+| READY | Music toggle persists and silences music | QA owner | Toggle, play, terminate, and relaunch | Persistence and minus-80 dB mute assertions pass; device listening remains |
+| READY | Haptic toggle persists and suppresses haptics | QA owner | Physical-device test | Persistence passes automatically; physical haptic verification remains |
+| PASS | Reduced Motion suppresses screen shake | QA owner | Force perfect and failure feedback | Integration test proves shake time remains zero when either reduction setting is active |
+| READY | Reduced Motion reduces background movement | QA owner | Compare all three zones | Particles and starfield receive the reduced-motion state; visual device comparison remains |
+| READY | High Contrast Guide is visibly distinct | Accessibility owner | Contrast review on target displays | Integration proves the high-contrast render path is selected; target-display review remains |
+| PASS | Guide Off, Tutorial, and Always behave correctly | QA owner | Test first and later runs | Integration covers all three guide modes before and after tutorial completion |
+| READY | Pause, resume, and restart are reachable | QA owner | Test safe-area layout on small and large screens | State, world processing, and music assertions pass; safe-area device review remains |
+| READY | Backgrounding preserves the current run | QA owner | Physical-device test during orbit and flight | Pause and resume notifications preserve state automatically; physical-device verification remains |
 | TODO | UI does not rely on colour alone for critical meaning | Accessibility owner | Manual review and user test |  |
 | TODO | Accessibility Nutrition Label claims are evidence-backed | Accessibility owner | Complete Apple's current evaluation criteria |  |
 
