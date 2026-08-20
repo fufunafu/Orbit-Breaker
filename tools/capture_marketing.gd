@@ -27,16 +27,18 @@ func _capture_all() -> void:
 	(game.get_node("GameCenter") as OrbitGameCenter).enabled = false
 	root.add_child(game)
 	await process_frame
+	game.layout_rng.seed = 20260820
+	game.feedback_rng.seed = 20260820
+	game._reset_world(false)
+	game.set_physics_process(false)
 	await process_frame
 	game.audio_controller.apply_settings(false, false)
 	await _capture("01-home.png")
 
 	game.start_run(false)
-	game.set_physics_process(false)
 	_align_ship_for_perfect_guide(game)
 	await process_frame
 	await _capture("02-perfect-launch.png")
-	game.set_physics_process(true)
 
 	game.score = 16
 	game.combo = 5
@@ -61,6 +63,8 @@ func _capture_all() -> void:
 	game.landings = 31
 	game.perfect_landings = 12
 	game.run_highest_combo = 5
+	game.best_score = maxi(game.best_score, game.score)
+	game.hud.set_score(game.score, game.combo, game.best_score)
 	game.end_run("pulse_mine")
 	await process_frame
 	await _capture("04-score-card.png")
@@ -73,6 +77,8 @@ func _capture_all() -> void:
 		icon_image.save_png("res://marketing/app-icon-1024.png")
 
 	game.queue_free()
+	await process_frame
+	await process_frame
 	await process_frame
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAPTURE_SAVE))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAPTURE_METRICS))
