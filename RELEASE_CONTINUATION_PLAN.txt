@@ -468,3 +468,30 @@ August 20 final local continuation
 - The remaining immediate owner actions are to approve the named Git push,
   approve creation of the prepared App Store Connect record, and unlock the
   connected iPhone for launch validation.
+
+
+August 20 CI completion audit
+-----------------------------
+
+- Local main and origin/main both reached 97daf0c after the reviewed release
+  commits were pushed.
+- GitHub Pages run 32404129255 passed for 97daf0c.
+- In release checks run 32404129274, release-artifact validation passed and the
+  gameplay suite printed ORBIT_BREAKER_TESTS_OK.
+- The gameplay job still failed because the Linux-only Game Center stub emits
+  Godot 4.7 bind_integer_constant diagnostics and the strict log gate rejects
+  every engine error.
+- The workflow now moves the iOS-only Game Center extension out of the Linux
+  gameplay-test checkout before import, so unrelated native registration does
+  not contaminate cross-platform gameplay results.
+- Release-artifact validation now independently verifies the Game Center iOS
+  framework mapping and Swift runtime dependency before the workflow can pass.
+- A fresh cache-free local fixture using the same extension-isolation sequence
+  imported successfully, printed ORBIT_BREAKER_TESTS_OK, and contained no
+  SCRIPT ERROR or ERROR entries in the gameplay test log.
+- A fresh project-only iOS export printed ORBIT_BREAKER_IOS_EXPORT_READY.
+- The fresh unsigned arm64 Release build completed with BUILD SUCCEEDED,
+  embedded both native Game Center frameworks, and completed Xcode's shallow
+  store validation.
+- The workflow fix still needs to be committed and pushed before an
+  authoritative GitHub run can verify the Linux runner result.

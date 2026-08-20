@@ -258,7 +258,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 These items are known to require external state or owner decisions:
 
 1. Confirm the publisher name, price, regions, TestFlight feedback contact, and App Review contact.
-2. Push the four reviewed local commits through `564a68a` and attach successful CI evidence for that exact source.
+2. Push the Linux CI isolation fix and attach successful workflow evidence for the resulting source commit.
 3. Create the prepared App Store Connect app record and enter the public privacy and support URLs.
 4. Configure and attach the three leaderboards and three achievements, then upload the prepared achievement images.
 5. Unlock the connected iPhone and complete launch, safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests.

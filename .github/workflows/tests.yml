@@ -36,6 +36,12 @@ jobs:
       - name: Show engine version
         run: godot --version
 
+      - name: Disable the iOS Game Center extension on Linux
+        shell: bash
+        run: |
+          extension="addons/GodotApplePluginsGameCenter/godot_apple_plugins_game_center.gdextension"
+          mv "${extension}" "${RUNNER_TEMP}/godot_apple_plugins_game_center.gdextension"
+
       - name: Import project resources
         run: godot --headless --path . --import --log-file "${RUNNER_TEMP}/godot-import.log"
 
@@ -103,6 +109,7 @@ jobs:
         run: |
           ruby -e '
             preset = File.read("export_presets.cfg")
+            extension = File.read("addons/GodotApplePluginsGameCenter/godot_apple_plugins_game_center.gdextension")
             required = {
               "iOS 17 target" => %q(application/min_ios_version="17.0"),
               "Game Center entitlement" => "entitlements/game_center=true",
@@ -114,6 +121,8 @@ jobs:
             abort "missing iOS release settings: #{missing.join(", ")}" unless missing.empty?
             abort "Game Center artwork must stay out of the app bundle" unless preset.include?("marketing/game-center-achievements/*")
             abort "Game Center artwork must stay out of Godot imports" unless File.exist?("marketing/game-center-achievements/.gdignore")
+            abort "Game Center iOS framework mapping is missing" unless extension.include?(%q(ios = "res://addons/GodotApplePluginsGameCenter/bin/GodotApplePluginsGameCenter.xcframework"))
+            abort "Game Center runtime dependency is missing" unless extension.include?(%q(ios = { "res://addons/GodotApplePluginsRuntime/bin/SwiftGodotRuntime.xcframework": "" }))
             %w[camera microphone photolibrary].each do |permission|
               key = "privacy/#{permission}_usage_description"
               abort "unexpected protected-resource purpose string: #{key}" unless preset.include?(%Q(#{key}=""))
