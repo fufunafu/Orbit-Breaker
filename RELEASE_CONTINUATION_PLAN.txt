@@ -245,13 +245,53 @@ Local commit and push state
 - The second reviewed batch was committed locally as a4746d0.
 - Commit message: Fix release validation and iOS exports
 - Commit a4746d0 changes 12 files with 317 insertions and 7 deletions.
-- The local main branch is one commit ahead of origin/main before this checkpoint
-  update is committed.
-- A direct push of a4746d0 to origin/main was attempted after validation.
-- The managed approval reviewer rejected that push because it requires a fresh
-  explicit user confirmation before changing the shared default branch.
-- Do not rewrite or discard a4746d0. After the user explicitly approves pushing
-  the reviewed local commits to origin/main, run git push origin main.
+- The detailed checkpoint was committed as 27474a7.
+- Commit message: Document release progress checkpoint
+- The first direct push attempt was rejected pending fresh user confirmation.
+- The user explicitly approved pushing both reviewed commits to origin/main.
+- Commits a4746d0 and 27474a7 were pushed successfully.
+- origin/main now points to 27474a796fad36aa61ffd17ed21653155e54d1c0
+  before this final checkpoint-only commit.
+
+
+Authoritative GitHub results for 27474a7
+----------------------------------------
+
+- Release artifact checks run 32398166115 completed successfully.
+- Run URL:
+  https://github.com/fufunafu/Orbit-Breaker/actions/runs/32398166115
+- Headless GDScript tests passed on Ubuntu with Godot 4.7.2.
+- Release artifact validation passed, including:
+  - Explicit ffmpeg installation.
+  - TestFlight CSV validation.
+  - README link validation.
+  - iOS 17, Game Center, Files access, and privacy preset validation.
+  - App Store copy limit validation.
+  - Icon and screenshot validation.
+  - H.264 preview validation.
+  - Em dash rejection for release text.
+- Pages run 32398163043 completed successfully.
+- Run URL:
+  https://github.com/fufunafu/Orbit-Breaker/actions/runs/32398163043
+- The newly deployed support page returned HTTP 200 over HTTPS and contains the
+  Files app export instructions.
+- Public privacy URL:
+  https://fufunafu.github.io/Orbit-Breaker/privacy.html
+- Public support URL:
+  https://fufunafu.github.io/Orbit-Breaker/support.html
+
+
+Repository milestone status
+---------------------------
+
+- The iOS 16 versus iOS 17 mismatch is resolved at iOS 17.
+- The combined implementation and release upgrade is committed and pushed.
+- GitHub CI passes on the pushed release commit.
+- GitHub Pages is enabled, published, HTTPS-enforced, and verified.
+- The legal page URLs are ready to enter in App Store Connect.
+- The remaining work is external Apple configuration, real-device testing,
+  TestFlight execution, contact-detail replacement, achievement artwork, and App
+  Store submission.
 
 
 External work still blocked on owner or Apple access
