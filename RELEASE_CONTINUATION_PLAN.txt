@@ -167,6 +167,13 @@ GitHub and Pages progress
   inspection. This fix is staged but not yet pushed.
 - The manually dispatched runs target the previous commit and may still show the
   old ffprobe failure. The next pushed commit must trigger authoritative runs.
+- Manually dispatched Pages run 32397536669 completed successfully.
+- Manually dispatched test run 32397534055 failed on the previous commit because
+  that commit does not contain the staged ffmpeg installation fix.
+- The public Pages URLs were checked over HTTPS and returned HTTP 200:
+  - https://fufunafu.github.io/Orbit-Breaker/
+  - https://fufunafu.github.io/Orbit-Breaker/privacy.html
+  - https://fufunafu.github.io/Orbit-Breaker/support.html
 
 
 Current staged batch
@@ -230,6 +237,21 @@ Latest validation after checkpoint creation
   SwiftGodotRuntime.framework successfully.
 - The generated app passed Xcode's shallow store validation step during the
   unsigned build.
+
+
+Local commit and push state
+---------------------------
+
+- The second reviewed batch was committed locally as a4746d0.
+- Commit message: Fix release validation and iOS exports
+- Commit a4746d0 changes 12 files with 317 insertions and 7 deletions.
+- The local main branch is one commit ahead of origin/main before this checkpoint
+  update is committed.
+- A direct push of a4746d0 to origin/main was attempted after validation.
+- The managed approval reviewer rejected that push because it requires a fresh
+  explicit user confirmation before changing the shared default branch.
+- Do not rewrite or discard a4746d0. After the user explicitly approves pushing
+  the reviewed local commits to origin/main, run git push origin main.
 
 
 External work still blocked on owner or Apple access
