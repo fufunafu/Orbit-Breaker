@@ -531,3 +531,27 @@ August 20 App Store Connect continuation audit
   request for that reason.
 - Local commit 51694a2 contains the Linux CI isolation fix. Its push was denied
   because it needs explicit owner approval naming that commit.
+
+
+August 20 regression completion audit
+-------------------------------------
+
+- Expanded the release suite across persistence, Daily UTC rollover, legacy
+  save loading, progression boundaries, locked cosmetics, audio resource
+  separation, failure copy, guide modes, reduced motion, high contrast,
+  Classic replay, and run-summary accuracy.
+- Godot 4.7.2 printed ORBIT_BREAKER_TESTS_OK with no ObjectDB instance leaks or
+  retained resources. The only engine diagnostic was the previously documented
+  macOS certificate lookup warning in the restricted environment.
+- Git diff formatting, workflow YAML parsing, shell syntax, TestFlight CSV
+  structure, README local links, iOS 17 preset settings, native framework
+  mapping, App Store copy limits, image dimensions and alpha checks, preview
+  stream inspection, secret-pattern scanning, and the release-text em dash guard
+  all pass locally.
+- No tracked file exceeds 100 MB. The only larger local files are ignored Godot
+  iOS export outputs under build/ios.
+- The expanded regression and checklist batch is committed locally as e6d151d
+  with message: Expand release regression coverage.
+- Local main contains three unpublished commits: 51694a2, 5623114, and e6d151d.
+  The next repository action is to push them together and verify both GitHub
+  workflows on the resulting origin/main commit.
