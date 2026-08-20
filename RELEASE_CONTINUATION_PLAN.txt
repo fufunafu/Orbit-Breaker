@@ -429,3 +429,42 @@ August 20 implementation continuation
 - App Store Connect remains at Apple's sign-in screen. Account configuration,
   signed device launch confirmation, and the real 20 to 30 person TestFlight
   study still require owner interaction and human participation.
+
+
+August 20 final local continuation
+----------------------------------
+
+- Refreshed all four App Store screenshots from the current release scene and
+  fixed the score-card capture so SCORE 42 and BEST 42 agree.
+- Seeded the marketing layout and disabled gameplay physics during capture so
+  the represented route remains stable.
+- Extended capture cleanup to release the music playback resources before exit.
+- Two normal-renderer captures printed ORBIT_BREAKER_MARKETING_CAPTURE_OK. The
+  verbose run exited without ObjectDB or retained-resource leaks.
+- Visual review passed for all four final screenshots. Each is a 1320 by 2868
+  RGB PNG at 72 ppi without alpha.
+- Godot 4.7.2 printed ORBIT_BREAKER_TESTS_OK again after the capture changes and
+  exited without ObjectDB or retained-resource leaks.
+- The screenshot batch is committed locally as 564a68a with message:
+  Refresh App Store screenshots.
+- Local main contains four reviewed unpublished commits: 8def233, f80eac4,
+  d8f8778, and 564a68a. The managed approval gate requires explicit owner
+  approval naming these commits before they can be pushed to origin/main.
+- App Store Connect is authenticated. The New App form is prepared with iOS,
+  name Orbit Breaker, English (Canada), bundle identifier
+  com.antonio.orbitbreaker, SKU orbit-breaker-ios-1, and full access.
+- Creating the App Store Connect record remains paused at the final Create
+  button pending action-time owner confirmation.
+- The connected iPhone 16 Pro still contains Orbit Breaker 1.0 build 1. A fresh
+  launch attempt reached the device but was rejected because the device is
+  locked.
+- The development archive passes strict deep signature verification and has the
+  Game Center entitlement.
+- The 32,870,733-byte App Store IPA passes strict deep signature verification,
+  targets iOS 17.0, identifies version 1.0 build 1, enables Game Center and beta
+  reports, disables get-task-allow, and includes the expected Files app access.
+- The IPA contains a privacy manifest declaring the Godot file timestamp,
+  system boot time, and disk space required-reason APIs with tracking disabled.
+- The remaining immediate owner actions are to approve the named Git push,
+  approve creation of the prepared App Store Connect record, and unlock the
+  connected iPhone for launch validation.

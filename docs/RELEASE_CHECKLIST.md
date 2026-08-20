@@ -176,7 +176,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | Support page has real contact information | Support owner | Open public page | Public page links to the Orbit Breaker GitHub issue tracker |
 | PASS | Privacy policy is published at a stable HTTPS URL | Web owner | Public browser check | `https://fufunafu.github.io/Orbit-Breaker/privacy.html` returned HTTP 200 |
 | PASS | Support page is published at a stable HTTPS URL | Web owner | Public browser check | `https://fufunafu.github.io/Orbit-Breaker/support.html` returned HTTP 200 |
-| TODO | Privacy manifest matches accessed APIs and SDK declarations | iOS and privacy owners | Inspect final archive and `PrivacyInfo.xcprivacy` files |  |
+| READY | Privacy manifest matches accessed APIs and SDK declarations | iOS and privacy owners | Inspect final archive and `PrivacyInfo.xcprivacy` files | The App Store IPA contains a valid root privacy manifest declaring file timestamp, system boot time, and disk space reasons with tracking disabled; Apple upload validation remains pending |
 | TODO | App Store Connect privacy answers match actual practices | Privacy owner | Compare final binary, policy, and published answers |  |
 | TODO | Third-party SDK data practices are included | Privacy owner | SDK and dependency audit | Include Apple plugin behaviour where applicable |
 | TODO | Score-card storage and sharing wording is accurate | Privacy owner | Device test final implementation |  |
@@ -209,12 +209,12 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | Icon has no unintended transparency or clipped content | Art owner | Inspect exported 1024 by 1024 asset | `sips` reports 1024 by 1024 RGB and `hasAlpha: no` on 2026-08-20 |
 | READY | Eight-shot screenshot story exists | Marketing owner | Review feature coverage | `docs/SCREENSHOT_PLAN.md` |
 | PASS | Final 6.9-inch screenshots are captured | Marketing owner | Validate dimensions and alpha channel | All four marketing PNGs are 1320 by 2868 RGB with no alpha |
-| TODO | Screenshots show only implemented features | Product owner | Compare to release build |  |
-| TODO | Screenshot captions are readable and accurate | Marketing and accessibility owners | Thumbnail review |  |
-| TODO | Game Center captures contain no unintended personal data | Privacy owner | Inspect final files |  |
+| PASS | Screenshots show only implemented features | Product owner | Compare to release build | All four final screenshots are rendered directly from the current `scenes/game.tscn` release implementation |
+| N/A | Screenshot captions are readable and accurate | Marketing and accessibility owners | Thumbnail review | The final four use only in-game UI and contain no added marketing captions |
+| N/A | Game Center captures contain no unintended personal data | Privacy owner | Inspect final files | The final four do not include a Game Center account or leaderboard screen |
 | READY | Preview storyboard exists | Marketing owner | Review timing and claims | `docs/SCREENSHOT_PLAN.md` |
 | PASS | Preview video is 15 to 30 seconds with valid codec, audio, size, and frame rate | Marketing owner | Inspect the final video stream | Current file: 30 sec, H.264, 886 by 1920, 30 fps, AAC stereo, about 38 MB |
-| TODO | Media rights are documented | Release owner | Asset ledger |  |
+| PASS | Media rights are documented | Release owner | Asset ledger | Screenshots, preview, and icon derive from the game; authored and CC0 bundled assets are recorded in `THIRD_PARTY_NOTICES.md` |
 
 ## TestFlight
 
@@ -257,15 +257,15 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 
 These items are known to require external state or owner decisions:
 
-1. Provide support, privacy, TestFlight, and review contact details.
-2. Publish the privacy and support pages at stable HTTPS URLs.
-3. Run the new GitHub workflow and attach a successful CI result.
-4. Configure and submit Game Center leaderboards and achievements in App Store Connect.
-5. Complete the three achievement images.
-6. Sign, archive, and install the iOS release candidate.
-7. Run the 20 to 30 person TestFlight validation.
-8. Complete the final privacy, age-rating, export-compliance, regional-compliance, and third-party-license audits.
-9. Replace the installed Godot simulator export template with an arm64-compatible build, or run the current x86_64 simulator build with Rosetta.
+1. Confirm the publisher name, price, regions, TestFlight feedback contact, and App Review contact.
+2. Push the four reviewed local commits through `564a68a` and attach successful CI evidence for that exact source.
+3. Create the prepared App Store Connect app record and enter the public privacy and support URLs.
+4. Configure and attach the three leaderboards and three achievements, then upload the prepared achievement images.
+5. Unlock the connected iPhone and complete launch, safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests.
+6. Transmit the prepared App Store package to Apple for validation and upload after explicit approval.
+7. Recruit 20 to 30 testers and run the documented seven-day TestFlight validation.
+8. Complete the final privacy answers, age rating, export compliance, regional compliance, pricing, availability, and third-party-license audit.
+9. Replace the installed Godot simulator export template with an arm64-compatible build, or keep the validated x86_64 simulator workflow under Rosetta.
 
 ## Go or no-go record
 
