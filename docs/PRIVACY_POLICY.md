@@ -10,7 +10,8 @@ This Privacy Policy explains how Orbit Breaker handles information when you use 
 
 Orbit Breaker does not currently include advertising, an app-specific account system, developer-operated analytics, or a developer-operated online service. Game progress and preferences are stored locally on your device. If you use Game Center, Apple processes Game Center information and Orbit Breaker submits gameplay results to that service.
 
-This summary must be rechecked against the final release binary and all included third-party software before publication.
+This summary was rechecked on August 20, 2026 against the prepared release IPA,
+its privacy manifest, and all bundled third-party software.
 
 ## Information stored on your device
 
@@ -73,7 +74,7 @@ To manage or delete Game Center data, use the controls Apple provides for your A
 
 ## Children
 
-Orbit Breaker is not designed to collect personal information directly from children through a developer-operated service. Game Center availability and account features are controlled by Apple, including applicable family and child-account settings. A final age-rating and privacy review must be completed before release.
+Orbit Breaker is not designed to collect personal information directly from children through a developer-operated service. Game Center availability and account features are controlled by Apple, including applicable family and child-account settings. App Store Connect privacy answers must remain consistent with this policy and the saved age rating.
 
 ## Security
 
@@ -94,16 +95,15 @@ For privacy questions, contact:
 Fuanne Gao<br>
 [Orbit Breaker support](https://fufunafu.github.io/Orbit-Breaker/support.html)
 
-## Publication checklist
+## Release audit record
 
-Before publishing this policy:
-
-- Audit the final release binary and all embedded SDKs.
-- Confirm whether any diagnostics, analytics, or crash data is sent outside Apple TestFlight.
-- Confirm Game Center data flows on a physical device.
-- Confirm the score-card save location and any share-sheet integration.
-- Match App Store Connect privacy answers to the final policy.
-- Publish at a stable, public HTTPS URL.
-- Link the same URL from App Store Connect and, where practical, from the app or support page.
+The prepared release IPA contains no advertising, analytics, attribution,
+developer account, or developer-operated networking SDK. Its privacy manifest
+declares the required-reason file timestamp, system boot time, and disk-space
+APIs and declares tracking as disabled. The app submits only scores and
+achievement progress to Apple Game Center after authentication. Score cards and
+playtest reports remain local unless the user chooses to export them. The
+published policy and App Store Connect answers must be updated if any of these
+facts change.
 
 Apple requires a privacy-policy URL for iOS apps and requires developers to disclose their own and integrated third parties' data practices accurately. See https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy/

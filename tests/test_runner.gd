@@ -318,6 +318,7 @@ func _test_gameplay_integration() -> void:
 	_check(game.run_started_msec > 0, "The initial Classic run must start the run-length timer.")
 	_check(game.aim_guide.active, "First run must show the trajectory guide.")
 	_check(game.hud.tutorial_label.visible, "First run must keep the launch tutorial visible.")
+	_check(game.hud.tutorial_label.text.contains("DOUBLE RING = PERFECT"), "The tutorial must explain the non-colour perfect-landing cue.")
 	game._handle_primary_action()
 	_check(game.state == OrbitGame.GameState.ORBITING, "Duplicate iOS tap event must not launch the ship.")
 	_check(not game.start_run(), "An active run must not start twice.")
@@ -399,6 +400,19 @@ func _test_gameplay_integration() -> void:
 		"Changing intensity must not unmute disabled music."
 	)
 	game.audio_controller.apply_settings(false, true)
+	game.audio_controller.set_intensity(1, 0)
+	var calm_drive_volume := game.audio_controller.drive_player.volume_db
+	var ion_pitch := game.audio_controller.base_player.pitch_scale
+	game.audio_controller.set_intensity(5, 2)
+	_check(
+		game.audio_controller.drive_player.volume_db > calm_drive_volume,
+		"A maximum combo must raise the adaptive drive layer."
+	)
+	_check(
+		game.audio_controller.base_player.pitch_scale > ion_pitch
+		and is_equal_approx(game.audio_controller.base_player.pitch_scale, game.audio_controller.drive_player.pitch_scale),
+		"Later zones must raise both music layers to the same pitch."
+	)
 	game.audio_controller.set_intensity(1, 0)
 	game.profile.guide_mode = 0
 	game.profile.tutorial_completed = false
@@ -535,6 +549,11 @@ func _test_gameplay_integration() -> void:
 	_check(is_equal_approx(game.target_planet.radius, first_daily_radius), "Daily replay must reproduce the first target size.")
 	game.end_run("miss")
 	game.is_daily_run = false
+	game._seed_layout_rng()
+	var first_classic_state := game.layout_rng.state
+	await process_frame
+	game._seed_layout_rng()
+	_check(game.layout_rng.state != first_classic_state, "Separate Classic starts must receive fresh random layout states.")
 	game._reset_world(true)
 	_check(game.end_run("miss"), "A Classic run must be able to end.")
 	game._replay_current_mode()

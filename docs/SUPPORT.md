@@ -83,11 +83,16 @@ Orbit Breaker stores progress in its local app container.
 
 - Avoid force-quitting the app immediately after changing a setting or ending a run.
 - Confirm that sufficient device storage is available.
-- Reinstalling the app may remove local progress.
+- Deleting the app removes its local progress, settings, and saved score cards
+  from the device. Restoring an iPhone backup may restore an earlier copy.
+- Offloading the app keeps its documents and data so they are available after
+  the app is reinstalled.
 - Restoring a device or app from backup may restore older local data.
 - If save data is invalid, the game safely starts from default progress rather than blocking play.
 
 There is currently no developer-operated cloud-save or account-recovery service.
+Apple documents the difference between offloading and deleting in
+[Manage storage on iPhone](https://support.apple.com/guide/iphone/manage-storage-on-iphone-iph47c931112/ios).
 
 ## Score-card troubleshooting
 
@@ -124,7 +129,7 @@ Never include an Apple Account password, App Store Connect credential, provision
 
 ## Privacy
 
-Read the [Orbit Breaker Privacy Policy](PRIVACY_POLICY.md). The published support page should link to the public HTTPS privacy-policy URL once available.
+Read the [Orbit Breaker Privacy Policy](https://fufunafu.github.io/Orbit-Breaker/privacy.html).
 
 ## Contact
 

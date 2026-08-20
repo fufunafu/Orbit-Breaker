@@ -79,6 +79,7 @@ The installed Godot 4.7.2 release template supplies an x86_64-only simulator eng
 - [TestFlight validation plan](marketing/testflight-validation.md)
 - [App preview storyboard](marketing/app-preview-storyboard.md)
 - [Detailed release checklist](docs/RELEASE_CHECKLIST.md)
+- [Accessibility communication audit](docs/ACCESSIBILITY_AUDIT.md)
 - [Detailed TestFlight protocol and session log](docs/TESTFLIGHT_PLAN.md)
 - [Screenshot capture plan](docs/SCREENSHOT_PLAN.md)
 

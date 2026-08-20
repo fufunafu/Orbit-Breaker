@@ -81,3 +81,5 @@ func _draw() -> void:
 	if will_land:
 		var ring_radius := target_radius + 25.0 + sin(pulse_time * 5.0) * 7.0
 		draw_arc(target, ring_radius, 0.0, TAU, 72, guide_color, 5.0, true)
+		if will_be_perfect:
+			draw_arc(target, ring_radius - 14.0, 0.0, TAU, 72, guide_color, 5.0, true)

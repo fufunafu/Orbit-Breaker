@@ -555,3 +555,32 @@ August 20 regression completion audit
 - Local main contains three unpublished commits: 51694a2, 5623114, and e6d151d.
   The next repository action is to push them together and verify both GitHub
   workflows on the resulting origin/main commit.
+
+
+August 20 accessibility and documentation continuation
+-------------------------------------------------------
+
+- Added regression coverage proving that separate Classic starts receive fresh
+  random layout states and that combo and zone changes raise the intended
+  adaptive music layer levels and pitches.
+- Documented iOS Delete App, Offload App, and backup-restoration behavior using
+  current Apple support guidance.
+- Added a dedicated accessibility communication audit covering text, shape,
+  motion, numeric, sound, and haptic cues.
+- The audit found that normal and perfect guide predictions shared the same
+  shape. Perfect predictions now draw a second target ring, and the tutorial and
+  support copy explain the double-ring cue.
+- Removed stale prepublication language from the detailed privacy policy and
+  recorded the completed IPA, privacy-manifest, and bundled-SDK audit instead.
+- Updated the public privacy and support sources to match the current app and
+  local-data behavior.
+- Regenerated all four App Store screenshots from the updated release scene.
+  Each is a 1320 by 2868 RGB PNG at 72 ppi without alpha. Visual review confirms
+  that the double-ring guide and three-line tutorial are clear and that the
+  remaining three frames retain their intended layout and copy.
+- Godot 4.7.2 printed ORBIT_BREAKER_TESTS_OK after these changes, with no
+  ObjectDB instance leaks or retained resources. The known restricted macOS
+  certificate lookup warning remains the only engine diagnostic.
+- The next commit will contain this accessibility, documentation, test, and
+  refreshed-media batch. It must be included in the exact commit list approved
+  for the pending origin/main push.

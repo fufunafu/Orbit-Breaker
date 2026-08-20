@@ -79,11 +79,11 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | Planet-theme unlock conditions are correct | QA owner | Reach each milestone and relaunch | Boundary tests cover 25 and 50 total landings |
 | PASS | Locked cosmetics cannot be selected | QA owner | Cycle each category before unlock | Catalog cycling tests remain on defaults below every threshold |
 | PASS | Selected cosmetics persist | QA owner | Select, terminate, and relaunch | Complete profile save and reload retains selections and unlock arrays |
-| TODO | Three score-driven zones are visually distinct | Art and QA owners | Capture same route state in each zone |  |
+| READY | Three score-driven zones are visually distinct | Art and QA owners | Capture same route state in each zone | Source audit confirms distinct background, star, glow, planet, and named transition treatments; same-route device capture remains |
 | PASS | Unlocks are based on skill milestones, not time or currency | Product owner | Review catalog and build | Catalog logic and boundary tests use only score, combo, perfects, and landings |
 | READY | Version 1 save data loads after upgrade | QA owner | Install upgrade over previous build | Version 1 fixture preserves score, progression, and settings; installed upgrade remains |
 | READY | Corrupt save data falls back safely | QA owner | Automated test and manual device check | Corrupt fixture returns defaults; device observation remains |
-| TODO | App reinstall behaviour is documented | Support owner | Confirm local data removal or restore behaviour |  |
+| PASS | App reinstall behaviour is documented | Support owner | Confirm local data removal or restore behaviour | `docs/SUPPORT.md` distinguishes Delete App, Offload App, and backup restoration and links to current Apple guidance |
 
 ## Daily Challenge
 
@@ -91,7 +91,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | --- | --- | --- | --- | --- |
 | PASS | UTC date changes at the intended boundary | QA owner | Test before and after 00:00 UTC | Exact 23:59:59 and 00:00:00 UTC boundary assertions pass |
 | READY | Same date and build produce the same sequence | QA owner | Compare at least three devices for 20 targets | Deterministic seed and random sequence assertions pass; cross-device comparison remains |
-| TODO | Classic mode remains randomly seeded | QA owner | Compare fresh Classic runs |  |
+| PASS | Classic mode remains randomly seeded | QA owner | Compare fresh Classic runs | Integration verifies separate Classic starts receive different RNG states while Daily remains deterministic |
 | PASS | Daily replay preserves the same date seed | QA owner | Replay several runs before UTC rollover | Integration replay reproduces the first target position and size |
 | PASS | Daily local best resets by date | QA owner | Test two UTC dates | Save-store assertions preserve same-day best and reset on the next UTC date |
 | TODO | Daily leaderboard occurrence matches the UTC date | Game Center owner | Compare in-game label and App Store configuration |  |
@@ -125,7 +125,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | --- | --- | --- | --- | --- |
 | PASS | Every bundled audio file has documented rights | Audio owner | Source and license ledger | Original music plus Kenney CC0 effect mappings in `THIRD_PARTY_NOTICES.md` |
 | READY | Launch, land, perfect, fail, and UI sounds are distinct | QA owner | Listening test on device speaker and headphones | Automated resource assertions prove five distinct files; device listening remains |
-| TODO | Music intensity responds to combo and zone | QA owner | Capture transition checks |  |
+| PASS | Music intensity responds to combo and zone | QA owner | Capture transition checks | Integration verifies combo raises the drive layer and later zones raise both layer pitches together |
 | TODO | Sound and music levels avoid clipping | Audio owner | Metered and subjective device test |  |
 | TODO | Ship, planets, asteroids, and pulse mines are recognizable | Art and QA owners | First-session identification test |  |
 | TODO | Background and palette changes communicate progression | Art and QA owners | Zone recognition results |  |
@@ -144,7 +144,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | Guide Off, Tutorial, and Always behave correctly | QA owner | Test first and later runs | Integration covers all three guide modes before and after tutorial completion |
 | READY | Pause, resume, and restart are reachable | QA owner | Test safe-area layout on small and large screens | State, world processing, and music assertions pass; safe-area device review remains |
 | READY | Backgrounding preserves the current run | QA owner | Physical-device test during orbit and flight | Pause and resume notifications preserve state automatically; physical-device verification remains |
-| TODO | UI does not rely on colour alone for critical meaning | Accessibility owner | Manual review and user test |  |
+| READY | UI does not rely on colour alone for critical meaning | Accessibility owner | Manual review and user test | `docs/ACCESSIBILITY_AUDIT.md` records text, shape, motion, numeric, sound, and haptic cues; target user testing remains |
 | TODO | Accessibility Nutrition Label claims are evidence-backed | Accessibility owner | Complete Apple's current evaluation criteria |  |
 
 ## iOS export and device validation
@@ -178,8 +178,8 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | Support page is published at a stable HTTPS URL | Web owner | Public browser check | `https://fufunafu.github.io/Orbit-Breaker/support.html` returned HTTP 200 |
 | READY | Privacy manifest matches accessed APIs and SDK declarations | iOS and privacy owners | Inspect final archive and `PrivacyInfo.xcprivacy` files | The App Store IPA contains a valid root privacy manifest declaring file timestamp, system boot time, and disk space reasons with tracking disabled; Apple upload validation remains pending |
 | TODO | App Store Connect privacy answers match actual practices | Privacy owner | Compare final binary, policy, and published answers |  |
-| TODO | Third-party SDK data practices are included | Privacy owner | SDK and dependency audit | Include Apple plugin behaviour where applicable |
-| TODO | Score-card storage and sharing wording is accurate | Privacy owner | Device test final implementation |  |
+| PASS | Third-party SDK data practices are included | Privacy owner | SDK and dependency audit | Privacy policy covers Apple Game Center and TestFlight, and the repository has no advertising, analytics, attribution, or developer-operated account SDK |
+| READY | Score-card storage and sharing wording is accurate | Privacy owner | Device test final implementation | Code and automated save test match the privacy and support wording: local PNG only, with no automatic Photos write, share sheet, or upload; device Files check remains |
 | TODO | Export-compliance answers are complete | Release owner | App Store Connect response and any documentation |  |
 | PASS | Age-rating questionnaire is complete | Product owner | App Store Connect result | Saved on 2026-08-20; App Store Connect shows 12+ and 13+ regional results and a legacy global 12+ rating |
 | TODO | Required legal and regional trader details are complete | Account owner | App Store Connect compliance sections | Depends on distribution regions |

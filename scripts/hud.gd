@@ -131,7 +131,7 @@ func _build_ready_actions() -> void:
 
 
 func _build_tutorial() -> void:
-	tutorial_label = _make_label("WAIT FOR THE GUIDE TO TOUCH THE TARGET\nTHEN TAP TO LAUNCH", 29, Color("d6fdff"), HORIZONTAL_ALIGNMENT_CENTER)
+	tutorial_label = _make_label("WAIT FOR THE GUIDE TO TOUCH THE TARGET\nDOUBLE RING = PERFECT\nTHEN TAP TO LAUNCH", 29, Color("d6fdff"), HORIZONTAL_ALIGNMENT_CENTER)
 	tutorial_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	tutorial_label.position = Vector2(-450.0, -310.0)
 	tutorial_label.size = Vector2(900.0, 150.0)
