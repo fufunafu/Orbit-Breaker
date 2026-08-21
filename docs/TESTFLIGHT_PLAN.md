@@ -176,6 +176,7 @@ Record one row per tester session in `TESTFLIGHT_SESSION_LOG.csv`.
 - `cohort`: frequent, occasional, rare, accessibility, internal, or smoke
 - `app_version` and `build_number`: Tested release identifiers
 - `device_model` and `ios_version`: Physical test environment
+- `device_size`: small, standard, or large, based on the tested display class
 - `mode_sequence`: Order played, for example `classic|daily`
 
 ### Comprehension
@@ -276,7 +277,7 @@ ruby tests/test_testflight_analysis.rb
 ruby tools/analyze_testflight.rb
 ```
 
-The analyzer rejects malformed rows, inconsistent calculated fields, duplicate tester/date/build records, and impossible-hazard reports without a reproducible layout reference. It derives behavioural gates from each tester's earliest external session and retains later sessions for stability and aggregate evidence. It writes `docs/TESTFLIGHT_REPORT.md` with behavioural gates, average run length, restart rate, complete run-score distribution, critical failures, device and cohort coverage, and ranked complaints.
+The analyzer rejects malformed rows, inconsistent calculated fields, duplicate tester/date/build records, and impossible-hazard reports without a reproducible layout reference. It derives behavioural gates from each tester's earliest external session, retains later external sessions for aggregate play evidence, and includes internal and smoke rows in stability signals. It writes `docs/TESTFLIGHT_REPORT.md` with behavioural gates, cohort and device-size breakdowns, average run length, restart rate, complete run-score distribution, critical failures, coverage, and ranked complaints. It reports owner-review readiness only after at least 20 external first sessions pass every measured gate with no critical signal, and it never records the final product go decision automatically.
 
 1. Validate every CSV row before calculating results.
 2. Exclude smoke-test rows from onboarding percentages, but keep them for stability evidence.

@@ -17,6 +17,7 @@ def valid_row(tester_id, overrides = {})
     "app_version" => "1.0",
     "build_number" => "1",
     "device_model" => "iPhone 16 Pro",
+    "device_size" => "large",
     "ios_version" => "26.6",
     "mode_sequence" => "classic|daily",
     "first_launch_understood" => "yes",
@@ -108,12 +109,20 @@ Tempfile.create(["orbit-testflight", ".csv"]) do |file|
       "session_date_utc" => "2026-08-21",
       "first_launch_understood" => "no",
     }).values_at(*TestFlightAnalysis::HEADERS)
+    csv << valid_row("S001", {
+      "cohort" => "smoke",
+      "device_model" => "iPhone SE (3rd generation)",
+      "device_size" => "small",
+      "crash_count" => "1",
+      "severe_frame_drop_count" => "2",
+    }).values_at(*TestFlightAnalysis::HEADERS)
   end
 
   rows = TestFlightAnalysis.load_rows(file.path)
   data = TestFlightAnalysis.analyze(rows)
   check(data.fetch("eligible_rows") == 2, "Two unique external testers must be eligible.")
-  check(data.fetch("external_session_rows") == 3, "Follow-up sessions must remain in aggregate evidence.")
+  check(data.fetch("external_session_rows") == 3, "Follow-up external sessions must remain in aggregate evidence.")
+  check(data.fetch("all_rows") == 4, "Smoke sessions must remain in stability evidence.")
   check(data.fetch("first_launch_rate") == 50.0, "First-launch rate must be calculated.")
   check(data.fetch("second_run_rate") == 50.0, "Second-run rate must be calculated.")
   check(data.fetch("five_run_rate") == 50.0, "Five-run rate must be calculated.")
@@ -121,10 +130,32 @@ Tempfile.create(["orbit-testflight", ".csv"]) do |file|
   check(data.fetch("score_buckets").fetch("0") == 1, "Zero-score bucket must be counted.")
   check(data.fetch("score_buckets").fetch("5-9") == 8, "Every run score must be counted.")
   check(data.fetch("complaints") == {"launch unclear" => 1}, "Empty complaints must be ignored.")
+  check(data.fetch("crash_count") == 1, "Smoke crashes must remain in stability evidence.")
+  check(data.fetch("severe_frame_drop_count") == 2, "Smoke performance failures must remain in stability evidence.")
+  check(data.fetch("cohort_breakdowns").fetch("occasional").fetch("count") == 2, "Cohort breakdowns must use first sessions.")
+  check(data.fetch("device_size_breakdowns").fetch("large").fetch("count") == 2, "Device-size breakdowns must use first sessions.")
   report = TestFlightAnalysis.render_report(data)
   check(report.include?("Valid external first-session rows: **2**"), "Report must state its sample size.")
   check(report.include?("All valid external session rows: **3**"), "Report must state its session count.")
+  check(report.include?("Severe frame drops: 2"), "Report must include stability evidence from smoke sessions.")
+  check(report.include?("| occasional | 2 |"), "Report must include cohort breakdowns.")
+  check(report.include?("| large | 2 |"), "Report must include device-size breakdowns.")
   check(report.include?("**NOT READY:**"), "Small samples must not produce a release decision.")
+end
+
+
+Tempfile.create(["orbit-testflight-nonfinite", ".csv"]) do |file|
+  invalid = valid_row("T004", {"seconds_to_first_launch" => "Infinity"})
+  CSV.open(file.path, "w") do |csv|
+    csv << TestFlightAnalysis::HEADERS
+    csv << invalid.values_at(*TestFlightAnalysis::HEADERS)
+  end
+  begin
+    TestFlightAnalysis.load_rows(file.path)
+    raise "Non-finite observations must fail."
+  rescue ArgumentError => error
+    check(error.message.include?("seconds_to_first_launch"), "Validation must identify the non-finite field.")
+  end
 end
 
 Tempfile.create(["orbit-testflight-invalid", ".csv"]) do |file|
@@ -168,10 +199,19 @@ check(
   passing_report.include?("Valid external first-session rows: **20**"),
   "Twenty unique testers must satisfy the sample-size requirement."
 )
-check(!passing_report.include?("**NOT READY:**"), "A complete sample must advance to gate review.")
+check(
+  passing_report.include?("**READY FOR OWNER REVIEW:**"),
+  "A complete passing sample must advance to owner review without recording an automatic go decision."
+)
 check(
   passing_report.include?("| First launch understood | 100.0% | 80% | PASS | 20 |"),
   "A passing behavioural gate must be rendered explicitly."
 )
+
+blocked_rows = passing_rows.map(&:dup)
+blocked_rows.first["progress_loss"] = "yes"
+blocked_report = TestFlightAnalysis.render_report(TestFlightAnalysis.analyze(blocked_rows))
+check(blocked_report.include?("**NOT READY:**"), "Critical signals must block release readiness.")
+check(blocked_report.include?("Progress-loss cases: 1"), "The release blocker must be named in the report.")
 
 puts "TESTFLIGHT_ANALYSIS_TESTS_OK"

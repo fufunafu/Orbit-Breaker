@@ -6,7 +6,7 @@ require "date"
 module TestFlightAnalysis
   HEADERS = %w[
     tester_id session_date_utc cohort app_version build_number device_model
-    ios_version mode_sequence first_launch_understood seconds_to_first_launch
+    device_size ios_version mode_sequence first_launch_understood seconds_to_first_launch
     target_understood failure_reason_understood perfect_landing_understood
     combo_understood first_run_score run_scores total_runs total_score average_score
     highest_score average_run_seconds restarts restart_rate_pct game_over_to_restart_seconds
@@ -44,6 +44,7 @@ module TestFlightAnalysis
 
   ENUM_FIELDS = {
     "cohort" => %w[frequent occasional rare accessibility internal smoke],
+    "device_size" => %w[small standard large],
     "daily_layout_match" => %w[yes no not_checked],
     "game_center_auth_success" => %w[yes no not_tested],
     "leaderboard_submit_success" => %w[yes no not_tested],
@@ -108,6 +109,10 @@ module TestFlightAnalysis
       raise ArgumentError, "line #{line_number}: #{field} must be nonnegative" if value.negative?
     end
 
+    if row.fetch("build_number").to_i < 1
+      raise ArgumentError, "line #{line_number}: build_number must be at least 1"
+    end
+
     DECIMAL_FIELDS.each do |field|
       value = parse_decimal(row.fetch(field), line_number, field)
       raise ArgumentError, "line #{line_number}: #{field} must be nonnegative" if value.negative?
@@ -118,6 +123,11 @@ module TestFlightAnalysis
     end
     ENUM_FIELDS.each do |field, values|
       validate_enum(row, line_number, field, values)
+    end
+
+    modes = row.fetch("mode_sequence").split("|", -1)
+    unless modes.any? && modes.all? { |mode| %w[classic daily].include?(mode) }
+      raise ArgumentError, "line #{line_number}: mode_sequence must contain classic or daily values"
     end
 
     total_runs = row.fetch("total_runs").to_i
@@ -220,6 +230,9 @@ module TestFlightAnalysis
     end
     zone_rows = external.select { |row| %w[yes no].include?(row.fetch("zone_change_noticed")) }
 
+    cohort_groups = first_sessions.group_by { |row| row.fetch("cohort") }
+    device_size_groups = first_sessions.group_by { |row| row.fetch("device_size") }
+
     {
       "all_rows" => rows.length,
       "external_session_rows" => external.length,
@@ -233,22 +246,27 @@ module TestFlightAnalysis
       "combo_understanding_rate" => yes_rate(first_sessions, "combo_understood"),
       "restart_rate" => percentage(total_restarts, total_runs),
       "median_restart_seconds" => median(restart_times),
+      "median_restart_count" => restart_times.length,
       "average_run_seconds" => total_runs.zero? ? nil : weighted_run_seconds / total_runs,
       "zone_notice_rate" => yes_rate(zone_rows, "zone_change_noticed"),
       "zone_notice_count" => zone_rows.length,
-      "crash_count" => external.sum { |row| row.fetch("crash_count").to_i },
-      "freeze_count" => external.sum { |row| row.fetch("freeze_count").to_i },
-      "progress_loss_count" => external.count { |row| row.fetch("progress_loss") == "yes" },
-      "daily_mismatch_count" => external.count { |row| row.fetch("daily_layout_match") == "no" },
-      "game_center_auth_failure_count" => external.count { |row| row.fetch("game_center_auth_success") == "no" },
-      "leaderboard_failure_count" => external.count { |row| row.fetch("leaderboard_submit_success") == "no" },
-      "achievement_failure_count" => external.count { |row| row.fetch("achievement_submit_success") == "no" },
-      "impossible_hazard_count" => external.count { |row| row.fetch("hazard_felt_impossible") == "yes" },
+      "crash_count" => rows.sum { |row| row.fetch("crash_count").to_i },
+      "freeze_count" => rows.sum { |row| row.fetch("freeze_count").to_i },
+      "severe_frame_drop_count" => rows.sum { |row| row.fetch("severe_frame_drop_count").to_i },
+      "progress_loss_count" => rows.count { |row| row.fetch("progress_loss") == "yes" },
+      "daily_mismatch_count" => rows.count { |row| row.fetch("daily_layout_match") == "no" },
+      "game_center_auth_failure_count" => rows.count { |row| row.fetch("game_center_auth_success") == "no" },
+      "leaderboard_failure_count" => rows.count { |row| row.fetch("leaderboard_submit_success") == "no" },
+      "achievement_failure_count" => rows.count { |row| row.fetch("achievement_submit_success") == "no" },
+      "impossible_hazard_count" => rows.count { |row| row.fetch("hazard_felt_impossible") == "yes" },
       "score_buckets" => score_buckets(external),
       "complaints" => ranked_text(external, "most_common_complaint"),
       "requested_improvements" => ranked_text(external, "most_requested_improvement"),
       "cohorts" => first_sessions.group_by { |row| row.fetch("cohort") }.transform_values(&:length),
       "devices" => external.group_by { |row| row.fetch("device_model") }.transform_values(&:length),
+      "device_sizes" => first_sessions.group_by { |row| row.fetch("device_size") }.transform_values(&:length),
+      "cohort_breakdowns" => cohort_groups.transform_values { |group| behavioral_breakdown(group) },
+      "device_size_breakdowns" => device_size_groups.transform_values { |group| behavioral_breakdown(group) },
     }
   end
 
@@ -273,20 +291,28 @@ module TestFlightAnalysis
       gate_row("Failure reason understood", data["failure_understanding_rate"], 90.0, rows),
       gate_row("Perfect landing understood", data["perfect_understanding_rate"], 70.0, rows),
       gate_row("Combo understood", data["combo_understanding_rate"], 70.0, rows),
-      seconds_gate_row("Median game-over-to-restart", data["median_restart_seconds"], 5.0),
+      seconds_gate_row(
+        "Median game-over-to-restart",
+        data["median_restart_seconds"],
+        5.0,
+        data["median_restart_count"]
+      ),
       gate_row("Zone change noticed", data["zone_notice_rate"], 60.0, data["zone_notice_count"]),
       "",
       "## Aggregate play",
       "",
       "- Total completed runs: #{data.fetch("total_runs")}",
-      "- Overall restart rate: #{format_percentage(data["restart_rate"])}",
-      "- Weighted average run length: #{format_seconds(data["average_run_seconds"])}",
+      "- Overall restart rate: #{format_percentage(data["restart_rate"])} (#{data.fetch("external_session_rows")} sessions, #{data.fetch("total_runs")} runs)",
+      "- Weighted average run length: #{format_seconds(data["average_run_seconds"])} (#{data.fetch("total_runs")} runs)",
       "- Run score distribution: #{format_counts(data.fetch("score_buckets"))}",
       "",
       "## Critical signals",
       "",
+      "These totals include all #{data.fetch("all_rows")} external, internal, and smoke session rows.",
+      "",
       "- Crashes: #{data.fetch("crash_count")}",
       "- Freezes: #{data.fetch("freeze_count")}",
+      "- Severe frame drops: #{data.fetch("severe_frame_drop_count")}",
       "- Progress-loss cases: #{data.fetch("progress_loss_count")}",
       "- Daily layout mismatches: #{data.fetch("daily_mismatch_count")}",
       "- Game Center authentication failures: #{data.fetch("game_center_auth_failure_count")}",
@@ -298,6 +324,13 @@ module TestFlightAnalysis
       "",
       "- Cohorts: #{format_counts(data.fetch("cohorts"))}",
       "- Devices: #{format_counts(data.fetch("devices"))}",
+      "- Device sizes: #{format_counts(data.fetch("device_sizes"))}",
+      "",
+      "## Behavioural breakdowns",
+      "",
+      breakdown_table("Cohort", data.fetch("cohort_breakdowns")),
+      "",
+      breakdown_table("Device size", data.fetch("device_size_breakdowns")),
       "",
       "## Ranked feedback",
       "",
@@ -308,10 +341,15 @@ module TestFlightAnalysis
       "",
     ]
 
+    blockers = release_blockers(data)
     if rows < 20
       lines << "**NOT READY:** At least 20 valid external first-session rows are required before a release decision."
+    elsif blockers.any?
+      lines << "**NOT READY:** The evidence contains unresolved release blockers:"
+      lines << ""
+      blockers.each { |blocker| lines << "- #{blocker}" }
     else
-      lines << "Review every failed gate and critical signal before recording a go, conditional-go, or no-go decision."
+      lines << "**READY FOR OWNER REVIEW:** The measured TestFlight gates pass. Complete the remaining release checklist before recording a go decision."
     end
     lines << ""
     lines.join("\n")
@@ -330,7 +368,9 @@ module TestFlightAnalysis
   end
 
   def parse_decimal(value, line_number, field)
-    Float(value)
+    number = Float(value)
+    raise ArgumentError unless number.finite?
+    number
   rescue ArgumentError
     raise ArgumentError, "line #{line_number}: #{field} must be numeric"
   end
@@ -343,7 +383,7 @@ module TestFlightAnalysis
     end
     values.map do |item|
       number = integer ? Integer(item, 10) : Float(item)
-      raise ArgumentError if number.negative?
+      raise ArgumentError if number.negative? || (!integer && !number.finite?)
       number
     rescue ArgumentError
       kind = integer ? "nonnegative integers" : "nonnegative numbers"
@@ -394,14 +434,76 @@ module TestFlightAnalysis
     counts.sort_by { |text, count| [-count, text] }.to_h
   end
 
+  def behavioral_breakdown(rows)
+    {
+      "count" => rows.length,
+      "first_launch_rate" => yes_rate(rows, "first_launch_understood"),
+      "second_run_rate" => predicate_rate(rows) { |row| row.fetch("total_runs").to_i >= 2 },
+      "five_run_rate" => predicate_rate(rows) { |row| row.fetch("total_runs").to_i >= 5 },
+      "failure_understanding_rate" => yes_rate(rows, "failure_reason_understood"),
+      "perfect_understanding_rate" => yes_rate(rows, "perfect_landing_understood"),
+      "combo_understanding_rate" => yes_rate(rows, "combo_understood"),
+    }
+  end
+
+  def release_blockers(data)
+    minimum_gates = {
+      "First launch understood is below 80%" => [data["first_launch_rate"], 80.0],
+      "Second-run rate is below 70%" => [data["second_run_rate"], 70.0],
+      "Five-run completion is below 50%" => [data["five_run_rate"], 50.0],
+      "Failure understanding is below 90%" => [data["failure_understanding_rate"], 90.0],
+      "Perfect-landing understanding is below 70%" => [data["perfect_understanding_rate"], 70.0],
+      "Combo understanding is below 70%" => [data["combo_understanding_rate"], 70.0],
+      "Zone recognition is below 60% or not measured" => [data["zone_notice_rate"], 60.0],
+    }
+    blockers = minimum_gates.each_with_object([]) do |(message, values), result|
+      measurement, minimum = values
+      result << message if measurement.nil? || measurement < minimum
+    end
+    if data["median_restart_seconds"].nil? || data["median_restart_seconds"] > 5.0
+      blockers << "Median game-over-to-restart time exceeds 5 seconds or is not measured"
+    end
+
+    critical_counts = {
+      "Crashes" => "crash_count",
+      "Freezes" => "freeze_count",
+      "Progress-loss cases" => "progress_loss_count",
+      "Daily layout mismatches" => "daily_mismatch_count",
+      "Game Center authentication failures" => "game_center_auth_failure_count",
+      "Leaderboard submission failures" => "leaderboard_failure_count",
+      "Achievement submission failures" => "achievement_failure_count",
+      "Impossible-hazard reports" => "impossible_hazard_count",
+    }
+    critical_counts.each do |label, key|
+      count = data.fetch(key)
+      blockers << "#{label}: #{count}" if count.positive?
+    end
+    blockers
+  end
+
+  def breakdown_table(group_label, groups)
+    lines = [
+      "| #{group_label} | Testers | First launch | Second run | Five runs | Failure understood | Perfect understood | Combo understood |",
+      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    if groups.empty?
+      lines << "| None recorded | 0 | Not measured | Not measured | Not measured | Not measured | Not measured | Not measured |"
+    else
+      groups.sort_by { |name, _values| name }.each do |name, values|
+        lines << "| #{name} | #{values.fetch("count")} | #{format_percentage(values["first_launch_rate"])} | #{format_percentage(values["second_run_rate"])} | #{format_percentage(values["five_run_rate"])} | #{format_percentage(values["failure_understanding_rate"])} | #{format_percentage(values["perfect_understanding_rate"])} | #{format_percentage(values["combo_understanding_rate"])} |"
+      end
+    end
+    lines.join("\n")
+  end
+
   def gate_row(label, result, gate, count)
     status = result.nil? ? "NOT MEASURED" : result >= gate ? "PASS" : "FAIL"
     "| #{label} | #{format_percentage(result)} | #{gate.round}% | #{status} | #{count} |"
   end
 
-  def seconds_gate_row(label, result, gate)
+  def seconds_gate_row(label, result, gate, count)
     status = result.nil? ? "NOT MEASURED" : result <= gate ? "PASS" : "FAIL"
-    "| #{label} | #{format_seconds(result)} | <= #{gate.round} sec | #{status} | #{result.nil? ? 0 : 1} aggregate |"
+    "| #{label} | #{format_seconds(result)} | <= #{gate.round} sec | #{status} | #{count} intervals |"
   end
 
   def format_percentage(value)

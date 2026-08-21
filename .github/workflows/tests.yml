@@ -89,7 +89,7 @@ jobs:
             widths = rows.map(&:length).uniq
             abort "inconsistent CSV row widths: #{widths.inspect}" unless widths.length == 1
             abort "duplicate CSV headers" unless rows[0].uniq.length == rows[0].length
-            abort "unexpected TestFlight field count" unless rows[0].length == 50
+            abort "unexpected TestFlight field count" unless rows[0].length == 51
             puts "CSV valid: #{rows[0].length} fields"
           '
 

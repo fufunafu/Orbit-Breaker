@@ -598,9 +598,9 @@ August 20 TestFlight analysis continuation
   support sources.
 - Added a standard-library Ruby analyzer for the TestFlight session log and a
   deterministic Markdown findings report.
-- Expanded the session schema from 45 to 50 fields so every run score and every
+- Expanded the session schema from 45 to 51 fields so every run score and every
   measured game-over-to-restart interval can be analyzed without relying on
-  averages of averages.
+  averages of averages, and each tested device has an explicit size class.
 - Added explicit zone-recognition, impossible-hazard, and reproducible-layout
   fields for experience and fairness gates that previously had no structured
   evidence path.
@@ -612,9 +612,51 @@ August 20 TestFlight analysis continuation
   device, complaint, and critical-signal evidence.
 - The report includes sample sizes, behavioural gates, complete run-score
   distribution, average run length, restart rate, critical signals, cohort and
-  device coverage, and ranked feedback.
+  device-size breakdowns, device coverage, and ranked feedback.
 - Automated analyzer tests pass on the system Ruby 2.6 runtime, and the empty
   source log regenerates the committed report exactly.
 - The report currently states NOT READY because no external first-session rows
   exist. Real TestFlight distribution and 20 to 30 human testers remain
   required before the final brief item can be completed.
+
+
+August 21 TestFlight evidence audit
+-----------------------------------
+
+- The analyzer now treats internal and smoke sessions as stability evidence for
+  crashes, freezes, severe frame drops, progress loss, Daily mismatches, Game
+  Center failures, and impossible-hazard reports while keeping them out of
+  external behavioural percentages.
+- Behavioural results are reported separately by cohort and device size, as
+  required by the TestFlight analysis procedure.
+- Numeric validation rejects non-finite observations, and build numbers,
+  device sizes, mode sequences, and Daily-state combinations have explicit
+  validation rules.
+- The analyzer test covers later external sessions, internal smoke stability
+  evidence, cohort and device-size breakdowns, non-finite values, and missing
+  impossible-hazard references.
+- The report cannot advance to owner review until at least 20 external first
+  sessions pass every behavioural and experience gate with no critical signal.
+  It deliberately never records the final product go decision automatically.
+- Hazard launch-window validation now uses each hazard's collision margin plus
+  the ship radius. The 300-layout integration sample applies the same physical
+  blocking radius, closing a fairness gap between route validation and runtime
+  collision checks.
+- A fresh cache-free Godot 4.7.2 import and verbose test run printed
+  ORBIT_BREAKER_TESTS_OK and exited successfully. No ObjectDB instance leaks or
+  retained resources were reported. The known restricted macOS certificate
+  lookup warning and two engine StringName entries remain the only shutdown
+  noise.
+- Local validation passed for the 51-field CSV, deterministic report,
+  workflow YAML, shell syntax, README links, iOS release preset, App Store copy
+  limits, image dimensions and alpha channels, preview streams, secret
+  patterns, tracked file sizes, formatting, and the release-text em dash guard.
+- All 21 external documentation and project links were checked on August 21,
+  2026. Apple documentation resolved, and the public landing, privacy, support,
+  issue-tracker, and recorded CI pages returned HTTP 200.
+- Local main contains unpublished commits 0092a2b and 067cc99 plus the current
+  evidence-audit batch. All three must be pushed together before the next
+  GitHub run is authoritative.
+- App Store Connect browser control did not respond during this continuation.
+  No Apple-side data was changed. Human TestFlight execution still requires a
+  distributed build, 20 to 30 real testers, and at least seven calendar days.
