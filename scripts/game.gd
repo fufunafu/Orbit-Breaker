@@ -492,7 +492,12 @@ func _spawn_hazard_for_segment(source: OrbitPlanet, target: OrbitPlanet) -> void
 			var kind := OrbitHazard.Kind.ASTEROID
 			if landings >= tuning.pulse_hazards_begin_at_landing and (hazard_index == 1 or layout_rng.randf() < 0.5):
 				kind = OrbitHazard.Kind.PULSE_MINE
-			var candidate := {"position": hazard_position, "radius": radius * 1.12, "kind": kind}
+			var candidate := {
+				"position": hazard_position,
+				"radius": radius,
+				"blocking_radius": radius * 1.12 + ship.radius,
+				"kind": kind,
+			}
 			var candidates := accepted.duplicate()
 			candidates.append(candidate)
 			if _hazards_preserve_launch_window(source, target, candidates):
@@ -502,17 +507,22 @@ func _spawn_hazard_for_segment(source: OrbitPlanet, target: OrbitPlanet) -> void
 		var hazard := HAZARD_SCENE.instantiate() as OrbitHazard
 		hazards.add_child(hazard)
 		hazard.global_position = data.position
-		hazard.configure(float(data.radius) / 1.12, layout_rng.randi(), data.kind)
+		hazard.configure(float(data.radius), layout_rng.randi(), data.kind)
 
 
 func _hazards_preserve_launch_window(source: OrbitPlanet, target: OrbitPlanet, candidates: Array[Dictionary]) -> bool:
-	var blocking_hazards := candidates.duplicate()
+	var blocking_hazards: Array[Dictionary] = []
+	for candidate in candidates:
+		blocking_hazards.append({
+			"position": candidate.position,
+			"radius": float(candidate.get("blocking_radius", candidate.radius)),
+		})
 	for hazard_node in hazards.get_children():
 		var hazard := hazard_node as OrbitHazard
 		if hazard:
 			blocking_hazards.append({
 				"position": hazard.global_position,
-				"radius": hazard.radius * 1.12,
+				"radius": hazard.radius * 1.12 + ship.radius,
 			})
 	var safe_samples := OrbitMath.safe_launch_sample_count_for_hazards(
 		source.global_position,

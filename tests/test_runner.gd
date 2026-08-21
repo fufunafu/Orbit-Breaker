@@ -506,7 +506,7 @@ func _test_gameplay_integration() -> void:
 					continue
 				hazard_data.append({
 					"position": generated_hazard.global_position,
-					"radius": generated_hazard.radius * 1.12,
+					"radius": generated_hazard.radius * 1.12 + game.ship.radius,
 				})
 				if landing_stage < game.tuning.pulse_hazards_begin_at_landing:
 					_check(generated_hazard.kind == OrbitHazard.Kind.ASTEROID, "Pulse mines must not appear before their introduction.")
