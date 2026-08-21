@@ -691,3 +691,30 @@ August 21 active continuation audit
   App Store Connect interaction, owner-approved account data and distribution
   choices, Apple validation and upload approval, and the documented seven-day
   TestFlight study with real external testers.
+
+
+August 21 third-party rights audit
+----------------------------------
+
+- The final tracked code and media inventory was audited against its source and
+  license records.
+- Godot Engine 4.7.2 now includes its exact MIT license and consolidated
+  third-party copyright inventory from the 4.7.2-stable tag.
+- Godot Apple Plugins now includes the exact MIT license from bundled source
+  commit 3781b9c19eaf69b2387eacecf4b6f88fc8d07e65.
+- The development-only Godot MCP addon was identified as an unmodified copy of
+  yanhuifair/Godot-MCP v1.11.2 at commit
+  cd5da3c7afed9f37a2480f3f73b500fb92cc05c5. Its exact
+  AGPL-3.0-or-later license is now included, and the addon remains excluded from
+  shipped app builds.
+- The five Kenney CC0 effects remain the only third-party media. The exact
+  source mappings and CC0 link were already recorded.
+- GitHub release validation now pins the four license files and the three
+  unmodified Godot MCP source files by SHA-256, and requires the versioned
+  source references in THIRD_PARTY_NOTICES.md.
+- The iOS export preset explicitly includes the project license, third-party
+  notices, and version-pinned license files in the shipped resource pack.
+- A fresh Godot 4.7.2 iOS resource export stored LICENSE,
+  THIRD_PARTY_NOTICES.md, and all four files under LICENSES in the PCK while
+  continuing to exclude the development-only Godot MCP source.
+- The release checklist now marks the third-party license audit complete.

@@ -113,6 +113,36 @@ jobs:
             puts "README local links valid: #{local.length}"
           '
 
+      - name: Validate third-party notices
+        shell: bash
+        run: |
+          ruby -rdigest -e '
+            expected = {
+              "LICENSES/Godot-4.7.2-MIT.txt" => "b0435e3b3e4e55238f05f4b306f30524a1b2e20147810d436eaa554fa6855c80",
+              "LICENSES/Godot-4.7.2-COPYRIGHT.txt" => "cb1980c88089573bcacd7221d777c689bb8bbd778799f24c27fca0fe5f774d6d",
+              "LICENSES/Godot-Apple-Plugins-MIT.txt" => "e970596d9c06e9cf3acb706e0d9d46b240865a2c76c9cc23d5a79e38c76aaf15",
+              "LICENSES/Godot-MCP-AGPL-3.0-or-later.txt" => "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+              "addons/godot-mcp/plugin.gd" => "36b4d54ee0fce22c39ba15eafe12a08bdf4aa0a82e39c4e3047d1a414d2efabe",
+              "addons/godot-mcp/runtime_bridge.gd" => "fdf672bdde04aaeb24a9a003839f6ba4585debec8e33ac87037960e5e726b086",
+              "addons/godot-mcp/plugin.cfg" => "1edb72339a2be307172fe7c4352d5788c938964405498ba0b3a24187a6307c44",
+            }
+            mismatches = expected.reject do |path, digest|
+              File.file?(path) && Digest::SHA256.file(path).hexdigest == digest
+            end
+            abort "third-party file mismatch: #{mismatches.keys.join(", ")}" unless mismatches.empty?
+            notices = File.read("THIRD_PARTY_NOTICES.md")
+            required = %w[
+              4.7.2-stable
+              3781b9c19eaf69b2387eacecf4b6f88fc8d07e65
+              cd5da3c7afed9f37a2480f3f73b500fb92cc05c5
+              AGPL-3.0-or-later
+              Creative-Commons-Zero
+            ]
+            missing = required.reject { |value| notices.include?(value.tr("-", " ")) || notices.include?(value) }
+            abort "third-party notice reference missing: #{missing.join(", ")}" unless missing.empty?
+            puts "third-party notices valid: #{expected.length} pinned files"
+          '
+
       - name: Validate iOS release preset
         shell: bash
         run: |
@@ -125,6 +155,7 @@ jobs:
               "Files app export access" => "user_data/accessible_from_files_app=true",
               "iPhone-only device family" => "application/targeted_device_family=0",
               "automatic development signing" => %q(application/code_sign_identity_release="Apple Development"),
+              "bundled third-party notices" => %q(include_filter="LICENSE,THIRD_PARTY_NOTICES.md,LICENSES/*"),
             }
             missing = required.reject { |_name, setting| preset.include?(setting) }.keys
             abort "missing iOS release settings: #{missing.join(", ")}" unless missing.empty?

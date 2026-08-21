@@ -34,8 +34,8 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | --- | --- | --- | --- | --- |
 | READY | README explains controls, setup, tests, and export | Developer | Review from a clean checkout | `README.md` |
 | PASS | License notice exists | Project owner | Confirm copyright holder and terms | `LICENSE` |
-| READY | Third-party license audit is documented | Release owner | Verify every plugin and asset source against its upstream license | `THIRD_PARTY_NOTICES.md`; final completeness audit remains TODO |
-| READY | Third-party notices file exists | Release owner | Compare bundled files against license obligations | `THIRD_PARTY_NOTICES.md` |
+| PASS | Third-party license audit is documented | Release owner | Verify every plugin and asset source against its upstream license | Exact upstream licenses, versioned sources, and the final component inventory are recorded in `THIRD_PARTY_NOTICES.md` and `LICENSES/` |
+| PASS | Third-party notices file exists | Release owner | Compare bundled files against license obligations | Workflow validation pins all four license files and the unmodified Godot MCP source hashes |
 | READY | Release documents are present | Release owner | Check all links from README | `docs/` package |
 | PASS | Repository contains no secrets | Security owner | Secret scan plus manual inspection | Regex and manual scans found no credentials, signing files, private keys, or tokens on 2026-08-20 |
 | PASS | Unrelated generated files are excluded | Developer | Inspect clean `git status` after import and export | `.godot`, `build`, and `.DS_Store` remain ignored after final import and export checks |
@@ -265,7 +265,7 @@ These items are known to require external state or owner decisions:
 5. Unlock the connected iPhone and complete launch, safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests.
 6. Transmit the prepared App Store package to Apple for validation and upload after explicit approval.
 7. Recruit 20 to 30 testers and run the documented seven-day TestFlight validation.
-8. Complete the final privacy answers, age rating, export compliance, regional compliance, pricing, availability, and third-party-license audit.
+8. Complete the final privacy answers, age rating, export compliance, regional compliance, pricing, and availability.
 9. Replace the installed Godot simulator export template with an arm64-compatible build, or keep the validated x86_64 simulator workflow under Rosetta.
 
 ## Go or no-go record
