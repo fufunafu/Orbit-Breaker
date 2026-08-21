@@ -733,3 +733,23 @@ August 21 device launch continuation
   and launch record complete.
 - Safe-area, backgrounding, persistence, haptic, accessibility, performance,
   and Game Center interaction tests still require hands-on device observation.
+
+
+August 21 authoritative push verification
+-----------------------------------------
+
+- The owner explicitly approved publishing commits 0092a2b, 067cc99, d7c22c3,
+  6797874, 01a0bc5, and 0832610 to origin/main.
+- The push from 5ac55a9 through 0832610 completed successfully, and
+  origin/main now points to 0832610d8fc8fd3b3e8fa4abcb174b303ea1608c before
+  this evidence-only checkpoint.
+- Release artifact checks run 32482783253 completed successfully for 0832610.
+- The GitHub runner passed the Godot 4.7.2 headless gameplay suite, TestFlight
+  analysis, third-party license and source hashes, iOS preset, App Store copy,
+  images, preview, links, CSV, and release-text punctuation validation.
+- Pages run 32482783272 completed successfully for 0832610 and deployed the
+  matching support and privacy sources.
+- The only workflow annotations are GitHub's non-blocking notice that
+  actions/checkout v4 is being forced from Node.js 20 to Node.js 24.
+- The release checklist now references the authoritative 0832610 run, and the
+  unpublished-commit blocker has been removed.

@@ -46,12 +46,12 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
 | PASS | Gameplay GitHub workflow exists | Developer | Inspect workflow syntax and trigger set | `.github/workflows/tests.yml` |
-| PASS | Gameplay workflow pins Godot 4.7.2 | Developer | Inspect install step and engine output | GitHub run 32408952489 used Godot 4.7.2 |
-| PASS | Gameplay workflow runs `tests/test_runner.gd` headlessly | Developer | Successful GitHub run prints `ORBIT_BREAKER_TESTS_OK` | GitHub run 32408952489 passed the headless gameplay job |
-| PASS | Release-artifact job exists | Developer | Validate CSV, links, metadata limits, and punctuation | GitHub run 32408952489 passed release-artifact validation |
-| PASS | Clean-checkout CI run passes | Developer | Link successful GitHub Actions run for release commit | `https://github.com/fufunafu/Orbit-Breaker/actions/runs/32408952489` passed for 5ac55a9 |
-| PASS | Local headless test run passes | Developer | Save command output and exit status | Godot 4.7.2 printed `ORBIT_BREAKER_TESTS_OK` on 2026-08-20 |
-| PASS | Test shutdown is free of leaked-instance warnings | Developer | Repeat with `--verbose` and resolve owned leaks | Godot 4.7.2 verbose run exited 0 without leaked ObjectDB instances or resources on 2026-08-20 |
+| PASS | Gameplay workflow pins Godot 4.7.2 | Developer | Inspect install step and engine output | GitHub run 32482783253 used Godot 4.7.2 |
+| PASS | Gameplay workflow runs `tests/test_runner.gd` headlessly | Developer | Successful GitHub run prints `ORBIT_BREAKER_TESTS_OK` | GitHub run 32482783253 passed the headless gameplay job |
+| PASS | Release-artifact job exists | Developer | Validate CSV, links, licenses, metadata limits, media, and punctuation | GitHub run 32482783253 passed release-artifact validation |
+| PASS | Clean-checkout CI run passes | Developer | Link successful GitHub Actions run for release commit | `https://github.com/fufunafu/Orbit-Breaker/actions/runs/32482783253` passed for 0832610 |
+| PASS | Local headless test run passes | Developer | Save command output and exit status | Godot 4.7.2 printed `ORBIT_BREAKER_TESTS_OK` on 2026-08-21 |
+| PASS | Test shutdown is free of leaked-instance warnings | Developer | Repeat with `--verbose` and resolve owned leaks | Godot 4.7.2 verbose run exited 0 without leaked ObjectDB instances or resources on 2026-08-21 |
 | TODO | Ten consecutive full editor runs complete without errors | QA owner | Manual test log |  |
 
 ## Gameplay and fairness
@@ -259,14 +259,13 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 These items are known to require external state or owner decisions:
 
 1. Confirm the publisher name, price, regions, TestFlight feedback contact, and App Review contact.
-2. Push the unpublished continuation commits and this active checkpoint, then attach successful workflow evidence for the resulting `origin/main` commit.
-3. Complete the existing Orbit Breaker App Store Connect record by entering the prepared product metadata and public privacy and support URLs.
-4. Configure and attach the three leaderboards and three achievements, then upload the prepared achievement images.
-5. Complete safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests on physical devices.
-6. Transmit the prepared App Store package to Apple for validation and upload after explicit approval.
-7. Recruit 20 to 30 testers and run the documented seven-day TestFlight validation.
-8. Complete the final privacy answers, age rating, export compliance, regional compliance, pricing, and availability.
-9. Replace the installed Godot simulator export template with an arm64-compatible build, or keep the validated x86_64 simulator workflow under Rosetta.
+2. Complete the existing Orbit Breaker App Store Connect record by entering the prepared product metadata and public privacy and support URLs.
+3. Configure and attach the three leaderboards and three achievements, then upload the prepared achievement images.
+4. Complete safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests on physical devices.
+5. Transmit the prepared App Store package to Apple for validation and upload after explicit approval.
+6. Recruit 20 to 30 testers and run the documented seven-day TestFlight validation.
+7. Complete the final privacy answers, age rating, export compliance, regional compliance, pricing, and availability.
+8. Replace the installed Godot simulator export template with an arm64-compatible build, or keep the validated x86_64 simulator workflow under Rosetta.
 
 ## Go or no-go record
 
