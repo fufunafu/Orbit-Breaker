@@ -660,3 +660,34 @@ August 21 TestFlight evidence audit
 - App Store Connect browser control did not respond during this continuation.
   No Apple-side data was changed. Human TestFlight execution still requires a
   distributed build, 20 to 30 real testers, and at least seven calendar days.
+
+
+August 21 active continuation audit
+-----------------------------------
+
+- Local main is clean at d7c22c3 and remains three commits ahead of
+  origin/main at 5ac55a9 before this checkpoint update.
+- The unpublished commits are 0092a2b, 067cc99, and d7c22c3.
+- Godot 4.7.2 printed ORBIT_BREAKER_TESTS_OK and exited successfully. No
+  ObjectDB instance leaks, retained resources, or script errors were reported.
+  The restricted macOS certificate lookup warning and two engine StringName
+  entries remain the only shutdown noise.
+- The TestFlight analyzer test prints TESTFLIGHT_ANALYSIS_TESTS_OK, and the
+  empty 51-field session log regenerates docs/TESTFLIGHT_REPORT.md exactly.
+- Workflow YAML, TestFlight CSV, README links, the iOS release preset, App
+  Store copy limits, all release images, the App Store preview, shell syntax,
+  tracked file sizes, secret patterns, formatting, and the release-text
+  punctuation guard all pass locally.
+- The managed reviewer requires explicit owner approval naming commits
+  0092a2b, 067cc99, and d7c22c3 before they can be pushed to origin/main.
+- The paired iPhone 16 Pro is available, but iOS rejected the release-candidate
+  launch because the device remains locked.
+- The Chrome browser extension is connected, but existing-tab inspection did
+  not respond. No App Store Connect data was viewed or changed.
+- The next repository action is to commit this checkpoint, obtain explicit
+  approval for the complete unpublished commit list, push main, and verify both
+  GitHub workflows on the resulting origin/main commit.
+- The remaining release work still requires an unlocked iPhone, authenticated
+  App Store Connect interaction, owner-approved account data and distribution
+  choices, Apple validation and upload approval, and the documented seven-day
+  TestFlight study with real external testers.

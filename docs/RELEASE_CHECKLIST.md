@@ -259,8 +259,8 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 These items are known to require external state or owner decisions:
 
 1. Confirm the publisher name, price, regions, TestFlight feedback contact, and App Review contact.
-2. Push the Linux CI isolation fix and attach successful workflow evidence for the resulting source commit.
-3. Create the prepared App Store Connect app record and enter the public privacy and support URLs.
+2. Push the unpublished continuation commits and this active checkpoint, then attach successful workflow evidence for the resulting `origin/main` commit.
+3. Complete the existing Orbit Breaker App Store Connect record by entering the prepared product metadata and public privacy and support URLs.
 4. Configure and attach the three leaderboards and three achievements, then upload the prepared achievement images.
 5. Unlock the connected iPhone and complete launch, safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests.
 6. Transmit the prepared App Store package to Apple for validation and upload after explicit approval.
