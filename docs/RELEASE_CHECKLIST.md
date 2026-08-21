@@ -159,7 +159,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | App Store package signs with intended distribution identity | Release owner | Xcode App Store export | 31 MB IPA signed by Apple Distribution: 15041074 Canada Inc on 2026-08-20 |
 | PASS | Generic iPhone arm64 build completes | iOS developer | Unsigned Xcode build log | Release device build succeeded with signing disabled on 2026-08-20 |
 | PASS | Simulator build completes | QA owner | Build log and smoke-test record | Release simulator build succeeds with `ARCHS=x86_64`; runtime smoke test remains |
-| READY | Physical iPhone build completes | QA owner | Device install and run record | Signed Release build installed on iPhone 16 Pro; unlock and launch validation remain |
+| PASS | Physical iPhone build completes | QA owner | Device install and run record | Signed Release build installed and launched on iPhone 16 Pro; a console-attached launch remained active for the full 10-second diagnostic window on 2026-08-21 |
 | TODO | Small and large supported iPhone layouts pass | QA owner | Screenshot matrix |  |
 | TODO | Portrait lock works on physical device | QA owner | Rotation test |  |
 | TODO | Touch response remains immediate | QA owner | Input latency observation |  |
@@ -262,7 +262,7 @@ These items are known to require external state or owner decisions:
 2. Push the unpublished continuation commits and this active checkpoint, then attach successful workflow evidence for the resulting `origin/main` commit.
 3. Complete the existing Orbit Breaker App Store Connect record by entering the prepared product metadata and public privacy and support URLs.
 4. Configure and attach the three leaderboards and three achievements, then upload the prepared achievement images.
-5. Unlock the connected iPhone and complete launch, safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests.
+5. Complete safe-area, backgrounding, persistence, haptic, accessibility, performance, and Game Center tests on physical devices.
 6. Transmit the prepared App Store package to Apple for validation and upload after explicit approval.
 7. Recruit 20 to 30 testers and run the documented seven-day TestFlight validation.
 8. Complete the final privacy answers, age rating, export compliance, regional compliance, pricing, and availability.

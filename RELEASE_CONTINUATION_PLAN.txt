@@ -718,3 +718,18 @@ August 21 third-party rights audit
   THIRD_PARTY_NOTICES.md, and all four files under LICENSES in the PCK while
   continuing to exclude the development-only Godot MCP source.
 - The release checklist now marks the third-party license audit complete.
+
+
+August 21 device launch continuation
+------------------------------------
+
+- The paired iPhone 16 Pro became unlocked and available for development.
+- The installed Orbit Breaker 1.0 build 1 launched successfully by bundle
+  identifier com.antonio.orbitbreaker.
+- A second launch terminated any existing instance, attached the device
+  console, and waited for the app to exit. The app stayed active for the full
+  10-second diagnostic window with no termination or startup-crash output.
+- The release checklist now marks the signed physical-iPhone build, install,
+  and launch record complete.
+- Safe-area, backgrounding, persistence, haptic, accessibility, performance,
+  and Game Center interaction tests still require hands-on device observation.
