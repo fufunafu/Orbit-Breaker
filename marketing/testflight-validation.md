@@ -22,7 +22,7 @@ Recruit 20 to 30 external testers across small and large supported iPhones. Incl
 
 ## Measurements
 
-Use the in-game **Export Playtest Report** action to collect aggregate, non-personal metrics:
+Use the in-game **Export Gameplay Stats** action (Loadout + Settings) to collect aggregate, non-personal metrics:
 
 - First-landing rate as a proxy for understanding the first launch
 - Average run length

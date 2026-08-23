@@ -22,7 +22,8 @@ The trajectory guide can be set to Off, Tutorial, or Always in Settings.
 - Resume: continue a paused run
 - Restart: immediately begin the current mode again
 - Replay Now: restart after game over
-- Save Score Card: save a PNG image inside the app's local storage
+- Main Menu: leave the current run or summary and return to mode selection
+- Save Score Card: save a PNG image to **Files > On My iPhone > Orbit Breaker**
 - Leaderboards: open Game Center leaderboards when Game Center is available
 
 ## Settings
@@ -38,6 +39,8 @@ Orbit Breaker includes controls for:
 - Unlocked ship colour
 - Unlocked trail
 - Unlocked planet theme
+- Export Gameplay Stats: write a summary of your local gameplay statistics to
+  **Files > On My iPhone > Orbit Breaker**
 
 Settings and unlocked items are saved locally.
 
@@ -96,7 +99,7 @@ Apple documents the difference between offloading and deleting in
 
 ## Score-card troubleshooting
 
-Save Score Card writes an image to the app's local Godot user-data location. The current version does not automatically add the image to Photos and does not open the iOS share sheet.
+Save Score Card writes an image to the app's Documents folder, which you can open in the Files app under **On My iPhone > Orbit Breaker**. The current version does not automatically add the image to Photos and does not open the iOS share sheet; use the Files app to share, copy, or delete saved cards.
 
 If saving fails, include that fact in a bug report along with the device, iOS version, app build, and available storage. Do not send a score-card image if it contains anything you do not want included in a support message.
 
@@ -104,13 +107,14 @@ If saving fails, include that fact in a bug report along with the device, iOS ve
 
 - Check Orbit Breaker's Sound, Music, and Haptics toggles.
 - Check device volume, silent mode, Focus settings, and system haptic settings.
-- Enable Reduced Motion to reduce animated background changes and disable gameplay screen shake.
+- Enable Reduced Motion to reduce animated background changes, disable gameplay screen shake, and turn off full-screen landing and failure flashes.
+- Enable Reduced Screen Shake to turn off screen shake on its own.
 - Enable High Contrast Guide if the default trajectory guide is hard to see.
 - Set Guide to Always if you want the trajectory guide throughout every run.
 
 ## Report a bug
 
-Open an issue at https://github.com/fufunafu/Orbit-Breaker/issues with:
+Email <fuannegao25@gmail.com> or open an issue at https://github.com/fufunafu/Orbit-Breaker/issues with:
 
 - Orbit Breaker version and build number
 - iPhone model
@@ -123,7 +127,7 @@ Open an issue at https://github.com/fufunafu/Orbit-Breaker/issues with:
 - Failure reason displayed, if relevant
 - Whether Game Center was signed in
 - Accessibility settings in use
-- Screenshot or TestFlight feedback, if helpful
+- Screenshot, or the exported gameplay statistics file from Files, if helpful
 
 Never include an Apple Account password, App Store Connect credential, provisioning profile, private key, or other secret.
 
@@ -133,6 +137,7 @@ Read the [Orbit Breaker Privacy Policy](https://fufunafu.github.io/Orbit-Breaker
 
 ## Contact
 
-Developer: Fuanne Gao<br>
+Developer: Fuanne Gao, 15041074 Canada Inc<br>
+Email: <fuannegao25@gmail.com><br>
 Support page: https://fufunafu.github.io/Orbit-Breaker/support.html<br>
 Issue tracker: https://github.com/fufunafu/Orbit-Breaker/issues

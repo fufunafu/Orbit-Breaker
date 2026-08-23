@@ -5,6 +5,8 @@ const CAPTURE_SAVE := "res://.godot/orbit_breaker_marketing_capture.cfg"
 const CAPTURE_METRICS := "res://.godot/orbit_breaker_marketing_capture.json"
 const CAPTURE_SIZE := Vector2i(1320, 2868)
 
+var capture_failures: int = 0
+
 
 func _init() -> void:
 	call_deferred("_capture_all")
@@ -82,6 +84,10 @@ func _capture_all() -> void:
 	await process_frame
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAPTURE_SAVE))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAPTURE_METRICS))
+	if capture_failures > 0:
+		print("ORBIT_BREAKER_MARKETING_CAPTURE_FAILED: %d" % capture_failures)
+		quit(1)
+		return
 	print("ORBIT_BREAKER_MARKETING_CAPTURE_OK")
 	quit(0)
 
@@ -89,12 +95,18 @@ func _capture_all() -> void:
 func _capture(filename: String) -> void:
 	await RenderingServer.frame_post_draw
 	var image := root.get_viewport().get_texture().get_image()
-	if image.get_width() != CAPTURE_SIZE.x or image.get_height() != CAPTURE_SIZE.y:
-		image.resize(CAPTURE_SIZE.x, CAPTURE_SIZE.y, Image.INTERPOLATE_LANCZOS)
+	var captured := Vector2i(image.get_width(), image.get_height())
+	if captured != CAPTURE_SIZE:
+		# The display clamped the window. Resizing a different aspect ratio would
+		# produce a distorted, non-native screenshot, so refuse instead.
+		push_error("Captured %s at %s, expected %s. Use a display that allows the full capture size." % [filename, captured, CAPTURE_SIZE])
+		capture_failures += 1
+		return
 	image.convert(Image.FORMAT_RGB8)
 	var result := image.save_png("%s/%s" % [SCREENSHOT_DIR, filename])
 	if result != OK:
 		push_error("Unable to save marketing screenshot %s" % filename)
+		capture_failures += 1
 
 
 func _align_ship_for_perfect_guide(game: OrbitGame) -> void:

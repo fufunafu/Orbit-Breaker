@@ -64,7 +64,7 @@ Repository and commits
 ----------------------
 
 - Repository path:
-  /Users/fuannegao/Documents/PERSONAL_WEBSITE/ANTONIORUN2/antonio-2-godot
+  the local antonio-2-godot checkout
 - Branch: main
 - Remote: https://github.com/fufunafu/Orbit-Breaker.git
 - Original repository commit: 1c02531
@@ -343,7 +343,7 @@ Active continuation checkpoint
 - Chrome is connected and an App Store Connect login tab is open for handoff.
   The Apple session is signed out, so the owner must complete Apple Account and
   any passkey or two-factor authentication before configuration can continue.
-- Xcode detects a connected physical device named iPhone de Fuanne Gao running
+- Xcode detects a connected physical iPhone (personal device name withheld) running
   iOS 26.6.
 - The keychain contains two valid Apple Development identities but no local
   Apple Distribution identity. Xcode can use cloud-managed distribution signing

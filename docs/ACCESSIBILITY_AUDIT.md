@@ -1,6 +1,6 @@
 # Accessibility Communication Audit
 
-Audit date: August 20, 2026
+Audit date: August 23, 2026
 
 This audit records how the release candidate communicates critical gameplay
 state without relying on colour alone. It supports source review and automated
@@ -36,6 +36,16 @@ testing. Target-display review and first-session user testing remain required.
 - Zone transitions display the destination zone name in text.
 - Unlocks and New Best status appear as text in the run summary.
 
+## Motion and flashing
+
+- Landings and failures trigger a brief full-screen colour flash (alpha 0.18
+  to 0.38, 0.24 second fade) and, for perfect landings and failures, a 0.28
+  second camera shake.
+- Reduced Motion disables the flashes, the camera shake, background parallax,
+  and most particle output. Reduced Screen Shake disables only the shake.
+- Flash frequency is bounded by landing cadence, which the launch speed and
+  minimum planet gap keep below three per second.
+
 ## Controls and settings
 
 - Buttons use text labels rather than colour-only icons, except the pause
@@ -43,8 +53,8 @@ testing. Target-display review and first-session user testing remain required.
 - Check buttons expose checked state and a written setting name.
 - Guide mode is written as Off, Tutorial, or Always.
 - Cosmetic choices display their selected names.
-- Pause, resume, restart, save, privacy, support, and leaderboard actions all
-  have visible labels.
+- Pause, resume, restart, main menu, save, privacy, support, and leaderboard
+  actions all have visible labels.
 
 ## Remaining validation
 

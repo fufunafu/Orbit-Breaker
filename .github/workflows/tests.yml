@@ -2,14 +2,21 @@ name: Release artifact checks
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: release-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   GODOT_VERSION: 4.7.2
+  # From SHA512-SUMS.txt on the godot-builds 4.7.2-stable release.
+  GODOT_LINUX_SHA512: 9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65
 
 jobs:
   gameplay-tests:
@@ -19,7 +26,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Install Godot
         shell: bash
@@ -28,6 +35,7 @@ jobs:
           url="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/${archive}"
           mkdir -p "${RUNNER_TEMP}/godot"
           curl --fail --location --retry 3 --output "${RUNNER_TEMP}/${archive}" "${url}"
+          echo "${GODOT_LINUX_SHA512}  ${RUNNER_TEMP}/${archive}" | sha512sum --check --strict
           unzip -q "${RUNNER_TEMP}/${archive}" -d "${RUNNER_TEMP}/godot"
           mv "${RUNNER_TEMP}/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64" "${RUNNER_TEMP}/godot/godot"
           chmod +x "${RUNNER_TEMP}/godot/godot"
@@ -37,6 +45,10 @@ jobs:
         run: godot --version
 
       - name: Disable the iOS Game Center extension on Linux
+        # The extension ships iOS and macOS binaries only. Hiding the manifest keeps
+        # Godot from logging a missing-library error that the log gate below would
+        # treat as a failure. The game's Game Center service degrades safely when
+        # the classes are absent, which is the path the headless tests exercise.
         shell: bash
         run: |
           extension="addons/GodotApplePluginsGameCenter/godot_apple_plugins_game_center.gdextension"
@@ -57,7 +69,7 @@ jobs:
 
       - name: Upload Godot logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: godot-test-logs
           path: |
@@ -68,30 +80,17 @@ jobs:
   validate-release-artifacts:
     name: Validate release artifacts
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Install preview inspection tools
         shell: bash
         run: |
           sudo apt-get update -q
           sudo apt-get install --no-install-recommends -y ffmpeg
-
-      - name: Validate TestFlight CSV
-        shell: bash
-        run: |
-          ruby -rcsv -e '
-            rows = CSV.read("docs/TESTFLIGHT_SESSION_LOG.csv")
-            abort "missing CSV header" if rows.empty?
-            widths = rows.map(&:length).uniq
-            abort "inconsistent CSV row widths: #{widths.inspect}" unless widths.length == 1
-            abort "duplicate CSV headers" unless rows[0].uniq.length == rows[0].length
-            abort "unexpected TestFlight field count" unless rows[0].length == 51
-            puts "CSV valid: #{rows[0].length} fields"
-          '
 
       - name: Validate TestFlight analysis
         shell: bash
@@ -101,6 +100,10 @@ jobs:
             docs/TESTFLIGHT_SESSION_LOG.csv \
             "${RUNNER_TEMP}/TESTFLIGHT_REPORT.md"
           diff -u docs/TESTFLIGHT_REPORT.md "${RUNNER_TEMP}/TESTFLIGHT_REPORT.md"
+
+      - name: Validate generated public pages and mirrors
+        shell: bash
+        run: ruby tools/build_site.rb --check
 
       - name: Validate README links
         shell: bash
@@ -121,6 +124,7 @@ jobs:
               "LICENSES/Godot-4.7.2-MIT.txt" => "b0435e3b3e4e55238f05f4b306f30524a1b2e20147810d436eaa554fa6855c80",
               "LICENSES/Godot-4.7.2-COPYRIGHT.txt" => "cb1980c88089573bcacd7221d777c689bb8bbd778799f24c27fca0fe5f774d6d",
               "LICENSES/Godot-Apple-Plugins-MIT.txt" => "e970596d9c06e9cf3acb706e0d9d46b240865a2c76c9cc23d5a79e38c76aaf15",
+              "LICENSES/SwiftGodot-MIT.txt" => "f398c6e4bc6fcc7c81ad2187eccd7d42e4e07ea574fe66d41291de776f68f7be",
               "LICENSES/Godot-MCP-AGPL-3.0-or-later.txt" => "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
               "addons/godot-mcp/plugin.gd" => "36b4d54ee0fce22c39ba15eafe12a08bdf4aa0a82e39c4e3047d1a414d2efabe",
               "addons/godot-mcp/runtime_bridge.gd" => "fdf672bdde04aaeb24a9a003839f6ba4585debec8e33ac87037960e5e726b086",
@@ -135,6 +139,7 @@ jobs:
               4.7.2-stable
               3781b9c19eaf69b2387eacecf4b6f88fc8d07e65
               cd5da3c7afed9f37a2480f3f73b500fb92cc05c5
+              SwiftGodot
               AGPL-3.0-or-later
               Creative-Commons-Zero
             ]
@@ -152,7 +157,9 @@ jobs:
             required = {
               "iOS 17 target" => %q(application/min_ios_version="17.0"),
               "Game Center entitlement" => "entitlements/game_center=true",
-              "Files app export access" => "user_data/accessible_from_files_app=true",
+              "Files app document access" => "user_data/accessible_from_files_app=true",
+              "Files app sharing access" => "user_data/accessible_from_itunes_sharing=true",
+              "push notifications disabled" => %q(entitlements/push_notifications="Disabled"),
               "iPhone-only device family" => "application/targeted_device_family=0",
               "automatic development signing" => %q(application/code_sign_identity_release="Apple Development"),
               "bundled third-party notices" => %q(include_filter="LICENSE,THIRD_PARTY_NOTICES.md,LICENSES/*"),
@@ -248,7 +255,7 @@ jobs:
       - name: Reject em dashes in release text
         shell: bash
         run: |
-          if grep -RIn --include='*.md' --include='*.txt' '—' README.md LICENSE docs marketing; then
+          if grep -RIn '—' README.md LICENSE PRIVACY.md SUPPORT.md THIRD_PARTY_NOTICES.md docs marketing; then
             echo "Release text contains an em dash."
             exit 1
           fi

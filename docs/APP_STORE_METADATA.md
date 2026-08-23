@@ -1,10 +1,12 @@
 # Orbit Breaker App Store metadata
 
 Status: Release-candidate draft<br>
-Primary language: English (Canada) or English (U.S.), to be confirmed<br>
-Last repository audit: 2026-08-20
+Primary language: English (Canada)<br>
+Last repository audit: 2026-08-23
 
 Do not paste claims marked **Pending** into App Store Connect until their checklist gates are complete.
+
+This file is the single source for store copy. `marketing/app-store-metadata.md` only maps the captured screenshots to this copy; `marketing/game-center-configuration.md` holds the Game Center component setup and must match the tables below.
 
 ## Product identity
 
@@ -13,7 +15,7 @@ Do not paste claims marked **Pending** into App Store Connect until their checkl
 | App name | Orbit Breaker | 30 characters maximum |
 | Bundle identifier | `com.antonio.orbitbreaker` | Must match the signed build and App Store record |
 | Version | 1.0 | Confirm before upload |
-| Copyright | 2026 Fuanne Gao | Confirm it matches the App Store seller record |
+| Copyright | 2026 15041074 Canada Inc | Matches the Apple Distribution signing identity and App Store seller record |
 | Primary category | Games | Recommended |
 | Primary game subcategory | Action | Available in the current App Store Connect form |
 | Secondary game subcategory | Casual | Available in the current App Store Connect form |
@@ -63,7 +65,7 @@ FEATURES
 • Clear end-of-run statistics and failure feedback
 • All-time, weekly, and daily Game Center competition
 • Game Center achievements for orbital milestones
-• Unlockable ship colors, trails, and planet themes earned through skill
+• Unlockable ship colours, trails, and planet themes earned through skill
 • Three distinct space zones as your score rises
 • Adaptive music and responsive sound and haptic feedback
 • Sound, music, haptic, reduced-motion, high-contrast, and guide settings
@@ -78,7 +80,7 @@ The route is clear. The timing is yours.
 Recommended keyword string:
 
 ```text
-arcade,space,orbit,one tap,high score,daily challenge,leaderboard,reflex,skill,neon
+arcade,space,planets,one tap,high score,daily challenge,leaderboard,reflex,skill,neon
 ```
 
 Validation rules:
@@ -112,8 +114,8 @@ To begin a run:
 2. Tap Classic for a normal run or Daily for the UTC daily challenge.
 3. Tap while the ship orbits to launch along its current tangent.
 4. Land on the highlighted planet. The inner target area awards a perfect landing and raises the combo.
-5. Use the pause button to test resume, restart, and settings.
-6. After a failure, use Replay Now for an immediate restart or Save Score Card to write a PNG inside the app's local storage.
+5. Use the pause button to test resume, restart, settings, and Main Menu.
+6. After a failure, use Replay Now for an immediate restart, Main Menu to change modes, or Save Score Card to write a PNG to the app's Documents folder, which is visible in the Files app.
 
 Game Center authentication is requested through Apple's Game Center interface. The game remains playable if Game Center is unavailable or the player is not authenticated. Leaderboards and achievements require the reviewer to use a Game Center-enabled device and account.
 
@@ -127,7 +129,7 @@ No special hardware is required. Haptics are available on supported physical dev
 
 These are preparation notes, not a substitute for completing Apple's current questionnaire against the final build.
 
-- Cartoon or fantasy violence: likely None. The ship can collide with stylized hazards, but there are no characters, weapons, injuries, or depictions of harm.
+- Cartoon or fantasy violence: None. The ship can collide with stylized hazards, but there are no characters, weapons, injuries, or depictions of harm.
 - Realistic violence: None observed.
 - Profanity or crude humour: None observed.
 - Horror or fear themes: None observed.
@@ -140,6 +142,8 @@ These are preparation notes, not a substitute for completing Apple's current que
 - Location sharing: None observed.
 - Game Center: leaderboards and achievements are present and should be disclosed wherever the questionnaire asks about online or social game features.
 
+Expected result: **4+**. App Store Connect currently shows a 12+ rating saved on 2026-08-20, which does not follow from these answers; re-answer the questionnaire in App Store Connect so the saved rating becomes 4+ before submission.
+
 Re-audit the final binary and every bundled SDK before submitting these answers.
 
 ## Game Center configuration
@@ -148,9 +152,11 @@ Re-audit the final binary and every bundled SDK before submitting these answers.
 
 | Reference name | Identifier in code | Configuration | Sort | Submission gate |
 | --- | --- | --- | --- | --- |
-| All-Time High Score | `com.antonio.orbitbreaker.highscore` | Classic, never resets | High to low, integer score | Create, localize, test, and submit with the app version |
-| Weekly High Score | `com.antonio.orbitbreaker.weekly` | Recurring every 7 days | High to low, integer score | Confirm recurrence start day and UTC time |
-| Daily Challenge | `com.antonio.orbitbreaker.daily` | Recurring every 24 hours | High to low, integer score | Start each occurrence at 00:00 UTC to match the in-game date key |
+| Orbit Breaker All Time | `com.antonio.orbitbreaker.highscore` | Classic, never resets | High to low, integer score | Create, localize, test, and submit with the app version |
+| Orbit Breaker Weekly | `com.antonio.orbitbreaker.weekly` | Recurring every 7 days | High to low, integer score | Confirm recurrence start day and UTC time |
+| Orbit Breaker Daily | `com.antonio.orbitbreaker.daily` | Recurring every 24 hours | High to low, integer score | Start each occurrence at 00:00 UTC to match the in-game date key |
+
+Every completed run posts to the all-time and weekly boards; Daily Challenge runs also post to the daily board.
 
 Suggested localized title format:
 
@@ -165,8 +171,8 @@ Suggested localized title format:
 | Reference name | Identifier in code | Suggested points | Pre-earned description | Earned description |
 | --- | --- | ---: | --- | --- |
 | Perfect Ten | `com.antonio.orbitbreaker.perfect10` | 25 | Complete 10 perfect landings. | You completed 10 perfect landings. |
-| Maximum Burn | `com.antonio.orbitbreaker.combo5` | 25 | Reach a 5x combo. | You reached a 5x combo. |
-| Planet Runner | `com.antonio.orbitbreaker.planets50` | 50 | Land on 50 planets across all runs. | You landed on 50 planets. |
+| Maximum Burn | `com.antonio.orbitbreaker.combo5` | 25 | Reach a 5x combo in one run. | You reached maximum burn with a 5x combo. |
+| Planet Runner | `com.antonio.orbitbreaker.planets50` | 50 | Land on 50 planets across all runs. | You landed on 50 planets and carried the signal onward. |
 
 The prepared achievement images are 1024 by 1024 RGB PNG files at 72 ppi without alpha. They are stored in `marketing/game-center-achievements/` and mapped in `marketing/game-center-configuration.md`.
 
@@ -180,11 +186,11 @@ Orbit Breaker is a one-tap orbital arcade game. Time each launch, land on the hi
 
 ### What to test
 
-Please complete at least five runs. On your first run, do not ask for instructions. Tell us whether the first launch made sense, whether each failure reason was clear, and whether Replay Now felt immediate. Try Classic and Daily modes, change at least one accessibility setting, save a score card, and open Game Center leaderboards. Report any crash, progress loss, incorrect daily layout, failed Game Center submission, unreadable text, delayed input, or severe frame-rate drop.
+Please complete at least five runs. On your first run, do not ask for instructions. Tell us whether the first launch made sense, whether each failure reason was clear, and whether Replay Now felt immediate. Try Classic and Daily modes, change at least one accessibility setting, save a score card and confirm it appears in Files, and open Game Center leaderboards. Report any crash, progress loss, incorrect daily layout, failed Game Center submission, unreadable text, delayed input, or severe frame-rate drop.
 
 ### Feedback email
 
-Enter the account holder's monitored feedback address directly in App Store Connect. The public issue tracker remains available at https://github.com/fufunafu/Orbit-Breaker/issues.
+Use fuannegao25@gmail.com, which is also published on the support and privacy pages. The public issue tracker remains available at https://github.com/fufunafu/Orbit-Breaker/issues.
 
 ## Localization plan
 

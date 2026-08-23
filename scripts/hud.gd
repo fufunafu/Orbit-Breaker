@@ -8,6 +8,7 @@ signal share_requested
 signal pause_requested
 signal resume_requested
 signal restart_requested
+signal menu_requested
 signal leaderboards_requested
 signal setting_changed(key: String, value: Variant)
 signal cosmetic_cycle_requested(category: String)
@@ -147,7 +148,7 @@ func _build_tutorial() -> void:
 
 
 func _build_game_over() -> void:
-	game_over_panel = _make_panel(Vector2(780.0, 860.0), Vector2(-390.0, -430.0))
+	game_over_panel = _make_panel(Vector2(780.0, 940.0), Vector2(-390.0, -470.0))
 	add_child(game_over_panel)
 	var box := VBoxContainer.new()
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -175,13 +176,17 @@ func _build_game_over() -> void:
 	var leaderboard_button := _make_button("LEADERBOARDS", 25, Vector2(620.0, 64.0))
 	leaderboard_button.pressed.connect(func() -> void: leaderboards_requested.emit())
 	box.add_child(leaderboard_button)
+	var menu_button := _make_button("MAIN MENU", 25, Vector2(620.0, 64.0))
+	menu_button.name = "MenuButton"
+	menu_button.pressed.connect(func() -> void: menu_requested.emit())
+	box.add_child(menu_button)
 	share_status_label = _make_label("", 20, Color("8fffd4"), HORIZONTAL_ALIGNMENT_CENTER)
 	box.add_child(share_status_label)
 	game_over_panel.visible = false
 
 
 func _build_pause() -> void:
-	pause_panel = _make_panel(Vector2(650.0, 470.0), Vector2(-325.0, -235.0))
+	pause_panel = _make_panel(Vector2(650.0, 560.0), Vector2(-325.0, -280.0))
 	add_child(pause_panel)
 	var box := VBoxContainer.new()
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -197,6 +202,10 @@ func _build_pause() -> void:
 	var settings_button := _make_button("SETTINGS", 27, Vector2(520.0, 68.0))
 	settings_button.pressed.connect(show_settings)
 	box.add_child(settings_button)
+	var menu_button := _make_button("MAIN MENU", 25, Vector2(520.0, 64.0))
+	menu_button.name = "MenuButton"
+	menu_button.pressed.connect(func() -> void: menu_requested.emit())
+	box.add_child(menu_button)
 	pause_panel.visible = false
 
 
@@ -235,7 +244,7 @@ func _build_settings() -> void:
 		button.pressed.connect(func() -> void: cosmetic_cycle_requested.emit(category))
 		loadout_buttons[category] = button
 		box.add_child(button)
-	var metrics_button := _make_button("EXPORT PLAYTEST REPORT", 23, Vector2(650.0, 62.0))
+	var metrics_button := _make_button("EXPORT GAMEPLAY STATS", 23, Vector2(650.0, 62.0))
 	metrics_button.pressed.connect(func() -> void: export_metrics_requested.emit())
 	box.add_child(metrics_button)
 	var legal_row := HBoxContainer.new()
@@ -385,7 +394,9 @@ func hide_settings() -> void:
 
 func update_settings(profile: Dictionary) -> void:
 	for key in ["sound_enabled", "music_enabled", "haptics_enabled", "reduced_motion", "reduced_screen_shake", "high_contrast"]:
-		(settings_controls[key] as CheckButton).button_pressed = bool(profile[key])
+		# set_pressed_no_signal: a plain assignment emits toggled, which would
+		# re-enter the game's setting handler and rewrite the save file.
+		(settings_controls[key] as CheckButton).set_pressed_no_signal(bool(profile[key]))
 	var guide_names := ["OFF", "TUTORIAL", "ALWAYS"]
 	(settings_controls.guide_mode as Button).text = "GUIDE: %s" % guide_names[clampi(int(profile.guide_mode), 0, 2)]
 	loadout_buttons.ship.text = "SHIP: %s" % CosmeticCatalog.find_item(CosmeticCatalog.SHIP_COLORS, String(profile.selected_ship_color)).name
@@ -415,8 +426,10 @@ func show_tip(text_value: String, duration: float = 2.4) -> void:
 	tip_tween.tween_callback(func() -> void: tip_label.visible = false)
 
 
-func show_share_status(path: String) -> void:
-	if OS.get_name() == "iOS":
+func show_share_status(path: String, success: bool = true) -> void:
+	if not success:
+		share_status_label.text = "UNABLE TO SAVE SCORE CARD"
+	elif OS.get_name() == "iOS":
 		share_status_label.text = "SCORE CARD SAVED TO FILES\nON MY IPHONE > ORBIT BREAKER"
 	else:
 		share_status_label.text = "SCORE CARD SAVED\n%s" % path

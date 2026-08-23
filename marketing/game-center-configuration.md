@@ -12,6 +12,10 @@ Enable Game Center for bundle identifier `com.antonio.orbitbreaker` in Certifica
 
 Use integer points with a minimum score of 0. Set the all-time leaderboard as default.
 
+Every completed run posts to the all-time and weekly boards. Daily Challenge
+runs additionally post to the daily board, so a Daily score can also become a
+player's all-time or weekly best.
+
 ### Daily version compatibility
 
 Version 1 uses the three identifiers above for every 1.x build whose scoring,

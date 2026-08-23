@@ -24,6 +24,22 @@ Source: <https://github.com/migueldeicaza/GodotApplePlugins/tree/3781b9c19eaf69b
 The exact upstream license is included in
 [LICENSES/Godot-Apple-Plugins-MIT.txt](LICENSES/Godot-Apple-Plugins-MIT.txt).
 
+## SwiftGodot
+
+The Godot Apple Plugins frameworks depend on the SwiftGodot runtime by Miguel
+de Icaza and contributors, distributed under the MIT License. The runtime is
+bundled as `SwiftGodotRuntime.xcframework` in
+`addons/GodotApplePluginsRuntime` and embedded in iOS builds. It links the
+Swift standard library and runtime, which Apple distributes with Xcode under
+the Apache License 2.0 with Runtime Library Exception.
+
+Copyright (c) 2020-2024 Miguel de Icaza.
+
+Source: <https://github.com/migueldeicaza/SwiftGodot>
+
+The exact upstream license is included in
+[LICENSES/SwiftGodot-MIT.txt](LICENSES/SwiftGodot-MIT.txt).
+
 ## Godot MCP
 
 The development-only Godot MCP editor addon is an unmodified copy of
@@ -54,8 +70,8 @@ License: <https://creativecommons.org/publicdomain/zero/1.0/>
 
 ## Release inventory audit
 
-The final tracked release inventory was audited on August 21, 2026. The only
-third-party executable code is Godot Engine, Godot Apple Plugins, and the
-development-only Godot MCP addon described above. The five Kenney effects are
+The final tracked release inventory was audited on August 23, 2026. The only
+third-party executable code is Godot Engine, Godot Apple Plugins, the SwiftGodot
+runtime, and the development-only Godot MCP addon described above. The five Kenney effects are
 the only third-party media. The music layers, game code, scenes, generated
 marketing media, and branding are original project material.

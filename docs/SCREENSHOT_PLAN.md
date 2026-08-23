@@ -1,8 +1,9 @@
 # Orbit Breaker App Store screenshot and preview plan
 
-Status: Shot list ready, final capture pending release-candidate lock<br>
+Status: Four screenshots captured from the release source; four optional additions listed<br>
 Target platform: iPhone, portrait<br>
-Planned screenshots: 8
+Captured screenshots: 4 (`marketing/screenshots/01-home.png` through `04-score-card.png`)<br>
+Capture tool: `tools/capture_marketing.gd`, which refuses to save a capture whose size differs from 1320 by 2868
 
 ## Capture gate
 
@@ -38,7 +39,17 @@ Recheck Apple's live specifications immediately before capture and upload.
 - Keep the player score plausible and internally consistent.
 - Avoid claims such as best, number one, free, or multiplayer unless they are accurate and approved.
 
+## Captured set
+
+The four shipping captures and the feature each one carries are listed in
+[marketing/app-store-metadata.md](../marketing/app-store-metadata.md). They map
+to sequence items 1, 2, 4, and 8 below and were reviewed visually on August 20,
+2026. Captions are not baked into the images.
+
 ## Screenshot sequence
+
+Items 3, 5, 6, and 7 are optional additions for a later update; they are not
+part of the 1.0 submission.
 
 ### 1. One tap breaks orbit
 
@@ -161,7 +172,7 @@ orbit-breaker_en-CA_6.9_01_core_1320x2868.png
 
 | Asset set | Portrait size | Required action |
 | --- | --- | --- |
-| 6.9-inch iPhone | 1320 by 2868 preferred, or another currently accepted size | Produce all 8 images |
+| 6.9-inch iPhone | 1320 by 2868 | Four images captured; optional additions use the same size |
 | 6.5-inch iPhone | 1284 by 2778 or 1242 by 2688 | Produce only if release strategy or App Store Connect requires it |
 | Smaller supported iPhone layouts | Current accepted dimensions for each requested display class | Validate UI even if App Store scales another set |
 

@@ -13,7 +13,7 @@ const TRAILS := [
 ]
 const PLANET_THEMES := [
 	{"id": "cosmic", "name": "COSMIC", "zone": 0},
-	{"id": "nebula", "name": "NEBULA", "zone": 1},
+	{"id": "nebula", "name": "NOVA DRIFT", "zone": 1},
 	{"id": "sunforge", "name": "SUNFORGE", "zone": 2},
 ]
 

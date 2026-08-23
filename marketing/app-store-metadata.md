@@ -1,67 +1,29 @@
-# App Store metadata
+# App Store product page assets
 
-## Name
+All store copy (name, subtitle, promotional text, description, keywords, URLs,
+review notes, age-rating notes, and Game Center text) lives in
+[docs/APP_STORE_METADATA.md](../docs/APP_STORE_METADATA.md). Do not duplicate
+that copy here.
 
-Orbit Breaker
+## Captured screenshots
 
-## Subtitle
+The shipping set is the four raw 1320 by 2868 captures in
+`marketing/screenshots/`, produced by `tools/capture_marketing.gd` from the
+release source. They contain no caption overlays; the listing copy tells the
+feature story.
 
-One Tap. Perfect Orbit.
+| Order | File | Game state | Feature shown |
+| --- | --- | --- | --- |
+| 1 | `01-home.png` | Ready screen with Classic, Daily Challenge, Loadout + Settings, and Leaderboards | One-tap premise and both modes |
+| 2 | `02-perfect-launch.png` | Early Classic run with the guide on the perfect zone and the tutorial visible | Timing the perfect launch |
+| 3 | `03-nova-hazards.png` | Nova Drift zone at a 5x combo with an asteroid and a pulse mine | Hazards, combos, and zone progression |
+| 4 | `04-score-card.png` | End-of-run summary with New Best, statistics, failure reason, and actions | Replay loop and clear feedback |
 
-## Promotional text
+The detailed capture plan, optional additional shots, and the preview video
+outline are in [docs/SCREENSHOT_PLAN.md](../docs/SCREENSHOT_PLAN.md).
 
-One tap decides everything. Read the orbit, launch at the right instant, and climb from the Ion Veil to the Sunforge.
+## App preview
 
-## Description
-
-One tap. One launch window. How high can you climb?
-
-Orbit Breaker is a fast portrait arcade game about reading motion and committing at exactly the right moment. Your ship circles each planet automatically. Tap to break orbit, cross open space, and land on the highlighted world above.
-
-Hit the perfect zone to raise your combo and score faster. Miss the planet, strike an asteroid, or get caught in a pulse mine and the run ends immediately. Every attempt teaches you to read the angle a little better, and Replay Now gets you back into orbit without delay.
-
-FEATURES
-
-• Simple one-tap play with precise, skill-based timing
-• Perfect landings and combos up to 5x
-• Classic endless runs and a shared UTC daily challenge
-• Clear end-of-run statistics and failure feedback
-• All-time, weekly, and daily Game Center competition
-• Game Center achievements for orbital milestones
-• Unlockable ship colors, trails, and planet themes earned through skill
-• Three distinct space zones as your score rises
-• Adaptive music and responsive sound and haptic feedback
-• Sound, music, haptic, reduced-motion, high-contrast, and guide settings
-• Pause, restart, immediate replay, and locally saved score cards
-
-There is no grinding for currency. New looks are unlocked by reaching meaningful skill milestones, including perfect landings, high combos, and total planets reached.
-
-The route is clear. The timing is yours.
-
-## Keywords
-
-arcade,space,orbit,one tap,high score,daily challenge,leaderboard,reflex,skill,neon
-
-## Category
-
-- Primary: Games, Action and Casual
-- Secondary: Entertainment
-
-## Age rating notes
-
-No violence, gambling, user-generated content, advertising, or unrestricted web access. Hazards are abstract geometric space objects.
-
-## Privacy summary
-
-- Data linked to the user: Game Center data managed by Apple
-- Tracking: none
-- Developer analytics transmission: none
-- Local gameplay metrics: stored only on device unless the tester explicitly exports them
-
-## Product page sequence
-
-1. One-tap launch with the copy “TIME THE PERFECT LAUNCH”
-2. A 5x combo in the nebula zone with “CHAIN PERFECT LANDINGS”
-3. Daily mode with “THE SAME CHALLENGE FOR EVERYONE”
-4. Asteroids and pulse mines with “SURVIVE THE DEEP ORBIT”
-5. Loadout screen with “UNLOCK YOUR SIGNAL”
+`marketing/app-preview.mp4` follows the storyboard in
+[app-preview-storyboard.md](app-preview-storyboard.md). CI validates its
+duration, resolution, codec, frame rate, and bit rate.

@@ -1,2 +1,88 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Orbit Breaker Privacy</title><style>body{max-width:760px;margin:auto;padding:48px 24px;background:#030615;color:#eaffff;font:17px system-ui;line-height:1.65}a{color:#75f8ff}</style></head><body><h1>Privacy Policy</h1><p>Effective August 20, 2026.</p><p>Developer: Fuanne Gao.</p><p>Orbit Breaker works without a developer account and does not send personal information or gameplay analytics to developer servers.</p><h2>Local data</h2><p>Scores, progression, cosmetic choices, settings, daily challenge results, and aggregate playtest metrics remain on your device unless you explicitly export them.</p><h2>Game Center</h2><p>If enabled, Apple processes player identity, leaderboard scores, and achievements under Apple’s privacy terms. Orbit Breaker never receives Apple ID credentials.</p><h2>Tracking and device access</h2><p>The game contains no ads, cross-app tracking, location access, contact access, camera access, microphone access, photo access, or sale of personal information.</p><h2>Deletion</h2><p>Deleting the app removes its local data. Offloading preserves documents and data for a later reinstall. Manage Game Center data through Apple services.</p><p><a href="support.html">Contact support</a> with privacy questions.</p></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="How the Orbit Breaker iPhone game handles local game data, Game Center, and TestFlight information.">
+<title>Orbit Breaker Privacy Policy</title>
+<style>body{margin:0;background:#030615;color:#eaffff;font:17px system-ui,-apple-system,sans-serif;line-height:1.65}
+main{max-width:760px;margin:auto;padding:48px 24px}
+h1{font-size:38px;line-height:1.15;color:#75f8ff}
+h2{margin-top:2em;font-size:24px;color:#75f8ff}
+h3{margin-top:1.5em;font-size:19px}
+a{color:#ff78e8}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.92em;background:#0d1b33;padding:0 4px;border-radius:4px}
+nav{max-width:760px;margin:auto;padding:0 24px 48px;font-size:15px}
+nav a{margin-right:20px}</style>
+</head>
+<body>
+<main>
+<h1>Orbit Breaker Privacy Policy</h1>
+<p>Effective date: August 23, 2026<br> Developer: Fuanne Gao, 15041074 Canada Inc<br> Contact: <a href="mailto:fuannegao25@gmail.com">fuannegao25@gmail.com</a> or the <a href="https://fufunafu.github.io/Orbit-Breaker/support.html">Orbit Breaker support page</a></p>
+<p>This Privacy Policy explains how Orbit Breaker handles information when you use the iOS application.</p>
+<h2>Summary</h2>
+<p>Orbit Breaker does not currently include advertising, an app-specific account system, developer-operated analytics, or a developer-operated online service. Game progress and preferences are stored locally on your device. If you use Game Center, Apple processes Game Center information and Orbit Breaker submits gameplay results to that service.</p>
+<p>This summary was rechecked on August 23, 2026 against the release source, the export configuration, the generated privacy manifest, and all bundled third-party software.</p>
+<h2>Information stored on your device</h2>
+<p>Orbit Breaker stores a local game profile so that progress and preferences remain available between sessions. The profile may include:</p>
+<ul>
+<li>Best score and daily best score</li>
+<li>Total landings and total perfect landings</li>
+<li>Highest combo, completed-run count, and restart count</li>
+<li>Tutorial-completion status</li>
+<li>Unlocked and selected ship colours, trails, and planet themes</li>
+<li>Sound, music, haptic, reduced-motion, high-contrast, and trajectory-guide settings</li>
+<li>The UTC date associated with the locally stored daily best score</li>
+</ul>
+<p>The app also records aggregate gameplay statistics in every build: completed runs, run length, restart count, score ranges, first-landing success, and failure reasons. These statistics contain no identifiers and are never transmitted automatically. You can export them as a file with <strong>Export Gameplay Stats</strong> in Loadout + Settings and choose whether to share that file.</p>
+<p>These files live in the app&#39;s Documents folder:</p>
+<ul>
+<li><code>save.cfg</code>: the game profile listed above</li>
+<li><code>playtest_metrics.json</code>: the aggregate gameplay statistics</li>
+<li><code>orbit-breaker-score-*.png</code>: score-card images you save</li>
+<li><code>orbit-breaker-gameplay-stats.json</code>: the exported statistics report</li>
+</ul>
+<p>The Documents folder is visible in the Files app under <strong>On My iPhone &gt; Orbit Breaker</strong>, where you can view, copy, or delete any of these files. Because the folder is part of the app&#39;s data, iOS includes it in device and iCloud backups unless you exclude the app from backups in iOS Settings. The developer does not receive any of this information through a developer-operated server in the current version.</p>
+<h2>Score-card images</h2>
+<p>When you choose Save Score Card, Orbit Breaker creates a PNG image from the game view and saves it in the app&#39;s Documents folder. The current version does not automatically upload the image or send it to another person or service. Any later sharing or copying that you perform through the Files app or other system tools is controlled by you and the relevant service provider.</p>
+<h2>Daily challenge</h2>
+<p>The daily challenge uses the current UTC date to calculate a deterministic layout seed. The planet and hazard sequence is generated on the device. The layout itself is not downloaded from a developer-operated server in the current version.</p>
+<p>If you submit a Daily Challenge score through Game Center, the score is handled as described below.</p>
+<h2>Game Center</h2>
+<p>Orbit Breaker can use Apple Game Center for authentication, leaderboards, and achievements. When Game Center is available and you are signed in, the app may submit:</p>
+<ul>
+<li>Classic and Daily Challenge scores</li>
+<li>Progress toward achievements based on perfect landings, highest combo, and total landings</li>
+</ul>
+<p>Game Center is operated by Apple. Apple may process your Game Center account information, player identifier, scores, achievements, friends, device information, and related service data under Apple&#39;s terms and privacy policies. Orbit Breaker does not store your Game Center account credentials.</p>
+<p>You can manage Game Center through your Apple device settings. If Game Center is unavailable or you are not authenticated, the core game remains playable and online scores and achievements are not submitted.</p>
+<p>Apple privacy information: https://www.apple.com/legal/privacy/</p>
+<h2>TestFlight</h2>
+<p>If you use a beta version through TestFlight, Apple may provide the developer with TestFlight information such as device model, operating-system version, sessions, crashes, and feedback that you choose to submit. Apple controls TestFlight collection and processing. Information the developer receives through TestFlight is used to test the app, investigate defects, and improve reliability and usability.</p>
+<p>Do not enter personal or sensitive information in free-form beta feedback unless it is necessary for support.</p>
+<h2>Analytics, advertising, and tracking</h2>
+<p>The repository audited on 2026-08-23 does not include a developer-operated analytics service, advertising SDK, or cross-app tracking system. Orbit Breaker does not request permission to track users across apps or websites in that audited version.</p>
+<p>This section must be updated before release if analytics, crash reporting, advertising, attribution, account services, cloud saves, or any other data-collecting SDK is added.</p>
+<h2>Data sharing</h2>
+<p>The developer does not sell the local game profile or score-card images. Data submitted to Game Center or generated through TestFlight is handled by Apple as described above. The developer may disclose information when required by applicable law or when reasonably necessary to protect users, rights, or service security.</p>
+<h2>Retention and deletion</h2>
+<p>Local game data remains in the app&#39;s Documents folder until you delete individual files through the Files app or delete the app. Offloading the app keeps its documents and data for a later reinstall. Restoring a device or app from an iCloud or computer backup may restore an earlier copy of these files.</p>
+<p>To manage or delete Game Center data, use the controls Apple provides for your Apple Account and Game Center. For privacy questions concerning information directly held by the developer, email <a href="mailto:fuannegao25@gmail.com">fuannegao25@gmail.com</a>. The developer cannot delete information controlled solely by Apple.</p>
+<h2>Children</h2>
+<p>Orbit Breaker is not designed to collect personal information directly from children through a developer-operated service. Game Center availability and account features are controlled by Apple, including applicable family and child-account settings. App Store Connect privacy answers must remain consistent with this policy and the saved age rating.</p>
+<h2>Security</h2>
+<p>Orbit Breaker limits local data to gameplay progress and preferences. No method of electronic storage is completely secure, but the app does not currently transmit that local profile to a developer-operated server.</p>
+<h2>International use</h2>
+<p>Apple may process Game Center and TestFlight information in locations described in Apple&#39;s privacy materials. The developer does not currently operate separate servers for Orbit Breaker.</p>
+<h2>Changes to this policy</h2>
+<p>This policy may be updated when the app&#39;s features, data practices, third-party services, or legal requirements change. The published policy will display an updated effective date. Material changes should be reflected in App Store Connect privacy answers before the corresponding app version is released.</p>
+<h2>Contact</h2>
+<p>For privacy questions, contact:</p>
+<p>Fuanne Gao, 15041074 Canada Inc<br> Email: <a href="mailto:fuannegao25@gmail.com">fuannegao25@gmail.com</a><br> <a href="https://fufunafu.github.io/Orbit-Breaker/support.html">Orbit Breaker support</a></p>
+<h2>Release audit record</h2>
+<p>The prepared release IPA contains no advertising, analytics, attribution, developer account, or developer-operated networking SDK. Its privacy manifest declares the required-reason file timestamp, system boot time, and disk-space APIs and declares tracking as disabled. The app submits only scores and achievement progress to Apple Game Center after authentication. Score cards and gameplay statistics remain local unless the user chooses to share them. The published policy and App Store Connect answers must be updated if any of these facts change.</p>
+<p>Apple requires a privacy-policy URL for iOS apps and requires developers to disclose their own and integrated third parties&#39; data practices accurately. See https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy/</p>
+</main>
+<nav><a href="index.html">Orbit Breaker</a><a href="support.html">Support</a><a href="privacy.html">Privacy policy</a></nav>
+</body>
+</html>

@@ -1,2 +1,135 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Orbit Breaker Support</title><style>body{max-width:760px;margin:auto;padding:48px 24px;background:#030615;color:#eaffff;font:17px system-ui;line-height:1.65}a{color:#75f8ff}</style></head><body><h1>Support</h1><p>Wait until the trajectory guide reaches the glowing target, then tap to launch. A double target ring marks a perfect landing.</p><p>Saved score cards and exported playtest reports are available in Files &gt; On My iPhone &gt; Orbit Breaker.</p><p>Deleting the app removes its local progress, settings, and score cards. Offloading the app preserves its documents and data for a later reinstall.</p><p>For technical help, <a href="https://github.com/fufunafu/Orbit-Breaker/issues">open a GitHub issue</a> with your iPhone model, iOS version, app version, and reproduction steps.</p><p>TestFlight testers can use Send Beta Feedback in TestFlight.</p><p><a href="privacy.html">Privacy policy</a></p></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Gameplay help, troubleshooting, and how to report a problem with the Orbit Breaker iPhone game.">
+<title>Orbit Breaker Support</title>
+<style>body{margin:0;background:#030615;color:#eaffff;font:17px system-ui,-apple-system,sans-serif;line-height:1.65}
+main{max-width:760px;margin:auto;padding:48px 24px}
+h1{font-size:38px;line-height:1.15;color:#75f8ff}
+h2{margin-top:2em;font-size:24px;color:#75f8ff}
+h3{margin-top:1.5em;font-size:19px}
+a{color:#ff78e8}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.92em;background:#0d1b33;padding:0 4px;border-radius:4px}
+nav{max-width:760px;margin:auto;padding:0 24px 48px;font-size:15px}
+nav a{margin-right:20px}</style>
+</head>
+<body>
+<main>
+<h1>Orbit Breaker Support</h1>
+<p>Public support: https://fufunafu.github.io/Orbit-Breaker/support.html<br> App version: 1.0</p>
+<h2>How to play</h2>
+<p>Orbit Breaker is a one-tap timing game.</p>
+<ol>
+<li>Choose Classic or Daily from the ready screen.</li>
+<li>Watch your ship orbit the current planet.</li>
+<li>Tap when its tangent points toward the highlighted target planet.</li>
+<li>Land inside the inner target area for a perfect landing and a larger combo.</li>
+<li>Keep climbing until you miss or hit a hazard.</li>
+</ol>
+<p>The trajectory guide can be set to Off, Tutorial, or Always in Settings.</p>
+<h2>Controls</h2>
+<ul>
+<li>Tap while orbiting: launch</li>
+<li>Pause button: pause the active run</li>
+<li>Resume: continue a paused run</li>
+<li>Restart: immediately begin the current mode again</li>
+<li>Replay Now: restart after game over</li>
+<li>Main Menu: leave the current run or summary and return to mode selection</li>
+<li>Save Score Card: save a PNG image to <strong>Files &gt; On My iPhone &gt; Orbit Breaker</strong></li>
+<li>Leaderboards: open Game Center leaderboards when Game Center is available</li>
+</ul>
+<h2>Settings</h2>
+<p>Orbit Breaker includes controls for:</p>
+<ul>
+<li>Sound effects</li>
+<li>Music</li>
+<li>Haptics</li>
+<li>Reduced motion and screen shake</li>
+<li>High-contrast trajectory guide</li>
+<li>Guide visibility</li>
+<li>Unlocked ship colour</li>
+<li>Unlocked trail</li>
+<li>Unlocked planet theme</li>
+<li>Export Gameplay Stats: write a summary of your local gameplay statistics to <strong>Files &gt; On My iPhone &gt; Orbit Breaker</strong></li>
+</ul>
+<p>Settings and unlocked items are saved locally.</p>
+<h2>Why did my run end?</h2>
+<p>The game-over panel reports the cause:</p>
+<ul>
+<li><strong>Drifted into deep space:</strong> the launch missed the target or left the playable area.</li>
+<li><strong>Struck an asteroid:</strong> the ship crossed an asteroid before reaching the target.</li>
+<li><strong>Caught in a pulse mine:</strong> the ship entered the mine&#39;s active collision radius.</li>
+<li><strong>Collided with a dead orbit:</strong> the ship struck a non-target planet or obstruction.</li>
+<li><strong>Signal timed out:</strong> the ship remained in flight beyond the allowed time.</li>
+</ul>
+<p>The same panel shows score, best score, landings, perfect landings, highest combo, unlocks, and New Best status.</p>
+<h2>Daily Challenge</h2>
+<p>The Daily Challenge changes at 00:00 UTC. Everyone using the same game version receives a layout generated from the same UTC date seed.</p>
+<p>If two players see different layouts, confirm:</p>
+<ul>
+<li>Both devices use the same Orbit Breaker version and build.</li>
+<li>Both devices have the correct date and time.</li>
+<li>Both players selected Daily rather than Classic.</li>
+<li>Neither run crossed the 00:00 UTC date boundary before restarting.</li>
+</ul>
+<h2>Game Center troubleshooting</h2>
+<p>If leaderboards or achievements do not appear:</p>
+<ol>
+<li>Confirm that the device is connected to the internet.</li>
+<li>Confirm that Game Center is enabled and signed in under iOS Settings.</li>
+<li>Restart Orbit Breaker and allow the Game Center authentication prompt to complete.</li>
+<li>Complete a run before checking whether a score was submitted.</li>
+<li>Confirm that the app is a TestFlight or App Store build with Game Center enabled.</li>
+<li>During beta testing, confirm that the required leaderboard and achievement components are active for the tested app version in App Store Connect.</li>
+</ol>
+<p>The game remains playable without Game Center, but online scores and achievement progress cannot be submitted.</p>
+<h2>Progress or settings did not save</h2>
+<p>Orbit Breaker stores progress in its local app container.</p>
+<ul>
+<li>Avoid force-quitting the app immediately after changing a setting or ending a run.</li>
+<li>Confirm that sufficient device storage is available.</li>
+<li>Deleting the app removes its local progress, settings, and saved score cards from the device. Restoring an iPhone backup may restore an earlier copy.</li>
+<li>Offloading the app keeps its documents and data so they are available after the app is reinstalled.</li>
+<li>Restoring a device or app from backup may restore older local data.</li>
+<li>If save data is invalid, the game safely starts from default progress rather than blocking play.</li>
+</ul>
+<p>There is currently no developer-operated cloud-save or account-recovery service. Apple documents the difference between offloading and deleting in <a href="https://support.apple.com/guide/iphone/manage-storage-on-iphone-iph47c931112/ios">Manage storage on iPhone</a>.</p>
+<h2>Score-card troubleshooting</h2>
+<p>Save Score Card writes an image to the app&#39;s Documents folder, which you can open in the Files app under <strong>On My iPhone &gt; Orbit Breaker</strong>. The current version does not automatically add the image to Photos and does not open the iOS share sheet; use the Files app to share, copy, or delete saved cards.</p>
+<p>If saving fails, include that fact in a bug report along with the device, iOS version, app build, and available storage. Do not send a score-card image if it contains anything you do not want included in a support message.</p>
+<h2>Audio, haptic, or motion concerns</h2>
+<ul>
+<li>Check Orbit Breaker&#39;s Sound, Music, and Haptics toggles.</li>
+<li>Check device volume, silent mode, Focus settings, and system haptic settings.</li>
+<li>Enable Reduced Motion to reduce animated background changes, disable gameplay screen shake, and turn off full-screen landing and failure flashes.</li>
+<li>Enable Reduced Screen Shake to turn off screen shake on its own.</li>
+<li>Enable High Contrast Guide if the default trajectory guide is hard to see.</li>
+<li>Set Guide to Always if you want the trajectory guide throughout every run.</li>
+</ul>
+<h2>Report a bug</h2>
+<p>Email <a href="mailto:fuannegao25@gmail.com">fuannegao25@gmail.com</a> or open an issue at https://github.com/fufunafu/Orbit-Breaker/issues with:</p>
+<ul>
+<li>Orbit Breaker version and build number</li>
+<li>iPhone model</li>
+<li>iOS version</li>
+<li>Classic or Daily mode</li>
+<li>UTC date if the issue involved Daily Challenge</li>
+<li>What you expected</li>
+<li>What happened</li>
+<li>Exact steps that reproduce the issue</li>
+<li>Failure reason displayed, if relevant</li>
+<li>Whether Game Center was signed in</li>
+<li>Accessibility settings in use</li>
+<li>Screenshot, or the exported gameplay statistics file from Files, if helpful</li>
+</ul>
+<p>Never include an Apple Account password, App Store Connect credential, provisioning profile, private key, or other secret.</p>
+<h2>Privacy</h2>
+<p>Read the <a href="https://fufunafu.github.io/Orbit-Breaker/privacy.html">Orbit Breaker Privacy Policy</a>.</p>
+<h2>Contact</h2>
+<p>Developer: Fuanne Gao, 15041074 Canada Inc<br> Email: <a href="mailto:fuannegao25@gmail.com">fuannegao25@gmail.com</a><br> Support page: https://fufunafu.github.io/Orbit-Breaker/support.html<br> Issue tracker: https://github.com/fufunafu/Orbit-Breaker/issues</p>
+</main>
+<nav><a href="index.html">Orbit Breaker</a><a href="support.html">Support</a><a href="privacy.html">Privacy policy</a></nav>
+</body>
+</html>

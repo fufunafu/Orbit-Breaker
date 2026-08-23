@@ -181,7 +181,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | Third-party SDK data practices are included | Privacy owner | SDK and dependency audit | Privacy policy covers Apple Game Center and TestFlight, and the repository has no advertising, analytics, attribution, or developer-operated account SDK |
 | READY | Score-card storage and sharing wording is accurate | Privacy owner | Device test final implementation | Code and automated save test match the privacy and support wording: local PNG only, with no automatic Photos write, share sheet, or upload; device Files check remains |
 | TODO | Export-compliance answers are complete | Release owner | App Store Connect response and any documentation |  |
-| PASS | Age-rating questionnaire is complete | Product owner | App Store Connect result | Saved on 2026-08-20; App Store Connect shows 12+ and 13+ regional results and a legacy global 12+ rating |
+| TODO | Age-rating questionnaire is complete | Product owner | App Store Connect result | Saved on 2026-08-20 as 12+, which does not match the all-None questionnaire notes in docs/APP_STORE_METADATA.md; re-answer so the result is 4+ |
 | TODO | Required legal and regional trader details are complete | Account owner | App Store Connect compliance sections | Depends on distribution regions |
 
 ## App Store product page

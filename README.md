@@ -14,16 +14,16 @@ Orbit Breaker is a fast portrait arcade game for iPhone. Tap at the right moment
 - Game Center all-time, weekly, and daily leaderboards
 - Game Center achievements
 - Original adaptive music, polished sound effects, haptics, particles, and screen feedback
-- Shareable end-of-run score cards
-- Local, privacy-preserving playtest metrics
+- Locally saved end-of-run score cards
+- Local, privacy-preserving gameplay statistics with an optional export
 
-On iPhone, saved score cards and explicitly exported playtest reports appear in **Files > On My iPhone > Orbit Breaker**. The game does not request access to the photo library.
+On iPhone, saved score cards and explicitly exported gameplay statistics appear in **Files > On My iPhone > Orbit Breaker**. The game does not request access to the photo library.
 
 ## Controls
 
 - iPhone: tap to start and launch
 - Editor: left click or Space to start and launch
-- Use the pause control during a run for resume, restart, and settings
+- Use the pause control during a run for resume, restart, settings, and the main menu
 - Open Privacy or Support from Loadout + Settings
 
 ## Requirements
@@ -54,13 +54,18 @@ If the macOS app binary is not on `PATH`, run:
 
 A successful run prints `ORBIT_BREAKER_TESTS_OK` and exits with status 0.
 
+The public privacy and support pages are generated from `docs/PRIVACY_POLICY.md`
+and `docs/SUPPORT.md`, which are also mirrored to `PRIVACY.md` and `SUPPORT.md`.
+After editing either source, run `ruby tools/build_site.rb`; CI fails if the
+generated pages or mirrors are stale.
+
 ## iOS export
 
 1. Install the matching Godot 4.7.2 iOS export templates.
 2. Open **Project > Export > iOS**.
 3. Confirm the signing team and bundle identifier.
 4. Export to `build/ios/Orbit Breaker.xcodeproj`.
-5. Run `tools/prepare_ios_export.sh build/ios` to remove empty Godot-generated entitlement and privacy keys, then validate iOS 17 and the native frameworks.
+5. Run `tools/prepare_ios_export.sh build/ios` to remove the empty Godot-generated privacy purpose strings, then validate signing, Files app access, iOS 17, and the native frameworks.
 6. Configure the Game Center identifiers listed in [Game Center configuration](marketing/game-center-configuration.md) in App Store Connect.
 7. Archive and upload the build from Xcode.
 

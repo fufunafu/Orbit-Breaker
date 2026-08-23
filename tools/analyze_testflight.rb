@@ -64,7 +64,7 @@ module TestFlightAnalysis
   module_function
 
   def load_rows(path)
-    table = CSV.read(path, headers: true)
+    table = CSV.read(path, headers: true, encoding: "bom|utf-8")
     actual_headers = table.headers || []
     unless actual_headers == HEADERS
       missing = HEADERS - actual_headers
@@ -100,7 +100,7 @@ module TestFlightAnalysis
       unless parsed_date.iso8601 == row.fetch("session_date_utc")
         raise ArgumentError
       end
-    rescue Date::Error, ArgumentError
+    rescue ArgumentError # Date::Error subclasses ArgumentError and is absent on Ruby < 3.0
       raise ArgumentError, "line #{line_number}: session_date_utc must be YYYY-MM-DD"
     end
 

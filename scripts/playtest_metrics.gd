@@ -65,7 +65,7 @@ static func summary(path: String = DEFAULT_PATH) -> Dictionary:
 	}
 
 
-static func export_report(path: String = "user://orbit-breaker-playtest-report.json", source_path: String = DEFAULT_PATH) -> String:
+static func export_report(path: String = "user://orbit-breaker-gameplay-stats.json", source_path: String = DEFAULT_PATH) -> String:
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
 		return ""
@@ -75,12 +75,18 @@ static func export_report(path: String = "user://orbit-breaker-playtest-report.j
 
 
 static func _save(data: Dictionary, path: String) -> Error:
-	var file := FileAccess.open(path, FileAccess.WRITE)
+	# Write to a sibling temp file and rename so a crash mid-write cannot
+	# leave a torn file behind.
+	var temp_path := path + ".tmp"
+	var file := FileAccess.open(temp_path, FileAccess.WRITE)
 	if file == null:
 		return FileAccess.get_open_error()
 	file.store_string(JSON.stringify(data))
 	file.close()
-	return OK
+	return DirAccess.rename_absolute(
+		ProjectSettings.globalize_path(temp_path),
+		ProjectSettings.globalize_path(path)
+	)
 
 
 static func _score_bucket(score: int) -> String:

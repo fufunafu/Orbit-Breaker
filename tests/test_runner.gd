@@ -583,9 +583,141 @@ func _test_gameplay_integration() -> void:
 	_check(game.end_run("miss"), "An equal-score summary run must end normally.")
 	_check(not game.hud.new_best_label.visible, "A non-record run must hide the New Best label.")
 
+	await _test_regressions(game)
+
 	game.queue_free()
 	await process_frame
 	await process_frame
 	await process_frame
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(integration_save_path))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(integration_metrics_path))
+
+
+var _setting_change_events: Array[String] = []
+
+
+func _record_setting_change(key: String, _value: Variant) -> void:
+	_setting_change_events.append(key)
+
+
+func _test_regressions(game: OrbitGame) -> void:
+	# Retired hazards must not count as blockers in the same frame.
+	game._reset_world(true)
+	var stale := game.HAZARD_SCENE.instantiate() as OrbitHazard
+	game.hazards.add_child(stale)
+	stale.global_position = game.current_planet.global_position + Vector2(0.0, -300.0)
+	stale.configure(400.0, 1)
+	game._retire_completed_segment_hazards()
+	_check(game.hazards.get_child_count() == 0, "Retired hazards must leave the hazard container immediately.")
+	_check(
+		game._hazards_preserve_launch_window(game.current_planet, game.target_planet, []),
+		"A launch window check must ignore hazards retired earlier in the same frame."
+	)
+	await process_frame
+
+	# Daily hazard placement must not depend on the player's orbit direction.
+	var original_base_hazard_chance := game.tuning.base_hazard_chance
+	var original_maximum_hazard_chance := game.tuning.maximum_hazard_chance
+	game.tuning.base_hazard_chance = 1.0
+	game.tuning.maximum_hazard_chance = 1.0
+	var states := []
+	var layouts := []
+	for direction in [1, -1]:
+		game.is_daily_run = true
+		game._seed_layout_rng()
+		game._reset_world(true)
+		game.ship.orbit_direction = direction
+		game.landings = 12
+		game._spawn_hazard_for_segment(game.current_planet, game.target_planet)
+		states.append(game.layout_rng.state)
+		var positions := []
+		for hazard_node in game.hazards.get_children():
+			positions.append(hazard_node.global_position)
+		layouts.append(positions)
+	_check(states[0] == states[1], "Daily hazard generation must consume the same random sequence for both orbit directions.")
+	_check(layouts[0] == layouts[1], "Daily hazard layouts must match for both orbit directions.")
+	game.tuning.base_hazard_chance = original_base_hazard_chance
+	game.tuning.maximum_hazard_chance = original_maximum_hazard_chance
+	game.is_daily_run = false
+
+	# A failed run must lock tap input briefly so the summary is seen.
+	game._reset_world(true)
+	game.input_locked_until_msec = 0
+	_check(game.end_run("miss"), "Regression run must end.")
+	_check(game.input_locked_until_msec > Time.get_ticks_msec(), "Game over must lock tap input briefly.")
+	game._handle_primary_action()
+	_check(game.state == OrbitGame.GameState.GAME_OVER, "A tap immediately after game over must not replay.")
+
+	# Main menu must be reachable from game over and from pause.
+	_check(game.hud.game_over_panel.find_child("MenuButton", true, false) != null, "The run summary must offer a main menu action.")
+	_check(game.hud.pause_panel.find_child("MenuButton", true, false) != null, "The pause panel must offer a main menu action.")
+	game._return_to_menu()
+	_check(game.state == OrbitGame.GameState.READY, "Main menu from game over must return to the ready screen.")
+	_check(game.hud.ready_actions.visible and not game.hud.game_over_panel.visible, "Main menu must show the ready actions.")
+	_check(game.start_run(true), "Daily must be selectable after returning to the menu.")
+	game._pause_run()
+	var restarts_before := int(game.profile.restarts)
+	game._return_to_menu()
+	_check(game.state == OrbitGame.GameState.READY and not game.manually_paused, "Main menu from pause must return to the ready screen unpaused.")
+	_check(int(game.profile.restarts) == restarts_before + 1, "Abandoning a paused run must count as a restart.")
+	_check(game.world.process_mode == Node.PROCESS_MODE_INHERIT, "Main menu from pause must resume world processing.")
+	_check(game.start_run(false) and not game.is_daily_run, "Classic must be selectable after a Daily run.")
+
+	# Refreshing settings controls from the profile must not emit setting changes.
+	game.hud.setting_changed.connect(_record_setting_change)
+	game.profile.sound_enabled = false
+	game.profile.music_enabled = false
+	game.hud.update_settings(game.profile)
+	_check(_setting_change_events.is_empty(), "Refreshing settings from the profile must not re-emit setting_changed.")
+	game.hud.setting_changed.disconnect(_record_setting_change)
+	game.profile.music_enabled = true
+	game._apply_profile()
+	_check(not game.audio_controller.playback_enabled, "Sound effects must stay disabled for the headless suite.")
+
+	# Share status must report failures on every platform.
+	game.hud.show_share_status("", false)
+	_check(game.hud.share_status_label.text.begins_with("UNABLE"), "A failed score card save must be reported.")
+
+	# Returning from the background must pause an active run.
+	_check(game.state == OrbitGame.GameState.ORBITING, "Regression run must be active before background test.")
+	game._notification(NOTIFICATION_APPLICATION_PAUSED)
+	game._notification(NOTIFICATION_APPLICATION_RESUMED)
+	_check(game.manually_paused and game.hud.pause_panel.visible, "Returning from the background must open the pause panel.")
+	game._resume_run()
+
+	# Full-screen flashes must respect Reduced Motion.
+	game.profile.reduced_motion = true
+	game.hud.flash_rect.color.a = 0.0
+	game._flash(Color.WHITE, 0.5)
+	_check(is_zero_approx(game.hud.flash_rect.color.a), "Reduced Motion must suppress full-screen flashes.")
+	game.profile.reduced_motion = false
+	game._flash(Color.WHITE, 0.5)
+	_check(game.hud.flash_rect.color.a > 0.0, "Flashes must remain available when Reduced Motion is off.")
+	game.hud.flash_rect.color.a = 0.0
+
+	# Changing the planet theme mid-run must keep the score-based zone stage.
+	game.profile.unlocked_planet_themes = PackedStringArray(["cosmic", "nebula", "sunforge"])
+	game.profile.selected_planet_theme = "cosmic"
+	game.score = game.tuning.nebula_zone_score
+	game._update_zone()
+	_check(game.zone_index == 1, "Reaching the nebula score must advance the zone.")
+	game._on_cosmetic_cycle_requested("theme")
+	_check(String(game.profile.selected_planet_theme) == "nebula", "Cycling themes must select the next unlocked theme.")
+	_check(game.zone_index == 2, "Changing theme mid-run must keep the score-based zone stage.")
+	game.profile.selected_planet_theme = "cosmic"
+	game.score = 0
+	game.zone_index = game._zone_for_progress()
+
+	# Run length must count only active play time.
+	game._reset_world(true)
+	game._physics_process(0.5)
+	game._pause_run()
+	game._physics_process(0.5)
+	_check(is_equal_approx(game.run_active_seconds, 0.5), "Paused time must not count toward run length.")
+	game._resume_run()
+
+	# Saves must not leave temp files behind.
+	_check(SaveStore.save_profile(game.profile, game.save_path) == OK, "Profile save must succeed via temp file.")
+	_check(not FileAccess.file_exists(game.save_path + ".tmp"), "Profile save must remove its temp file.")
+	_check(FileAccess.file_exists(game.save_path), "Profile save must produce the final file.")
+	game.end_run("miss")

@@ -18,6 +18,8 @@ const PLANET_SCENE := preload("res://scenes/planet.tscn")
 const HAZARD_SCENE := preload("res://scenes/hazard.tscn")
 const PRIVACY_URL := "https://fufunafu.github.io/Orbit-Breaker/privacy.html"
 const SUPPORT_URL := "https://fufunafu.github.io/Orbit-Breaker/support.html"
+const GAME_OVER_INPUT_LOCK_MSEC := 700
+const ZONE_NAMES := ["ION VEIL", "NOVA DRIFT", "SUNFORGE"]
 
 @export var tuning: GameTuning
 @export var save_path: String = SaveStore.DEFAULT_PATH
@@ -59,6 +61,7 @@ var zone_index: int = 0
 var layout_rng := RandomNumberGenerator.new()
 var feedback_rng := RandomNumberGenerator.new()
 var run_started_msec: int = 0
+var run_active_seconds: float = 0.0
 var launch_count: int = 0
 var first_launch_succeeded: bool = false
 var marketing_demo: bool = false
@@ -96,6 +99,7 @@ func _connect_hud() -> void:
 	hud.pause_requested.connect(_pause_run)
 	hud.resume_requested.connect(_resume_run)
 	hud.restart_requested.connect(_restart_from_pause)
+	hud.menu_requested.connect(_return_to_menu)
 	hud.leaderboards_requested.connect(game_center.show_leaderboards)
 	hud.setting_changed.connect(_on_setting_changed)
 	hud.cosmetic_cycle_requested.connect(_on_cosmetic_cycle_requested)
@@ -126,6 +130,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if marketing_demo:
 		_update_marketing_demo(delta)
+	if state == GameState.ORBITING or state == GameState.IN_FLIGHT:
+		run_active_seconds += delta
 	match state:
 		GameState.READY:
 			ship.update_orbit(delta, tuning.base_orbit_speed * 0.72)
@@ -249,8 +255,9 @@ func _update_flight(delta: float) -> void:
 			end_run(end_run_reason)
 		return
 
-	var camera_bottom := camera.global_position.y + 1100.0
-	var camera_top := camera.global_position.y - 1120.0
+	var half_height := _viewport_half_height()
+	var camera_bottom := camera.global_position.y + half_height + 140.0
+	var camera_top := camera.global_position.y - half_height - 160.0
 	if flight_time >= tuning.flight_timeout:
 		end_run("timeout")
 		return
@@ -313,14 +320,14 @@ func _complete_landing(perfect: bool) -> void:
 		perfect_landed.emit()
 		effects.burst(current_planet.global_position, Color("ff64dc"), tuning.particle_count_perfect, 390.0)
 		audio_controller.play(OrbitAudioController.Sound.PERFECT)
-		hud.flash(Color("ff62dc"), 0.34)
+		_flash(Color("ff62dc"), 0.34)
 		_vibrate(68, 0.78)
 		_start_shake(tuning.screen_shake_strength)
 	else:
 		landed.emit()
 		effects.burst(current_planet.global_position, Color("71faff"), tuning.particle_count_landing, 285.0)
 		audio_controller.play(OrbitAudioController.Sound.LAND)
-		hud.flash(Color("6df8ff"), 0.18)
+		_flash(Color("6df8ff"), 0.18)
 		_vibrate(38, 0.42)
 		_start_shake(tuning.screen_shake_strength * 0.5)
 
@@ -330,8 +337,15 @@ func _complete_landing(perfect: bool) -> void:
 
 
 func _retire_completed_segment_hazards() -> void:
-	for hazard_node in hazards.get_children():
-		hazard_node.queue_free()
+	_free_children_now(hazards)
+
+
+func _free_children_now(parent: Node) -> void:
+	# queue_free() alone leaves nodes in get_children() until the end of the
+	# frame, so later same-frame checks would still see them. Detach first.
+	for child in parent.get_children():
+		parent.remove_child(child)
+		child.queue_free()
 
 
 func end_run(reason: String = "miss") -> bool:
@@ -344,13 +358,12 @@ func end_run(reason: String = "miss") -> bool:
 	var new_unlocks := CosmeticCatalog.refresh_unlocks(profile)
 	best_score = int(profile.best_score)
 	SaveStore.save_profile(profile, save_path)
-	var run_seconds := float(Time.get_ticks_msec() - run_started_msec) / 1000.0 if run_started_msec > 0 else 0.0
-	PlaytestMetrics.record_run(score, landings, run_seconds, reason, first_launch_succeeded, metrics_path)
+	PlaytestMetrics.record_run(score, landings, run_active_seconds, reason, first_launch_succeeded, metrics_path)
 	game_center.submit_run(score, is_daily_run)
 	game_center.submit_achievement_progress(profile)
 	effects.burst(ship.global_position, Color("ff315f"), 48, 430.0)
 	audio_controller.play(OrbitAudioController.Sound.FAIL)
-	hud.flash(Color("ff315f"), 0.38)
+	_flash(Color("ff315f"), 0.38)
 	hud.show_game_over({
 		"score": score,
 		"best_score": best_score,
@@ -363,15 +376,16 @@ func end_run(reason: String = "miss") -> bool:
 	})
 	_vibrate(160, 1.0)
 	_start_shake(tuning.screen_shake_strength * 1.35)
+	# Players tap in rhythm; without a lock the next tap replays before the
+	# summary is seen.
+	input_locked_until_msec = Time.get_ticks_msec() + GAME_OVER_INPUT_LOCK_MSEC
 	run_ended.emit(score)
 	return true
 
 
 func _reset_world(begin_running: bool) -> void:
-	for child in planets.get_children():
-		child.queue_free()
-	for child in hazards.get_children():
-		child.queue_free()
+	_free_children_now(planets)
+	_free_children_now(hazards)
 
 	score = 0
 	combo = 1
@@ -381,6 +395,7 @@ func _reset_world(begin_running: bool) -> void:
 	launch_count = 0
 	first_launch_succeeded = false
 	run_started_msec = 0
+	run_active_seconds = 0.0
 	flight_time = 0.0
 	launch_predicted_perfect = false
 	manually_paused = false
@@ -524,16 +539,22 @@ func _hazards_preserve_launch_window(source: OrbitPlanet, target: OrbitPlanet, c
 				"position": hazard.global_position,
 				"radius": hazard.radius * 1.12 + ship.radius,
 			})
-	var safe_samples := OrbitMath.safe_launch_sample_count_for_hazards(
-		source.global_position,
-		source.radius + tuning.orbit_clearance,
-		ship.orbit_direction,
-		target.global_position,
-		target.radius + ship.radius,
-		blocking_hazards,
-		180
-	)
-	return safe_samples >= tuning.minimum_safe_launch_samples
+	# Check both orbit directions so the result, and therefore the number of
+	# layout_rng draws consumed, does not depend on how the player landed.
+	# That keeps Daily Challenge layouts identical for every player.
+	for direction in [1, -1]:
+		var safe_samples := OrbitMath.safe_launch_sample_count_for_hazards(
+			source.global_position,
+			source.radius + tuning.orbit_clearance,
+			direction,
+			target.global_position,
+			target.radius + ship.radius,
+			blocking_hazards,
+			180
+		)
+		if safe_samples < tuning.minimum_safe_launch_samples:
+			return false
+	return true
 
 
 func _update_camera(delta: float) -> void:
@@ -560,7 +581,7 @@ func _start_shake(strength: float) -> void:
 
 
 func _cleanup_world() -> void:
-	var cutoff_y := camera.global_position.y + 1250.0
+	var cutoff_y := camera.global_position.y + _viewport_half_height() + 290.0
 	for planet_node in planets.get_children():
 		if planet_node == current_planet or planet_node == target_planet:
 			continue
@@ -596,19 +617,22 @@ func _selected_theme_zone() -> int:
 	return int(CosmeticCatalog.find_item(CosmeticCatalog.PLANET_THEMES, String(profile.selected_planet_theme)).zone)
 
 
-func _update_zone() -> void:
+func _zone_for_progress() -> int:
 	var stage := 0
 	if score >= tuning.sunforge_zone_score:
 		stage = 2
 	elif score >= tuning.nebula_zone_score:
 		stage = 1
-	var next_zone := (_selected_theme_zone() + stage) % 3
+	return (_selected_theme_zone() + stage) % 3
+
+
+func _update_zone() -> void:
+	var next_zone := _zone_for_progress()
 	if next_zone == zone_index:
 		return
 	zone_index = next_zone
 	_apply_zone()
-	var zone_names := ["ION VEIL", "NOVA DRIFT", "SUNFORGE"]
-	hud.show_tip("ENTERING %s" % zone_names[zone_index], 1.8)
+	hud.show_tip("ENTERING %s" % ZONE_NAMES[zone_index], 1.8)
 
 
 func _apply_zone() -> void:
@@ -646,7 +670,7 @@ func _replay_current_mode() -> void:
 
 
 func _pause_run() -> void:
-	if state != GameState.ORBITING and state != GameState.IN_FLIGHT:
+	if manually_paused or (state != GameState.ORBITING and state != GameState.IN_FLIGHT):
 		return
 	manually_paused = true
 	world.process_mode = Node.PROCESS_MODE_DISABLED
@@ -696,7 +720,7 @@ func _on_cosmetic_cycle_requested(category: String) -> void:
 			var item := CosmeticCatalog.next_unlocked(CosmeticCatalog.PLANET_THEMES, profile.unlocked_planet_themes, String(profile.selected_planet_theme))
 			profile.selected_planet_theme = item.id
 	SaveStore.save_profile(profile, save_path)
-	zone_index = _selected_theme_zone()
+	zone_index = _zone_for_progress()
 	_apply_profile()
 
 
@@ -716,7 +740,7 @@ func _failure_reason_text(reason: String) -> String:
 
 func _on_share_requested() -> void:
 	var path := generate_score_image()
-	hud.show_share_status(path if not path.is_empty() else "UNABLE TO SAVE")
+	hud.show_share_status(path, not path.is_empty())
 
 
 func generate_score_image() -> String:
@@ -740,13 +764,13 @@ func save_score_image(image: Image, path_override: String = "") -> String:
 
 
 func _on_export_metrics_requested() -> void:
-	var path := PlaytestMetrics.export_report("user://orbit-breaker-playtest-report.json", metrics_path)
+	var path := PlaytestMetrics.export_report("user://orbit-breaker-gameplay-stats.json", metrics_path)
 	if path.is_empty():
-		hud.show_tip("UNABLE TO SAVE PLAYTEST REPORT", 4.0)
+		hud.show_tip("UNABLE TO SAVE GAMEPLAY STATS", 4.0)
 	elif OS.get_name() == "iOS":
-		hud.show_tip("PLAYTEST REPORT SAVED\nFILES > ON MY IPHONE > ORBIT BREAKER", 4.0)
+		hud.show_tip("GAMEPLAY STATS SAVED\nFILES > ON MY IPHONE > ORBIT BREAKER", 4.0)
 	else:
-		hud.show_tip("PLAYTEST REPORT SAVED\n%s" % path, 4.0)
+		hud.show_tip("GAMEPLAY STATS SAVED\n%s" % path, 4.0)
 
 
 func _open_external_url(url: String) -> void:
@@ -775,3 +799,26 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_APPLICATION_RESUMED:
 		get_tree().paused = false
 		paused_by_os = false
+		if state == GameState.ORBITING or state == GameState.IN_FLIGHT:
+			_pause_run()
+
+
+func _return_to_menu() -> void:
+	if state != GameState.GAME_OVER and not manually_paused:
+		return
+	if manually_paused:
+		profile.restarts = int(profile.restarts) + 1
+		PlaytestMetrics.record_restart(metrics_path)
+		SaveStore.save_profile(profile, save_path)
+	is_daily_run = false
+	_reset_world(false)
+
+
+func _flash(color: Color, strength: float) -> void:
+	if bool(profile.reduced_motion):
+		return
+	hud.flash(color, strength)
+
+
+func _viewport_half_height() -> float:
+	return get_viewport().get_visible_rect().size.y * 0.5

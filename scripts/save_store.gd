@@ -84,7 +84,16 @@ static func save_profile(profile: Dictionary, path: String = DEFAULT_PATH) -> Er
 		config.set_value("settings", key, profile.get(key, defaults[key]))
 	config.set_value("daily", "date", profile.get("daily_date", ""))
 	config.set_value("daily", "best_score", maxi(0, int(profile.get("daily_best_score", 0))))
-	return config.save(path)
+	# Save to a sibling temp file and rename so an interrupted write cannot
+	# corrupt the profile and silently reset progress on the next launch.
+	var temp_path := path + ".tmp"
+	var error := config.save(temp_path)
+	if error != OK:
+		return error
+	return DirAccess.rename_absolute(
+		ProjectSettings.globalize_path(temp_path),
+		ProjectSettings.globalize_path(path)
+	)
 
 
 static func load_best_score(path: String = DEFAULT_PATH) -> int:
