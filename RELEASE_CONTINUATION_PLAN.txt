@@ -753,3 +753,32 @@ August 21 authoritative push verification
   actions/checkout v4 is being forced from Node.js 20 to Node.js 24.
 - The release checklist now references the authoritative 0832610 run, and the
   unpublished-commit blocker has been removed.
+
+
+August 23 continuation checkpoint
+---------------------------------
+
+- Local main and origin/main both point to ea72b42b5dc82bf11b5d9d1135ed4b66cb964ba4
+  before this checkpoint update.
+- Release artifact checks run 32483235098 completed successfully for ea72b42.
+- Pages run 32483235100 completed successfully for ea72b42 and published the
+  matching support and privacy sources.
+- Xcode 26.6 enabled compatible developer disk image services on the paired
+  iPhone 16 Pro running iOS 26.6.
+- Orbit Breaker 1.0 build 1 launched again by bundle identifier
+  com.antonio.orbitbreaker and stayed active for the full 10-second diagnostic
+  window without startup-crash or termination output.
+- Godot 4.7.2 printed ORBIT_BREAKER_TESTS_OK and exited successfully again.
+  The run reported no ObjectDB instance leaks, retained resources, or script
+  errors. The known restricted macOS certificate lookup warning remained the
+  only engine error.
+- Workflow YAML parsing, TestFlight analyzer tests, deterministic report
+  regeneration, diff formatting, and the release-text punctuation guard pass
+  locally.
+- The only connected Chrome profile is signed out of App Store Connect. The
+  Orbit Breaker record URL is open at Apple's passkey sign-in handoff, and no
+  Apple-side data was changed during this continuation.
+- App Store Connect configuration, package validation and upload, hands-on
+  device testing, TestFlight recruitment, the seven-day study, and submission
+  remain dependent on owner authentication, decisions, approval, and human
+  participation.

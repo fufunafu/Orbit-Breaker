@@ -46,12 +46,12 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
 | PASS | Gameplay GitHub workflow exists | Developer | Inspect workflow syntax and trigger set | `.github/workflows/tests.yml` |
-| PASS | Gameplay workflow pins Godot 4.7.2 | Developer | Inspect install step and engine output | GitHub run 32482783253 used Godot 4.7.2 |
-| PASS | Gameplay workflow runs `tests/test_runner.gd` headlessly | Developer | Successful GitHub run prints `ORBIT_BREAKER_TESTS_OK` | GitHub run 32482783253 passed the headless gameplay job |
-| PASS | Release-artifact job exists | Developer | Validate CSV, links, licenses, metadata limits, media, and punctuation | GitHub run 32482783253 passed release-artifact validation |
-| PASS | Clean-checkout CI run passes | Developer | Link successful GitHub Actions run for release commit | `https://github.com/fufunafu/Orbit-Breaker/actions/runs/32482783253` passed for 0832610 |
-| PASS | Local headless test run passes | Developer | Save command output and exit status | Godot 4.7.2 printed `ORBIT_BREAKER_TESTS_OK` on 2026-08-21 |
-| PASS | Test shutdown is free of leaked-instance warnings | Developer | Repeat with `--verbose` and resolve owned leaks | Godot 4.7.2 verbose run exited 0 without leaked ObjectDB instances or resources on 2026-08-21 |
+| PASS | Gameplay workflow pins Godot 4.7.2 | Developer | Inspect install step and engine output | GitHub run 32483235098 used Godot 4.7.2 |
+| PASS | Gameplay workflow runs `tests/test_runner.gd` headlessly | Developer | Successful GitHub run prints `ORBIT_BREAKER_TESTS_OK` | GitHub run 32483235098 passed the headless gameplay job |
+| PASS | Release-artifact job exists | Developer | Validate CSV, links, licenses, metadata limits, media, and punctuation | GitHub run 32483235098 passed release-artifact validation |
+| PASS | Clean-checkout CI run passes | Developer | Link successful GitHub Actions run for release commit | `https://github.com/fufunafu/Orbit-Breaker/actions/runs/32483235098` passed for ea72b42 |
+| PASS | Local headless test run passes | Developer | Save command output and exit status | Godot 4.7.2 printed `ORBIT_BREAKER_TESTS_OK` on 2026-08-23 |
+| PASS | Test shutdown is free of leaked-instance warnings | Developer | Repeat with `--verbose` and resolve owned leaks | Godot 4.7.2 verbose run exited 0 without leaked ObjectDB instances or resources on 2026-08-23 |
 | TODO | Ten consecutive full editor runs complete without errors | QA owner | Manual test log |  |
 
 ## Gameplay and fairness
@@ -159,7 +159,7 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | PASS | App Store package signs with intended distribution identity | Release owner | Xcode App Store export | 31 MB IPA signed by Apple Distribution: 15041074 Canada Inc on 2026-08-20 |
 | PASS | Generic iPhone arm64 build completes | iOS developer | Unsigned Xcode build log | Release device build succeeded with signing disabled on 2026-08-20 |
 | PASS | Simulator build completes | QA owner | Build log and smoke-test record | Release simulator build succeeds with `ARCHS=x86_64`; runtime smoke test remains |
-| PASS | Physical iPhone build completes | QA owner | Device install and run record | Signed Release build installed and launched on iPhone 16 Pro; a console-attached launch remained active for the full 10-second diagnostic window on 2026-08-21 |
+| PASS | Physical iPhone build completes | QA owner | Device install and run record | Signed Release build installed and launched on iPhone 16 Pro; a console-attached relaunch remained active for the full 10-second diagnostic window on 2026-08-23 |
 | TODO | Small and large supported iPhone layouts pass | QA owner | Screenshot matrix |  |
 | TODO | Portrait lock works on physical device | QA owner | Rotation test |  |
 | TODO | Touch response remains immediate | QA owner | Input latency observation |  |
