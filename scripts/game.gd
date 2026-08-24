@@ -20,6 +20,11 @@ const PRIVACY_URL := "https://fufunafu.github.io/Orbit-Breaker/privacy.html"
 const SUPPORT_URL := "https://fufunafu.github.io/Orbit-Breaker/support.html"
 const GAME_OVER_INPUT_LOCK_MSEC := 700
 const ZONE_NAMES := ["ION VEIL", "NOVA DRIFT", "SUNFORGE"]
+const ZONE_COLORS := [Color("7cf8ff"), Color("7dffc4"), Color("ffd166")]
+const SCORE_CARD_SIZE := Vector2i(1080, 1350)
+## On the ready screen the camera sits lower so the idle ship and planet show
+## beneath the menu card instead of behind it.
+const MENU_CAMERA_OFFSET_RATIO := 0.45
 
 @export var tuning: GameTuning
 @export var save_path: String = SaveStore.DEFAULT_PATH
@@ -66,6 +71,7 @@ var launch_count: int = 0
 var first_launch_succeeded: bool = false
 var marketing_demo: bool = false
 var marketing_demo_elapsed: float = 0.0
+var last_run_summary: Dictionary = {}
 
 
 func _ready() -> void:
@@ -103,6 +109,7 @@ func _connect_hud() -> void:
 	hud.leaderboards_requested.connect(game_center.show_leaderboards)
 	hud.setting_changed.connect(_on_setting_changed)
 	hud.cosmetic_cycle_requested.connect(_on_cosmetic_cycle_requested)
+	hud.cosmetic_selected_requested.connect(_on_cosmetic_selected_requested)
 	hud.export_metrics_requested.connect(_on_export_metrics_requested)
 	hud.privacy_requested.connect(func() -> void: _open_external_url(PRIVACY_URL))
 	hud.support_requested.connect(func() -> void: _open_external_url(SUPPORT_URL))
@@ -110,7 +117,7 @@ func _connect_hud() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if paused_by_os or manually_paused or hud.settings_panel.visible:
+	if paused_by_os or manually_paused or hud.overlay_open():
 		return
 	if event.is_action_pressed("launch"):
 		_handle_primary_action()
@@ -170,6 +177,7 @@ func start_run(daily: bool = false) -> bool:
 	else:
 		run_started_msec = Time.get_ticks_msec()
 		state = GameState.ORBITING
+		camera_target_y = current_planet.global_position.y - tuning.camera_vertical_lead
 		hud.show_running(_tutorial_should_show(), false, daily_date)
 		_update_aim_guide()
 		run_started.emit()
@@ -364,7 +372,7 @@ func end_run(reason: String = "miss") -> bool:
 	effects.burst(ship.global_position, Color("ff315f"), 48, 430.0)
 	audio_controller.play(OrbitAudioController.Sound.FAIL)
 	_flash(Color("ff315f"), 0.38)
-	hud.show_game_over({
+	last_run_summary = {
 		"score": score,
 		"best_score": best_score,
 		"landings": landings,
@@ -373,7 +381,12 @@ func end_run(reason: String = "miss") -> bool:
 		"failure_reason": _failure_reason_text(reason),
 		"new_best": bool(run_result.new_best),
 		"new_unlocks": new_unlocks,
-	})
+		"zone_name": ZONE_NAMES[zone_index],
+		"zone_color": ZONE_COLORS[zone_index],
+		"is_daily": is_daily_run,
+		"daily_date": daily_date,
+	}
+	hud.show_game_over(last_run_summary)
 	_vibrate(160, 1.0)
 	_start_shake(tuning.screen_shake_strength * 1.35)
 	# Players tap in rhythm; without a lock the next tap replays before the
@@ -386,6 +399,7 @@ func end_run(reason: String = "miss") -> bool:
 func _reset_world(begin_running: bool) -> void:
 	_free_children_now(planets)
 	_free_children_now(hazards)
+	effects.clear()
 
 	score = 0
 	combo = 1
@@ -414,6 +428,8 @@ func _reset_world(begin_running: bool) -> void:
 		1
 	)
 	camera_target_y = current_planet.global_position.y - tuning.camera_vertical_lead
+	if not begin_running:
+		camera_target_y -= _viewport_half_height() * MENU_CAMERA_OFFSET_RATIO
 	camera.global_position = Vector2(540.0, camera_target_y)
 	camera.offset = Vector2.ZERO
 	starfield.set_camera_y(camera.global_position.y)
@@ -434,6 +450,10 @@ func _update_aim_guide() -> void:
 	if state != GameState.ORBITING or target_planet == null:
 		aim_guide.hide_guide()
 		return
+	var guide_visible := _guide_should_show()
+	# When the guide is on it owns the target rings; the planet's own pulsing
+	# outer ring would otherwise stack a fourth ring on a perfect line-up.
+	target_planet.set_guide_owned(guide_visible)
 	aim_guide.configure(
 		ship.global_position,
 		OrbitMath.tangent_for_angle(ship.orbit_angle, ship.orbit_direction),
@@ -441,7 +461,7 @@ func _update_aim_guide() -> void:
 		target_planet.radius,
 		ship.radius,
 		tuning.perfect_zone_ratio,
-		_guide_should_show()
+		guide_visible
 	)
 
 
@@ -632,7 +652,7 @@ func _update_zone() -> void:
 		return
 	zone_index = next_zone
 	_apply_zone()
-	hud.show_tip("ENTERING %s" % ZONE_NAMES[zone_index], 1.8)
+	hud.show_zone_banner(ZONE_NAMES[zone_index], ZONE_COLORS[zone_index])
 
 
 func _apply_zone() -> void:
@@ -701,6 +721,8 @@ func _restart_from_pause() -> void:
 func _on_setting_changed(key: String, value: Variant) -> void:
 	if key == "guide_cycle":
 		profile.guide_mode = (int(profile.guide_mode) + 1) % 3
+	elif key == "guide_mode":
+		profile.guide_mode = clampi(int(value), 0, 2)
 	elif profile.has(key):
 		profile[key] = value
 	SaveStore.save_profile(profile, save_path)
@@ -709,16 +731,50 @@ func _on_setting_changed(key: String, value: Variant) -> void:
 
 
 func _on_cosmetic_cycle_requested(category: String) -> void:
+	var item_id := ""
 	match category:
 		"ship":
 			var item := CosmeticCatalog.next_unlocked(CosmeticCatalog.SHIP_COLORS, profile.unlocked_ship_colors, String(profile.selected_ship_color))
-			profile.selected_ship_color = item.id
+			item_id = String(item.id)
 		"trail":
 			var item := CosmeticCatalog.next_unlocked(CosmeticCatalog.TRAILS, profile.unlocked_trails, String(profile.selected_trail))
-			profile.selected_trail = item.id
+			item_id = String(item.id)
 		"theme":
 			var item := CosmeticCatalog.next_unlocked(CosmeticCatalog.PLANET_THEMES, profile.unlocked_planet_themes, String(profile.selected_planet_theme))
-			profile.selected_planet_theme = item.id
+			item_id = String(item.id)
+	if not item_id.is_empty():
+		_on_cosmetic_selected_requested(category, item_id)
+
+
+func _on_cosmetic_selected_requested(category: String, item_id: String) -> void:
+	var items: Array
+	var unlocked: PackedStringArray
+	var profile_key := ""
+	match category:
+		"ship":
+			items = CosmeticCatalog.SHIP_COLORS
+			unlocked = profile.unlocked_ship_colors
+			profile_key = "selected_ship_color"
+		"trail":
+			items = CosmeticCatalog.TRAILS
+			unlocked = profile.unlocked_trails
+			profile_key = "selected_trail"
+		"theme":
+			items = CosmeticCatalog.PLANET_THEMES
+			unlocked = profile.unlocked_planet_themes
+			profile_key = "selected_planet_theme"
+		_:
+			return
+	if not unlocked.has(item_id):
+		return
+	var item_exists := false
+	for item in items:
+		if String(item.id) == item_id:
+			item_exists = true
+			break
+	if not item_exists:
+		return
+	profile[profile_key] = item_id
 	SaveStore.save_profile(profile, save_path)
 	zone_index = _zone_for_progress()
 	_apply_profile()
@@ -739,15 +795,35 @@ func _failure_reason_text(reason: String) -> String:
 
 
 func _on_share_requested() -> void:
-	var path := generate_score_image()
+	var path: String = await generate_score_image()
 	hud.show_share_status(path, not path.is_empty())
 
 
+## Renders a dedicated share card off-screen and saves it. The card carries the
+## run summary, never the interface buttons or the in-game HUD.
 func generate_score_image() -> String:
 	if DisplayServer.get_name() == "headless":
 		return ""
-	var image := get_viewport().get_texture().get_image()
+	var image := await render_score_card_image(last_run_summary)
 	return save_score_image(image)
+
+
+func render_score_card_image(summary: Dictionary) -> Image:
+	var viewport := SubViewport.new()
+	viewport.size = SCORE_CARD_SIZE
+	viewport.transparent_bg = false
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var card := OrbitScoreCard.new()
+	card.summary = summary
+	card.size = Vector2(SCORE_CARD_SIZE)
+	viewport.add_child(card)
+	add_child(viewport)
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	var image := viewport.get_texture().get_image()
+	remove_child(viewport)
+	viewport.queue_free()
+	return image
 
 
 func save_score_image(image: Image, path_override: String = "") -> String:

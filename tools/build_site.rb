@@ -31,8 +31,8 @@ STYLE = <<~CSS.strip
   h3{margin-top:1.5em;font-size:19px}
   a{color:#ff78e8}
   code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.92em;background:#0d1b33;padding:0 4px;border-radius:4px}
-  nav{max-width:760px;margin:auto;padding:0 24px 48px;font-size:15px}
-  nav a{margin-right:20px}
+  nav{max-width:760px;margin:auto;padding:28px 24px 0;font-size:15px;display:flex;flex-wrap:wrap;gap:8px 20px}
+  nav a{white-space:nowrap}
 CSS
 
 def inline(text)
@@ -112,10 +112,10 @@ def render_page(markdown, title:, description:)
     <style>#{STYLE}</style>
     </head>
     <body>
+    <nav><a href="index.html">Orbit Breaker</a><a href="support.html">Support</a><a href="privacy.html">Privacy policy</a></nav>
     <main>
     #{render_body(markdown)}
     </main>
-    <nav><a href="index.html">Orbit Breaker</a><a href="support.html">Support</a><a href="privacy.html">Privacy policy</a></nav>
     </body>
     </html>
   HTML

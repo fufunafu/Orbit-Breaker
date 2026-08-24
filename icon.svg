@@ -30,9 +30,13 @@
   <circle cx="512" cy="520" r="188" fill="#4cf2ff" opacity=".18" filter="url(#cyanGlow)"/>
   <circle cx="512" cy="520" r="164" fill="url(#planet)" stroke="#a8fdff" stroke-width="12"/>
   <path d="M414 426c48-52 122-76 192-56" fill="none" stroke="#d7ffff" stroke-width="17" stroke-linecap="round" opacity=".55"/>
-  <g transform="translate(770 322) rotate(16)" filter="url(#pinkGlow)">
-    <path d="M-78 0-18-39 66 0-18 39z" fill="#f6ffff" stroke="#71f8ff" stroke-width="9" stroke-linejoin="round"/>
+  <g transform="translate(700 280) rotate(9) scale(1.45)">
+    <g filter="url(#pinkGlow)" opacity=".8">
+      <path d="M-78 0-18-39 66 0-18 39z" fill="#71f8ff"/>
+      <path d="M-72-19-122 0-72 19z" fill="#ff4fd8"/>
+    </g>
     <path d="M-72-19-122 0-72 19z" fill="#ff4fd8"/>
-    <circle cx="8" cy="0" r="15" fill="#ff4fd8"/>
+    <path d="M-78 0-18-39 66 0-18 39z" fill="#f6ffff" stroke="#71f8ff" stroke-width="7" stroke-linejoin="round"/>
+    <circle cx="8" cy="0" r="14" fill="#ff4fd8"/>
   </g>
 </svg>

@@ -12,6 +12,10 @@ var perfect_zone_ratio: float = 0.42
 var pulse_time: float = 0.0
 var hue_seed: float = 0.0
 var zone_index: int = 0
+## True while the trajectory guide is drawing its own rings around this
+## target, so the planet skips its outer pulse ring instead of stacking a
+## third and fourth ring on top of the guide's.
+var guide_owned: bool = false
 
 
 func configure(new_radius: float, target: bool, current: bool, perfect_ratio: float) -> void:
@@ -34,6 +38,13 @@ func set_zone(value: int) -> void:
 	queue_redraw()
 
 
+func set_guide_owned(value: bool) -> void:
+	if guide_owned == value:
+		return
+	guide_owned = value
+	queue_redraw()
+
+
 func _process(delta: float) -> void:
 	pulse_time += delta
 	if is_target or is_current:
@@ -41,12 +52,14 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	var zone_hues := [0.52, 0.83, 0.10]
+	# Zone palettes stay clear of the signal colours: magenta is reserved for
+	# the perfect guide, red for asteroids, and purple for pulse mines.
+	var zone_hues := [0.52, 0.40, 0.10]
 	var base_color := Color.from_hsv(fposmod(float(zone_hues[zone_index]) + hue_seed * 0.10, 1.0), 0.72, 0.88)
 	if is_target:
-		base_color = [Color("7cf8ff"), Color("ff78e8"), Color("ffd166")][zone_index]
+		base_color = [Color("7cf8ff"), Color("7dffc4"), Color("ffd166")][zone_index]
 	elif is_current:
-		base_color = [Color("735cff"), Color("9a4dff"), Color("ff7b32")][zone_index]
+		base_color = [Color("735cff"), Color("2fb88a"), Color("ff7b32")][zone_index]
 
 	for ring_index in range(5, 0, -1):
 		var ring_radius := radius + float(ring_index) * 12.0
@@ -64,4 +77,5 @@ func _draw() -> void:
 		var perfect_radius := radius * perfect_zone_ratio
 		draw_circle(Vector2.ZERO, perfect_radius * pulse, Color("ff4fd8", 0.13))
 		draw_arc(Vector2.ZERO, perfect_radius * pulse, 0.0, TAU, 64, Color("ff74df", 0.9), 3.0, true)
-		draw_arc(Vector2.ZERO, radius + 20.0 + sin(pulse_time * 4.0) * 7.0, 0.0, TAU, 80, Color("8efbff", 0.42), 3.0, true)
+		if not guide_owned:
+			draw_arc(Vector2.ZERO, radius + 20.0 + sin(pulse_time * 4.0) * 7.0, 0.0, TAU, 80, Color("8efbff", 0.42), 3.0, true)

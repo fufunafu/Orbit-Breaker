@@ -28,19 +28,19 @@ The trajectory guide can be set to Off, Tutorial, or Always in Settings.
 
 ## Settings
 
-Orbit Breaker includes controls for:
+Settings includes controls for:
 
 - Sound effects
 - Music
 - Haptics
 - Reduced motion and screen shake
 - High-contrast trajectory guide
-- Guide visibility
-- Unlocked ship colour
-- Unlocked trail
-- Unlocked planet theme
+- Trajectory guide visibility: Off, Tutorial, or Always
 - Export Gameplay Stats: write a summary of your local gameplay statistics to
   **Files > On My iPhone > Orbit Breaker**
+
+Loadout lists every ship colour, trail, and planet theme. Locked items show
+the condition that unlocks them; tap an unlocked item to equip it.
 
 Settings and unlocked items are saved locally.
 

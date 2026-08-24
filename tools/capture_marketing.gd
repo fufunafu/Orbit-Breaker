@@ -4,8 +4,12 @@ const SCREENSHOT_DIR := "res://marketing/screenshots"
 const CAPTURE_SAVE := "res://.godot/orbit_breaker_marketing_capture.cfg"
 const CAPTURE_METRICS := "res://.godot/orbit_breaker_marketing_capture.json"
 const CAPTURE_SIZE := Vector2i(1320, 2868)
+## The project stretches a 1080-wide canvas to the screen width, so the 6.9-inch
+## capture renders a 1080 by 2346 canvas into 1320 by 2868 pixels.
+const CANVAS_SIZE := Vector2i(1080, 2346)
 
 var capture_failures: int = 0
+var capture_viewport: SubViewport
 
 
 func _init() -> void:
@@ -13,7 +17,14 @@ func _init() -> void:
 
 
 func _capture_all() -> void:
-	root.size = CAPTURE_SIZE
+	# Render into an off-screen viewport so captures do not depend on the
+	# display being tall enough to host a 2868 pixel window.
+	capture_viewport = SubViewport.new()
+	capture_viewport.size = CAPTURE_SIZE
+	capture_viewport.size_2d_override = CANVAS_SIZE
+	capture_viewport.size_2d_override_stretch = true
+	capture_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	root.add_child(capture_viewport)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SCREENSHOT_DIR))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAPTURE_SAVE))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAPTURE_METRICS))
@@ -27,7 +38,7 @@ func _capture_all() -> void:
 	game.save_path = CAPTURE_SAVE
 	game.metrics_path = CAPTURE_METRICS
 	(game.get_node("GameCenter") as OrbitGameCenter).enabled = false
-	root.add_child(game)
+	capture_viewport.add_child(game)
 	await process_frame
 	game.layout_rng.seed = 20260820
 	game.feedback_rng.seed = 20260820
@@ -38,6 +49,7 @@ func _capture_all() -> void:
 	await _capture("01-home.png")
 
 	game.start_run(false)
+	_snap_camera(game)
 	_align_ship_for_perfect_guide(game)
 	await process_frame
 	await _capture("02-perfect-launch.png")
@@ -50,6 +62,7 @@ func _capture_all() -> void:
 	game.hud.set_score(game.score, game.combo, game.best_score)
 	game.hud.set_tutorial_visible(false)
 	game._update_zone()
+	game.hud.zone_banner.visible = false
 	var asteroid := game.HAZARD_SCENE.instantiate() as OrbitHazard
 	game.hazards.add_child(asteroid)
 	asteroid.global_position = game.current_planet.global_position + Vector2(250.0, -250.0)
@@ -69,7 +82,18 @@ func _capture_all() -> void:
 	game.hud.set_score(game.score, game.combo, game.best_score)
 	game.end_run("pulse_mine")
 	await process_frame
+	# The failure flash is mid-fade one frame after the run ends; clear it so
+	# the summary capture is not tinted.
+	if game.hud.flash_tween and game.hud.flash_tween.is_valid():
+		game.hud.flash_tween.kill()
+	game.hud.flash_rect.color.a = 0.0
+	await process_frame
 	await _capture("04-score-card.png")
+	var share_card: Image = await game.render_score_card_image(game.last_run_summary)
+	share_card.convert(Image.FORMAT_RGB8)
+	if share_card.save_png("%s/05-share-card.png" % SCREENSHOT_DIR) != OK:
+		push_error("Unable to save the share card sample")
+		capture_failures += 1
 
 	var icon_texture := load("res://icon.svg") as Texture2D
 	if icon_texture:
@@ -94,7 +118,8 @@ func _capture_all() -> void:
 
 func _capture(filename: String) -> void:
 	await RenderingServer.frame_post_draw
-	var image := root.get_viewport().get_texture().get_image()
+	await RenderingServer.frame_post_draw
+	var image := capture_viewport.get_texture().get_image()
 	var captured := Vector2i(image.get_width(), image.get_height())
 	if captured != CAPTURE_SIZE:
 		# The display clamped the window. Resizing a different aspect ratio would
@@ -107,6 +132,13 @@ func _capture(filename: String) -> void:
 	if result != OK:
 		push_error("Unable to save marketing screenshot %s" % filename)
 		capture_failures += 1
+
+
+func _snap_camera(game: OrbitGame) -> void:
+	# Physics is disabled for deterministic captures, so the camera pan that
+	# normally follows the menu would never finish.
+	game.camera.global_position = Vector2(540.0, game.camera_target_y)
+	game.starfield.set_camera_y(game.camera.global_position.y)
 
 
 func _align_ship_for_perfect_guide(game: OrbitGame) -> void:

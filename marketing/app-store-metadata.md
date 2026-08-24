@@ -14,7 +14,7 @@ feature story.
 
 | Order | File | Game state | Feature shown |
 | --- | --- | --- | --- |
-| 1 | `01-home.png` | Ready screen with Classic, Daily Challenge, Loadout + Settings, and Leaderboards | One-tap premise and both modes |
+| 1 | `01-home.png` | Ready screen with Classic, Daily Challenge, Loadout, Leaderboard, and Settings above the idle orbit | One-tap premise and both modes |
 | 2 | `02-perfect-launch.png` | Early Classic run with the guide on the perfect zone and the tutorial visible | Timing the perfect launch |
 | 3 | `03-nova-hazards.png` | Nova Drift zone at a 5x combo with an asteroid and a pulse mine | Hazards, combos, and zone progression |
 | 4 | `04-score-card.png` | End-of-run summary with New Best, statistics, failure reason, and actions | Replay loop and clear feedback |

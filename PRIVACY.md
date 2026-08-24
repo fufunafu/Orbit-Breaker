@@ -30,7 +30,7 @@ The app also records aggregate gameplay statistics in every build: completed
 runs, run length, restart count, score ranges, first-landing success, and
 failure reasons. These statistics contain no identifiers and are never
 transmitted automatically. You can export them as a file with **Export
-Gameplay Stats** in Loadout + Settings and choose whether to share that file.
+Gameplay Stats** in Settings and choose whether to share that file.
 
 These files live in the app's Documents folder:
 

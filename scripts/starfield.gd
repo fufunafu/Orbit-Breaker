@@ -37,8 +37,8 @@ func set_zone(value: int, reduce_motion: bool = false) -> void:
 
 func _draw() -> void:
 	var size := get_viewport_rect().size
-	var backgrounds := [Color("030615"), Color("13051f"), Color("1b0905")]
-	var star_colors := [Color("9edfff"), Color("ffb1ef"), Color("ffe0a0")]
+	var backgrounds := [Color("030615"), Color("0d0a22"), Color("1b0905")]
+	var star_colors := [Color("9edfff"), Color("c4ffe6"), Color("ffe0a0")]
 	draw_rect(Rect2(Vector2.ZERO, size), backgrounds[zone_index])
 	for star in stars:
 		var x := float(star.x) * size.x
@@ -50,11 +50,13 @@ func _draw() -> void:
 		star_color.a = brightness
 		draw_circle(Vector2(x, y), float(star.size), star_color)
 
-	var center := Vector2(size.x * 0.16, size.y * 0.25)
-	var glow_colors := [Color("5a2bbd", 0.035), Color("b72b9c", 0.035), Color("ff7438", 0.03)]
+	# The nebula glow sits in the top-left corner, away from the band where
+	# targets spawn, and at half strength so planets keep their contrast.
+	var center := Vector2(size.x * 0.06, size.y * 0.09)
+	var glow_colors := [Color("5a2bbd", 0.018), Color("2e8f78", 0.016), Color("ff7438", 0.015)]
 	var glow_color: Color = glow_colors[zone_index]
 	for ring in range(7, 0, -1):
-		draw_circle(center, 65.0 * ring, Color(glow_color, glow_color.a * float(8 - ring)))
+		draw_circle(center, 58.0 * ring, Color(glow_color, glow_color.a * float(8 - ring)))
 
 
 func _notification(what: int) -> void:

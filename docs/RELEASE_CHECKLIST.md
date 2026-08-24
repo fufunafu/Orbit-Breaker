@@ -102,22 +102,23 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
 | READY | Game Center entitlement is enabled in the Godot preset | iOS developer | Inspect exported entitlements | Current preset requests Game Center |
+| PASS | Submitted version 1.0 binary contains the Game Center entitlement and linked plugin | iOS developer | Inspect the signed archive or IPA before upload | Fresh version 1.0 build 1 was exported from the current source, App Store-signed, verified with `com.apple.developer.game-center`, `get-task-allow=false`, and both `GodotApplePluginsGameCenter` and `SwiftGodotRuntime`, then uploaded successfully on 2026-08-23. App Store Connect finished processing it as Ready to Submit. |
 | READY | All-time identifier matches code | Game Center owner | Compare App Store Connect to code | `com.antonio.orbitbreaker.highscore` |
 | READY | Weekly identifier matches code | Game Center owner | Compare App Store Connect to code | `com.antonio.orbitbreaker.weekly` |
 | READY | Daily identifier matches code | Game Center owner | Compare App Store Connect to code | `com.antonio.orbitbreaker.daily` |
-| TODO | All-time leaderboard exists and is localized | Game Center owner | App Store Connect component record |  |
-| TODO | Weekly leaderboard recurs every seven days | Game Center owner | App Store Connect recurrence record | Confirm start day and 00:00 UTC boundary |
-| TODO | Daily leaderboard recurs every 24 hours | Game Center owner | App Store Connect recurrence record | Start at 00:00 UTC |
-| TODO | High scores sort high to low as integers | Game Center owner | Submit two ordered test scores |  |
-| TODO | Perfect Ten achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image |  |
-| TODO | Maximum Burn achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image |  |
-| TODO | Planet Runner achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image |  |
+| READY | All-time leaderboard exists and is localized | Game Center owner | App Store Connect component record | Verified in App Store Connect on 2026-08-23: default Classic leaderboard `com.antonio.orbitbreaker.highscore`, Integer, Best Score, High to Low, visible, with complete English (Canada) display name, description, and point suffixes. |
+| READY | Weekly leaderboard recurs every seven days | Game Center owner | App Store Connect recurrence record | Verified in App Store Connect on 2026-08-23: `com.antonio.orbitbreaker.weekly` starts 2026-08-24 00:00 UTC and uses seven-day duration and restart intervals. |
+| READY | Daily leaderboard recurs every 24 hours | Game Center owner | App Store Connect recurrence record | Verified in App Store Connect on 2026-08-23: `com.antonio.orbitbreaker.daily` starts 2026-08-24 00:00 UTC and uses one-day duration and restart intervals. |
+| TODO | High scores sort high to low as integers | Game Center owner | Submit two ordered test scores | All three App Store Connect records use Integer, Best Score, High to Low. Ordered TestFlight scores remain required. |
+| READY | Perfect Ten achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image | Verified in App Store Connect on 2026-08-23: `com.antonio.orbitbreaker.perfect10`, 25 points, visible, non-repeatable, with complete English (Canada) copy and processed `perfect-ten.png` artwork. |
+| READY | Maximum Burn achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image | Verified in App Store Connect on 2026-08-23: `com.antonio.orbitbreaker.combo5`, 25 points, visible, non-repeatable, with complete English (Canada) copy and processed `maximum-burn.png` artwork. |
+| READY | Planet Runner achievement exists and is localized | Game Center owner | Identifier, points, copy, and 1024 by 1024 image | Verified in App Store Connect on 2026-08-23: `com.antonio.orbitbreaker.planets50`, 50 points, visible, non-repeatable, with complete English (Canada) copy and processed `planet-runner.png` artwork. |
 | TODO | Achievement progress increments correctly | QA owner | Test partial and complete values on physical device |  |
 | TODO | Completion banners appear once | QA owner | Complete each achievement on test account |  |
 | TODO | Unauthenticated play remains functional | QA owner | Sign out of Game Center and complete runs |  |
 | TODO | Leaderboard button handles unavailable Game Center | QA owner | Test signed out, offline, and restricted states |  |
 | TODO | Test leaderboard data is removed before launch | Game Center owner | App Store Connect test-data action |  |
-| TODO | Game Center components are attached to the submitted app version | Game Center owner | Submission record |  |
+| READY | Game Center components are attached to the submitted app version | Game Center owner | Submission record | Verified in App Store Connect on 2026-08-23: the Ready for Review draft contains iOS version 1.0 plus Orbit Breaker All Time, Orbit Breaker Weekly, Orbit Breaker Daily, Perfect Ten, Maximum Burn, and Planet Runner. The draft has not been submitted. |
 
 ## Audio and visual identity
 
@@ -193,12 +194,12 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 | READY | Promotional text options are within 170 characters | Marketing owner | Automated character check |  |
 | READY | Description is within 4,000 characters | Marketing owner | Automated character check |  |
 | READY | Keyword draft is within 100 bytes | Marketing owner | UTF-8 byte count |  |
-| TODO | Final metadata contains no pending claims | Product owner | Compare each claim to release build |  |
-| TODO | Support URL is entered | Release owner | App Store Connect version record |  |
-| TODO | Privacy-policy URL is entered | Release owner | App Store Connect app privacy record |  |
-| TODO | Copyright is final | Project owner | App Store Connect record |  |
-| TODO | Primary and secondary categories are final | Product owner | App Store Connect record |  |
-| TODO | Review contact is complete | Release owner | App Review Information |  |
+| READY | Final metadata contains no pending claims | Product owner | Compare each claim to release build | The English (Canada) subtitle, promotional text, description, keywords, URLs, copyright, review notes, screenshots, Game Center claims, and uploaded build match the current release source as of 2026-08-23. |
+| PASS | Support URL is entered | Release owner | App Store Connect version record | `https://fufunafu.github.io/Orbit-Breaker/support.html` saved on version 1.0 on 2026-08-23. |
+| PASS | Privacy-policy URL is entered | Release owner | App Store Connect app privacy record | `https://fufunafu.github.io/Orbit-Breaker/privacy.html` saved and the no-data-collected disclosure published on 2026-08-23. |
+| READY | Copyright is final | Project owner | App Store Connect record | `2026 Fuanne Gao` saved on version 1.0. |
+| READY | Primary and secondary categories are final | Product owner | App Store Connect record | Games with Action and Casual subcategories, plus Entertainment as the secondary category, saved on 2026-08-23. |
+| PASS | Review contact is complete | Release owner | App Review Information | Account-holder name, international phone number, and email were saved on version 1.0 in App Store Connect on 2026-08-23. |
 | READY | App Review notes draft exists | Release owner | Update against final build | `docs/APP_STORE_METADATA.md` |
 
 ## Icon, screenshots, and previews
@@ -241,15 +242,15 @@ Replace every `[OWNER]`, `[DATE]`, `[BUILD]`, and contact placeholder before rel
 
 | Status | Item | Owner | Verification | Evidence |
 | --- | --- | --- | --- | --- |
-| TODO | Final archive passes Xcode validation | Release owner | Organizer validation result |  |
-| TODO | Correct build is selected in App Store Connect | Release owner | Version page |  |
-| TODO | Game Center components are included in submission | Game Center owner | Submission contents |  |
-| TODO | Required screenshots are uploaded | Marketing owner | Product page preview |  |
+| PASS | Final archive passes Xcode validation | Release owner | Organizer validation result | Fresh current-source archive and App Store IPA passed Xcode archive/export checks, strict signature validation, and App Store Connect upload analysis on 2026-08-23. |
+| PASS | Correct build is selected in App Store Connect | Release owner | Version page | Version 1.0 build 1 is processed, selected, and saved. The version is Ready for Review in App Store Connect. |
+| READY | Game Center components are included in submission | Game Center owner | Submission contents | The review draft contains all three leaderboards and all three achievements alongside iOS version 1.0, for seven items total. |
+| PASS | Required screenshots are uploaded | Marketing owner | Product page preview | Four validated 1320 by 2868 screenshots are uploaded to the English (Canada) 6.9-inch display set and inherited by the required iPhone display sizes. |
 | TODO | App preview poster frame is selected | Marketing owner | App Store Connect preview |  |
-| TODO | App privacy details are published | Privacy owner | Product page preview |  |
-| TODO | Review notes match final behaviour | Release owner | Final copy review |  |
-| TODO | Manual release is selected for version 1.0 | Product owner | Version release setting | Recommended for controlled launch |
-| TODO | App Review submission is complete | Release owner | Submission status and timestamp |  |
+| PASS | App privacy details are published | Privacy owner | Product page preview | Published on 2026-08-23 as Data Not Collected with the live privacy-policy URL. |
+| READY | Review notes match final behaviour | Release owner | Final copy review | Prepared notes were saved on version 1.0 and match the current Game Center, Daily Challenge, Files app, account, purchase, and hardware behaviour. |
+| PASS | Manual release is selected for version 1.0 | Product owner | Version release setting | Saved on version 1.0 on 2026-08-23 for a controlled launch. |
+| TODO | App Review submission is complete | Release owner | Submission status and timestamp | Draft is Ready for Review with seven verified items. It was intentionally not submitted on 2026-08-23. |
 | TODO | Approval result and any reviewer correspondence are archived | Release owner | Release folder or issue link |  |
 | TODO | Public privacy and support pages are monitored after launch | Support owner | Page availability check |  |
 | TODO | Launch build crash, review, and leaderboard signals are monitored | Product owner | First 72-hour report |  |

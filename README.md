@@ -23,8 +23,8 @@ On iPhone, saved score cards and explicitly exported gameplay statistics appear 
 
 - iPhone: tap to start and launch
 - Editor: left click or Space to start and launch
-- Use the pause control during a run for resume, restart, settings, and the main menu
-- Open Privacy or Support from Loadout + Settings
+- Use the round pause button during a run for resume, restart, settings, and the main menu
+- Open Privacy or Support from Settings; equip unlocked ships, trails, and planet themes from Loadout
 
 ## Requirements
 

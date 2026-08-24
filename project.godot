@@ -14,6 +14,8 @@ config/name="Orbit Breaker"
 run/main_scene="res://scenes/game.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0.0118, 0.0235, 0.0824, 1)
+boot_splash/image="res://marketing/app-icon-1024.png"
 
 [display]
 

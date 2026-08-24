@@ -23,6 +23,11 @@ func burst(world_position: Vector2, color: Color, count: int, power: float = 260
 	queue_redraw()
 
 
+func clear() -> void:
+	particles.clear()
+	queue_redraw()
+
+
 func _process(delta: float) -> void:
 	if particles.is_empty():
 		return

@@ -1,21 +1,23 @@
 class_name CosmeticCatalog
 extends RefCounted
 
+# `hint` is the written unlock condition shown on locked loadout options.
 const SHIP_COLORS := [
-	{"id": "ion", "name": "ION", "color": Color("e9feff"), "accent": Color("72faff")},
-	{"id": "nova", "name": "NOVA", "color": Color("fff0fb"), "accent": Color("ff64dc")},
-	{"id": "solar", "name": "SOLAR", "color": Color("fff7d6"), "accent": Color("ffd166")},
+	{"id": "ion", "name": "ION", "color": Color("e9feff"), "accent": Color("72faff"), "hint": ""},
+	{"id": "nova", "name": "NOVA", "color": Color("fff0fb"), "accent": Color("ff64dc"), "hint": "10 PERFECT LANDINGS"},
+	{"id": "solar", "name": "SOLAR", "color": Color("fff7d6"), "accent": Color("ffd166"), "hint": "REACH A 5X COMBO"},
 ]
 const TRAILS := [
-	{"id": "ion", "name": "ION", "color": Color("6ffcff")},
-	{"id": "plasma", "name": "PLASMA", "color": Color("ff5bd8")},
-	{"id": "comet", "name": "COMET", "color": Color("ffd166")},
+	{"id": "ion", "name": "ION", "color": Color("6ffcff"), "hint": ""},
+	{"id": "plasma", "name": "PLASMA", "color": Color("ff5bd8"), "hint": "10 PERFECT LANDINGS"},
+	{"id": "comet", "name": "COMET", "color": Color("ffd166"), "hint": "SCORE 25 IN ONE RUN"},
 ]
 const PLANET_THEMES := [
-	{"id": "cosmic", "name": "COSMIC", "zone": 0},
-	{"id": "nebula", "name": "NOVA DRIFT", "zone": 1},
-	{"id": "sunforge", "name": "SUNFORGE", "zone": 2},
+	{"id": "cosmic", "name": "COSMIC", "zone": 0, "hint": ""},
+	{"id": "nebula", "name": "NOVA DRIFT", "zone": 1, "hint": "25 TOTAL LANDINGS"},
+	{"id": "sunforge", "name": "SUNFORGE", "zone": 2, "hint": "50 TOTAL LANDINGS"},
 ]
+const CATEGORY_TITLES := {"ship": "SHIP", "trail": "TRAIL", "theme": "PLANETS"}
 
 
 static func refresh_unlocks(profile: Dictionary) -> PackedStringArray:
@@ -37,6 +39,21 @@ static func _unlock_if(profile: Dictionary, key: String, id: String, condition: 
 		values.append(id)
 		profile[key] = values
 		newly_unlocked.append(id)
+
+
+## Groups newly unlocked ids by category using their display names, for example
+## {"ship": ["SOLAR"], "trail": ["COMET"]}. Unknown ids are ignored.
+static func describe_unlocks(ids: PackedStringArray) -> Dictionary:
+	var grouped := {}
+	for category_items in [["ship", SHIP_COLORS], ["trail", TRAILS], ["theme", PLANET_THEMES]]:
+		var category := String(category_items[0])
+		var names := PackedStringArray()
+		for item in category_items[1]:
+			if ids.has(String(item.id)) and not String(item.hint).is_empty():
+				names.append(String(item.name))
+		if not names.is_empty():
+			grouped[category] = names
+	return grouped
 
 
 static func find_item(items: Array, id: String) -> Dictionary:

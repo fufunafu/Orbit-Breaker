@@ -33,7 +33,7 @@ testing. Target-display review and first-session user testing remain required.
 - Perfect landings change the numeric score and combo, and use a sound and
   haptic pattern distinct from an ordinary landing when those settings are on.
 - Classic and Daily are named in text. Daily also shows its UTC date.
-- Zone transitions display the destination zone name in text.
+- Zone transitions display the destination zone name in a large text banner.
 - Unlocks and New Best status appear as text in the run summary.
 
 ## Motion and flashing
@@ -49,9 +49,18 @@ testing. Target-display review and first-session user testing remain required.
 ## Controls and settings
 
 - Buttons use text labels rather than colour-only icons, except the pause
-  control, which uses the familiar `II` symbol.
+  control, a 136-unit round button drawing the standard two-bar pause glyph
+  with a "Pause" tooltip.
 - Check buttons expose checked state and a written setting name.
-- Guide mode is written as Off, Tutorial, or Always.
+- Guide mode is a three-option segmented control written as Off, Tutorial,
+  or Always, with a one-line explanation beneath it.
+- Locked loadout items are written as `LOCKED` with their unlock condition;
+  equipped items are written as `EQUIPPED`.
+- Every control is at least 124 design units (about 44pt) tall and no copy is
+  set below 40 units (about 15pt); the shared scale lives in
+  `scripts/ui_kit.gd`.
+- Zone palettes avoid the signal colours: magenta is reserved for the perfect
+  guide, red for asteroids, and purple for pulse mines.
 - Cosmetic choices display their selected names.
 - Pause, resume, restart, main menu, save, privacy, support, and leaderboard
   actions all have visible labels.
@@ -63,7 +72,7 @@ testing. Target-display review and first-session user testing remain required.
 - Test with colour filters, increased contrast, reduced motion, and reduced
   transparency where applicable.
 - Include players with colour-vision differences in the TestFlight cohort.
-- Confirm that the pause symbol is understood or replace it with a written
-  `PAUSE` label after user testing.
+- Confirm that the round pause glyph is understood or add a written `PAUSE`
+  label after user testing.
 - Complete Apple's current Accessibility Nutrition Label evaluation from the
   final installed build.

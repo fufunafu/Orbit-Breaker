@@ -68,10 +68,26 @@ Source: <https://kenney.nl/assets/sci-fi-sounds> and <https://kenney.nl/assets/i
 
 License: <https://creativecommons.org/publicdomain/zero/1.0/>
 
+## Archivo and Archivo Black typefaces
+
+The interface uses Archivo Black and the variable Archivo family by
+Omnibus-Type, bundled in `assets/fonts` and distributed under the SIL Open
+Font License, Version 1.1.
+
+Copyright 2017 The Archivo Black Project Authors and Copyright 2020 The
+Archivo Project Authors.
+
+Source: <https://github.com/Omnibus-Type/ArchivoBlack> and
+<https://github.com/Omnibus-Type/Archivo>
+
+The exact upstream licenses are included in
+[LICENSES/ArchivoBlack-OFL-1.1.txt](LICENSES/ArchivoBlack-OFL-1.1.txt) and
+[LICENSES/Archivo-OFL-1.1.txt](LICENSES/Archivo-OFL-1.1.txt).
+
 ## Release inventory audit
 
 The final tracked release inventory was audited on August 23, 2026. The only
 third-party executable code is Godot Engine, Godot Apple Plugins, the SwiftGodot
-runtime, and the development-only Godot MCP addon described above. The five Kenney effects are
-the only third-party media. The music layers, game code, scenes, generated
+runtime, and the development-only Godot MCP addon described above. The five Kenney effects and the
+two Archivo font files are the only third-party media. The music layers, game code, scenes, generated
 marketing media, and branding are original project material.

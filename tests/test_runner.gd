@@ -299,6 +299,18 @@ func _test_gameplay_integration() -> void:
 	_check(not game.hud.settings_panel.visible, "Settings must begin closed.")
 	_check(game.hud.settings_panel.find_child("PrivacyButton", true, false) != null, "Settings must expose the privacy policy.")
 	_check(game.hud.settings_panel.find_child("SupportButton", true, false) != null, "Settings must expose support.")
+	_check(game.hud.settings_panel.find_child("SettingsDoneButton", true, false) != null, "Settings must expose a prominent Done action.")
+	game.hud.show_settings()
+	await process_frame
+	var viewport_size := game.hud.get_viewport_rect().size
+	var settings_end := game.hud.settings_card.position + game.hud.settings_card.size
+	var done_end := game.hud.settings_done_button.position + game.hud.settings_done_button.size
+	_check(game.hud.settings_card.position.x >= 0.0 and game.hud.settings_card.position.y >= 0.0, "The settings card must begin inside the viewport.")
+	_check(settings_end.x <= viewport_size.x and settings_end.y <= viewport_size.y, "The complete settings card must fit inside the viewport.")
+	_check(done_end.x <= viewport_size.x and done_end.y <= viewport_size.y, "The complete Done action must fit inside the viewport.")
+	_check(game.hud.settings_done_button.position.y > settings_end.y, "The Done action must remain separate from the settings card.")
+	game.hud.hide_settings()
+	_check(game.hud.ready_actions.visible, "Closing settings from the home screen must restore the home actions.")
 	_check(OrbitGame.PRIVACY_URL.begins_with("https://"), "The in-app privacy action must use HTTPS.")
 	_check(OrbitGame.SUPPORT_URL.begins_with("https://"), "The in-app support action must use HTTPS.")
 	var sound_resource_paths := {}
@@ -386,6 +398,11 @@ func _test_gameplay_integration() -> void:
 	game._pause_run()
 	_check(game.manually_paused and game.audio_controller.music_paused, "Manual pause must pause music playback.")
 	_check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Manual pause must freeze the gameplay world.")
+	game.hud.show_settings()
+	_check(game.manually_paused and game.hud.settings_panel.visible and not game.hud.pause_panel.visible, "Settings opened from Pause must keep the run paused and replace the pause card.")
+	_check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Changing pause settings must keep gameplay frozen.")
+	game.hud.hide_settings()
+	_check(game.hud.pause_panel.visible and not game.hud.settings_panel.visible, "Done must return settings opened from Pause to the pause card.")
 	if game.audio_controller.base_player.stream != null:
 		_check(game.audio_controller.base_player.stream_paused, "Manual pause must pause the active base music player.")
 	game._restart_from_pause()
@@ -584,6 +601,7 @@ func _test_gameplay_integration() -> void:
 	_check(not game.hud.new_best_label.visible, "A non-record run must hide the New Best label.")
 
 	await _test_regressions(game)
+	_test_interface_design(game)
 
 	game.queue_free()
 	await process_frame
@@ -670,6 +688,16 @@ func _test_regressions(game: OrbitGame) -> void:
 	game.hud.update_settings(game.profile)
 	_check(_setting_change_events.is_empty(), "Refreshing settings from the profile must not re-emit setting_changed.")
 	game.hud.setting_changed.disconnect(_record_setting_change)
+	game.profile.unlocked_ship_colors = PackedStringArray(["ion", "nova"])
+	game.profile.selected_ship_color = "ion"
+	game.hud.update_settings(game.profile)
+	_check(not (game.hud.loadout_buttons.ship as Dictionary).nova.disabled, "Unlocked loadout choices must be selectable directly.")
+	game._on_cosmetic_selected_requested("ship", "nova")
+	_check(String(game.profile.selected_ship_color) == "nova", "Selecting a loadout option must equip that exact item.")
+	game._on_cosmetic_selected_requested("ship", "solar")
+	_check(String(game.profile.selected_ship_color) == "nova", "Locked loadout choices must not be equipped.")
+	game._on_cosmetic_selected_requested("ship", "ion")
+	game.profile.unlocked_ship_colors = PackedStringArray(["ion"])
 	game.profile.music_enabled = true
 	game._apply_profile()
 	_check(not game.audio_controller.playback_enabled, "Sound effects must stay disabled for the headless suite.")
@@ -720,4 +748,80 @@ func _test_regressions(game: OrbitGame) -> void:
 	_check(SaveStore.save_profile(game.profile, game.save_path) == OK, "Profile save must succeed via temp file.")
 	_check(not FileAccess.file_exists(game.save_path + ".tmp"), "Profile save must remove its temp file.")
 	_check(FileAccess.file_exists(game.save_path), "Profile save must produce the final file.")
+	game.end_run("miss")
+
+
+## Guards the interface scale and copy rules introduced by the design audit.
+## One design unit is about 0.36pt on a 393pt iPhone, so 121 units is Apple's
+## 44pt minimum tap target and 40 units is roughly 15pt body copy.
+func _test_interface_design(game: OrbitGame) -> void:
+	var hud := game.hud
+	var small_targets := PackedStringArray()
+	var small_copy := PackedStringArray()
+	var queue: Array[Node] = [hud]
+	while not queue.is_empty():
+		var node: Node = queue.pop_back()
+		for child in node.get_children():
+			queue.append(child)
+		if node is BaseButton:
+			var button := node as Control
+			if maxf(button.custom_minimum_size.y, button.size.y) < 121.0:
+				small_targets.append(button.name)
+		elif node is Label:
+			var label := node as Label
+			if not label.text.is_empty() and label.get_theme_font_size("font_size") < OrbitUIKit.CAPTION:
+				small_copy.append("%s (%d)" % [label.text.left(24), label.get_theme_font_size("font_size")])
+	_check(small_targets.is_empty(), "Every interface button must be at least 121 units tall: %s" % ", ".join(small_targets))
+	_check(small_copy.is_empty(), "No interface copy may be smaller than the caption size: %s" % ", ".join(small_copy))
+	_check(hud.flash_rect.get_index() < hud.game_over_panel.get_index(), "The failure flash must render beneath the run summary.")
+	_check(load("res://assets/fonts/ArchivoBlack-Regular.ttf") != null and load("res://assets/fonts/Archivo-Variable.ttf") != null, "The bundled interface fonts must load.")
+
+	# The home screen carries no gameplay chrome and reflects the profile.
+	if game.state == OrbitGame.GameState.GAME_OVER:
+		game._return_to_menu()
+	game._reset_world(false)
+	_check(not hud.top_row.visible, "The ready screen must hide the score row.")
+	_check((hud.classic_menu_button.get_node("Eyebrow") as Label).text.begins_with("BEST"), "The Classic card must carry the best score.")
+	_check((hud.daily_menu_button.get_node("Sub") as Label).text.begins_with("TODAY"), "The Daily card must show a formatted date.")
+	_check(not (hud.daily_menu_button.get_node("Meta") as Label).text.contains("\n"), "The Daily best must stay on one line.")
+	var loadout_meta := (hud.loadout_menu_button.get_node("Meta") as Label).text
+	_check(loadout_meta.contains("UNLOCK") or loadout_meta.contains("·"), "The Loadout row must describe the live loadout.")
+	_check(game.camera_target_y < game.current_planet.global_position.y - game.tuning.camera_vertical_lead, "The ready camera must sit above the idle planet so it shows beneath the menu card.")
+
+	# Loadout is its own sheet with written unlock conditions.
+	hud.show_loadout()
+	_check(hud.loadout_panel.visible and not hud.settings_panel.visible and hud.overlay_open(), "Loadout must open as its own sheet.")
+	var nova_status := ((hud.loadout_buttons.ship as Dictionary).nova as Button).get_node("Status") as Label
+	game.profile.unlocked_ship_colors = PackedStringArray(["ion"])
+	hud.update_settings(game.profile)
+	_check(nova_status.text.begins_with("LOCKED") and nova_status.text.contains("PERFECT"), "Locked loadout items must state their unlock condition.")
+	hud.hide_loadout()
+	_check(hud.ready_actions.visible and not hud.overlay_open(), "Closing Loadout from the home screen must restore the home actions.")
+
+	# The guide setting is a direct three-way choice.
+	hud.setting_changed.emit("guide_mode", 2)
+	_check(int(game.profile.guide_mode) == 2, "Selecting a guide mode must store that exact mode.")
+	hud.update_settings(game.profile)
+	var guide_buttons: Array[Button] = hud.settings_controls.guide_buttons
+	_check(guide_buttons[2].button_pressed and not guide_buttons[1].button_pressed, "The guide control must reflect the stored mode.")
+	hud.setting_changed.emit("guide_mode", 1)
+
+	# Unlock copy uses display names grouped by category.
+	var unlock_text := hud._describe_unlocks(PackedStringArray(["solar", "comet", "nebula"]))
+	_check(unlock_text.contains("NEW SHIP") and unlock_text.contains("NEW TRAIL") and unlock_text.contains("NOVA DRIFT"), "Unlock copy must group rewards by category using display names.")
+
+	# A new best owns the summary headline.
+	game.profile.best_score = 0
+	game.best_score = 0
+	game._reset_world(true)
+	game.score = 5
+	game.end_run("miss")
+	_check(hud.new_best_label.visible and not hud.game_over_title.visible, "A new best must replace the failure headline.")
+	_check(not hud.top_row.visible, "The run summary must hide the duplicate score row.")
+
+	# Failure particles must not survive into the next run.
+	_check(not game.effects.particles.is_empty(), "A failure must emit particles.")
+	game._replay_current_mode()
+	_check(game.effects.particles.is_empty(), "Restarting must clear the previous run's particles.")
+	_check(game.target_planet.guide_owned == game._guide_should_show(), "The target planet must defer its outer ring to the trajectory guide.")
 	game.end_run("miss")
