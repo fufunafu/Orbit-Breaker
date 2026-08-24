@@ -104,26 +104,68 @@ The GitHub Pages workflow publishes these files from `docs/`. Confirm all three 
 
 Enter the account holder's verified first name, last name, phone number, and email directly in App Store Connect. These private account fields are intentionally not stored in the public repository.
 
-## App Review notes draft
+## App Review notes
 
-Orbit Breaker is a portrait, one-tap arcade game. It does not require an app-specific account or purchase.
+Entered in App Store Connect > 1.0 > App Review Information > Notes on
+August 24, 2026, after App Review requested this information under
+Guideline 2.1 (Information Needed). Keep the two copies identical.
 
-To begin a run:
+Orbit Breaker is a portrait, one-tap arcade game for iPhone. No account, login,
+purchase, subscription, user-generated content, or sensitive-data permission
+exists anywhere in the app, so no credentials or demo account are needed.
 
-1. Launch the app in portrait orientation.
-2. Tap Classic for a normal run or Daily for the UTC daily challenge.
-3. Tap while the ship orbits to launch along its current tangent.
-4. Land on the highlighted planet. The inner target area awards a perfect landing and raises the combo.
-5. Use the pause button to test resume, restart, settings, and Main Menu.
-6. After a failure, use Replay Now for an immediate restart, Main Menu to change modes, or Save Score Card to write a PNG to the app's Documents folder, which is visible in the Files app.
+Setup and main features: Launch the app and tap Classic Run (endless) or Daily
+Challenge (same UTC-date layout for every player). Tap while the ship orbits to
+launch along its current tangent. Landing inside the target planet's inner zone
+is a perfect landing and raises the combo multiplier up to 5x; asteroids and
+pulse mines end the run on contact. The round pause button (top right during a
+run) exposes Resume, Restart, Settings, and Main Menu. After a run ends: Replay
+Now restarts immediately; Save Score Card writes a PNG to the app's Documents
+folder (Files > On My iPhone > Orbit Breaker); Leaderboards opens the Game
+Center interface. Loadout items (ships, trails, planet themes) unlock through
+play only; locked items show their unlock condition. Settings includes sound,
+music, haptics, reduced motion, reduced screen shake, high-contrast guide,
+trajectory guide (Off / Tutorial / Always), Export Gameplay Stats, Privacy
+Policy, and Support.
 
-Game Center authentication is requested through Apple's Game Center interface. The game remains playable if Game Center is unavailable or the player is not authenticated. Leaderboards and achievements require the reviewer to use a Game Center-enabled device and account.
+Game Center: Optional. Authentication uses Apple's Game Center sheet. If the
+reviewer is not signed in, the game remains fully playable and leaderboard and
+achievement submission is skipped silently. Three leaderboards (all time,
+weekly, daily) and three achievements are configured.
 
-The Daily mode derives its layout seed from the current UTC date. All players on the same build receive the same deterministic planet and hazard sequence for that UTC date.
+Functions, value, and audience: A quick, skill-based timing game with no ads,
+purchases, or accounts. General audience (4+), casual and score-chasing arcade
+players.
 
-There are no ads, in-app purchases, external web views, or developer-operated account systems in this build.
+Devices tested: Physical: iPhone 16 Pro, iOS 26.6 (TestFlight). Simulator:
+iPhone 16 Pro and iPhone SE (3rd generation), iOS 26.5. Minimum iOS 17.0;
+iPhone only, portrait.
 
-No special hardware is required. Haptics are available on supported physical devices and do not block play.
+External services: Apple Game Center (GameKit) only. No analytics, advertising,
+tracking, authentication, payment, AI, or third-party network services; the app
+makes no network requests of its own. Built with the open-source Godot Engine
+4.7.2 (MIT). Privacy Policy and Support links open the public site in Safari:
+<https://fufunafu.github.io/Orbit-Breaker/>
+
+Regional differences: None. Identical in all regions; the Daily Challenge uses
+UTC.
+
+Regulated industry / third-party material: Not applicable. Third-party material
+is openly licensed: five Kenney sound effects (CC0), the Archivo and Archivo
+Black typefaces (SIL OFL 1.1), Godot Engine and Godot Apple Plugins (MIT).
+Licenses are included in the app's public source repository.
+
+A screen recording of the full user flow captured on an iPhone 16 Pro was
+provided in the 1.0 review thread on August 24, 2026.
+
+### Screen recording shot list
+
+If App Review asks for a recording again, capture on a physical iPhone running
+the latest iOS, starting from the Home screen: launch the app; Classic Run with
+at least one perfect landing and a combo; pause, Settings, toggle a setting,
+Done, Resume; let the run end; Save Score Card; Leaderboards (signed in to Game
+Center so the sheet opens); Main Menu; Daily Challenge; Loadout; Settings;
+Privacy Policy. 60 to 120 seconds is enough.
 
 ## Age-rating questionnaire notes
 
