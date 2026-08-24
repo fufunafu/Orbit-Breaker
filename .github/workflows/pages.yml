@@ -32,11 +32,12 @@ jobs:
 
       - name: Stage the public pages only
         # docs/ also holds internal checklists and the TestFlight session log.
-        # Only the three public pages are published.
+        # Only the three public pages and the site assets are published.
         shell: bash
         run: |
           mkdir -p "${RUNNER_TEMP}/site"
           cp docs/index.html docs/privacy.html docs/support.html "${RUNNER_TEMP}/site/"
+          cp -R docs/assets "${RUNNER_TEMP}/site/assets"
 
       - name: Upload legal and support site
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1

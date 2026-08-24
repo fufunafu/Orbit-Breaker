@@ -1,5 +1,321 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Orbit Breaker is a one-tap orbit and launch arcade game for iPhone. Support and privacy information."><title>Orbit Breaker</title><style>body{margin:0;background:#030615;color:#eaffff;font:18px system-ui;line-height:1.6}main{max-width:760px;margin:auto;padding:72px 28px}h1{font-size:clamp(36px,8vw,54px);line-height:1.1;color:#75f8ff}a{color:#ff78e8}.card{background:#08152f;border:1px solid #55dff2;border-radius:24px;padding:28px;margin:24px 0}</style></head>
-<body><main><h1>Orbit Breaker</h1><p>One tap. Perfect timing. Carry the signal across an endless neon universe.</p><div class="card"><h2>Support</h2><p>Find gameplay help and report a problem on the <a href="support.html">support page</a>.</p></div><div class="card"><h2>Privacy</h2><p>Orbit Breaker contains no ads or cross-app tracking. Read the complete <a href="privacy.html">privacy policy</a>.</p></div></main></body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbit Breaker · a one-tap orbit and launch arcade game for iPhone</title>
+<meta name="description" content="Orbit Breaker is a one-tap arcade game for iPhone. Break orbit at the perfect moment, chain perfect landings, dodge asteroids and pulse mines, and climb the daily leaderboard.">
+<meta property="og:title" content="Orbit Breaker">
+<meta property="og:description" content="One tap. Perfect timing. A neon orbit-and-launch arcade game for iPhone.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fufunafu.github.io/Orbit-Breaker/">
+<meta property="og:image" content="https://fufunafu.github.io/Orbit-Breaker/assets/og-card.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#030615">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Archivo+Black&display=swap">
+<style>
+:root{
+  --ground:#030615; --deep:#050b1c; --card:#08182f; --line:#1d4962;
+  --ink:#f3f5ff; --muted:#8ea1c3; --faint:#5b6b8c;
+  --accent:#43d4ed; --accent-soft:#8fdfeb; --accent-ink:#06182b;
+  --perfect:#ff5fd6; --daily:#ff2777; --gold:#ffd166; --mint:#7dffc4;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--ground); color:var(--ink);
+  font:17px/1.65 "Archivo",ui-sans-serif,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+h1,h2,h3,.display{font-family:"Archivo Black","Archivo",sans-serif;font-weight:400;letter-spacing:.01em;text-wrap:balance}
+a{color:var(--accent-soft)}
+img{max-width:100%;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+.eyebrow{font-family:"Archivo Black",sans-serif;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+
+/* starfield canvas sits behind everything */
+#stars{position:fixed;inset:0;z-index:-2;background:var(--ground)}
+.nebula{position:fixed;z-index:-1;width:70vmax;height:70vmax;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(90,43,189,.16),transparent 62%);top:-30vmax;left:-24vmax}
+.nebula.two{background:radial-gradient(circle,rgba(255,39,119,.07),transparent 60%);top:auto;left:auto;bottom:-34vmax;right:-28vmax}
+
+/* nav */
+nav{position:sticky;top:0;z-index:10;background:rgba(3,6,21,.78);backdrop-filter:blur(10px);border-bottom:1px solid rgba(29,73,98,.55)}
+nav .wrap{display:flex;align-items:center;gap:14px;height:64px}
+nav img{width:34px;height:34px;border-radius:8px}
+.brand{font-family:"Archivo Black",sans-serif;font-size:17px;letter-spacing:.06em;color:var(--ink);text-decoration:none}
+nav .links{margin-left:auto;display:flex;gap:26px;font-size:14px;font-weight:600}
+nav .links a{color:var(--muted);text-decoration:none}
+nav .links a:hover,nav .links a:focus-visible{color:var(--accent-soft)}
+
+/* hero */
+header{padding:64px 0 56px}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(34px,4.6vw,60px);line-height:1.04}
+.hero h1 .break{color:var(--accent);text-shadow:0 0 34px rgba(67,212,237,.45)}
+.tagline{margin-top:16px;font-size:clamp(16px,2vw,20px);color:var(--accent-soft);font-weight:600;letter-spacing:.04em}
+.hero p.lede{margin-top:18px;color:var(--muted);max-width:52ch}
+.cta-row{margin-top:34px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:15px 26px;font-family:"Archivo Black",sans-serif;font-size:15px;letter-spacing:.05em;text-decoration:none}
+.pill.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 34px rgba(67,212,237,.35)}
+.pill.primary:hover{background:#62e5f8}
+.pill.ghost{border:2px solid var(--line);color:var(--ink)}
+.pill.ghost:hover{border-color:var(--accent)}
+.cta-note{width:100%;font-size:13px;color:var(--faint)}
+
+/* phone */
+.phone-stage{position:relative;display:flex;justify-content:center}
+.orbit-ring{position:absolute;top:50%;left:50%;width:520px;height:315px;border:2px solid rgba(67,212,237,.28);border-radius:50%;
+  transform:translate(-50%,-50%) rotate(-24deg);box-shadow:0 0 40px rgba(67,212,237,.12);pointer-events:none}
+.orbit-ring::after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:var(--perfect);
+  top:12%;right:6%;box-shadow:0 0 18px var(--perfect)}
+.phone{width:min(272px,72vw);border-radius:44px;border:1px solid rgba(76,231,251,.45);padding:10px;background:#0a0f22;
+  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(67,212,237,.14);transform:rotate(3deg)}
+.phone img{border-radius:34px}
+
+/* sections */
+section{padding:88px 0}
+.section-head{max-width:640px;margin-bottom:44px}
+.section-head h2{font-size:clamp(30px,4.4vw,44px);margin-top:10px}
+.section-head p{margin-top:14px;color:var(--muted)}
+
+/* how to play */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{background:linear-gradient(180deg,rgba(8,24,47,.92),rgba(5,11,28,.92));border:1px solid var(--line);border-radius:22px;padding:28px}
+.step .glyph{font-family:"Archivo Black",sans-serif;font-size:15px;color:var(--accent);letter-spacing:.14em}
+.step h3{margin-top:12px;font-size:21px}
+.step p{margin-top:10px;font-size:15px;color:var(--muted)}
+.step:nth-child(2) .glyph{color:var(--perfect)}
+.step:nth-child(3) .glyph{color:var(--gold)}
+
+/* features */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:rgba(8,24,47,.7);border:1px solid var(--line);border-radius:22px;padding:26px}
+.card h3{font-size:18px;display:flex;align-items:center;gap:10px}
+.card .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.card p{margin-top:10px;font-size:15px;color:var(--muted)}
+
+/* shots */
+.shots{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.shots figure{margin:0}
+.shots img{border-radius:22px;border:1px solid var(--line)}
+.shots figcaption{margin-top:10px;font-size:13px;color:var(--faint);letter-spacing:.04em}
+
+/* privacy band */
+.band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(5,11,28,.7)}
+.band .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center}
+.band ul{list-style:none;padding:0;margin-top:18px;display:grid;gap:10px}
+.band li{padding-left:26px;position:relative;color:var(--muted);font-size:15px}
+.band li::before{content:"";position:absolute;left:0;top:.5em;width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--mint);box-shadow:0 0 10px rgba(125,255,196,.5)}
+.scorecard{border-radius:22px;border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.5);max-width:360px;justify-self:center}
+
+/* final cta */
+.finale{text-align:center;padding:110px 0}
+.finale h2{font-size:clamp(34px,5vw,54px)}
+.finale p{margin-top:14px;color:var(--muted)}
+.finale .cta-row{justify-content:center}
+
+footer{border-top:1px solid rgba(29,73,98,.55);padding:36px 0 48px;font-size:14px;color:var(--faint)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--accent-soft)}
+footer .spacer{flex:1}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:56px}
+  .steps,.grid{grid-template-columns:1fr 1fr}
+  .shots{grid-template-columns:1fr 1fr}
+  .band .wrap{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  header{padding-top:56px}
+  .steps,.grid{grid-template-columns:1fr}
+  nav .links{gap:16px}
+  nav .links a.gh{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="nebula" aria-hidden="true"></div>
+<div class="nebula two" aria-hidden="true"></div>
+
+<nav>
+  <div class="wrap">
+    <img src="assets/favicon.png" alt="" width="34" height="34">
+    <a class="brand" href="#">ORBIT BREAKER</a>
+    <div class="links">
+      <a href="#play">How it plays</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+      <a class="gh" href="https://github.com/fufunafu/Orbit-Breaker">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap hero">
+    <div>
+      <p class="eyebrow">A one-tap arcade game for iPhone</p>
+      <h1>HOLD YOUR ORBIT.<br><span class="break">BREAK</span> AT THE PERFECT MOMENT.</h1>
+      <p class="tagline">ONE TAP. PERFECT TIMING.</p>
+      <p class="lede">Your ship circles a planet. The next one is waiting. Tap once to break orbit, thread the gap between asteroids and pulse mines, and land inside the perfect zone to build a combo up to 5x. Miss, and the void keeps your score.</p>
+      <div class="cta-row">
+        <span class="pill primary">COMING SOON TO THE APP STORE</span>
+        <a class="pill ghost" href="#play">SEE HOW IT PLAYS</a>
+        <span class="cta-note">In TestFlight now. No ads, no tracking, no account: just orbits.</span>
+      </div>
+    </div>
+    <div class="phone-stage">
+      <div class="orbit-ring" aria-hidden="true"></div>
+      <div class="phone"><img src="assets/shot-02-perfect-launch.jpg" alt="Orbit Breaker gameplay: the trajectory guide lines up a perfect launch between two planets" width="640" height="1391"></div>
+    </div>
+  </div>
+</header>
+
+<section id="play">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How it plays</p>
+      <h2>Three seconds to learn. A daily habit to master.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="glyph">01 · ORBIT</span>
+        <h3>Ride the circle</h3>
+        <p>Your ship orbits the current planet on its own. Every lap lines you up with the next target, and every landing spins the orbit a little faster.</p>
+      </div>
+      <div class="step">
+        <span class="glyph">02 · WAIT</span>
+        <h3>Watch the guide</h3>
+        <p>A dashed line shows where you are pointed. One ring around the target means you will land. A double ring means the landing will be perfect.</p>
+      </div>
+      <div class="step">
+        <span class="glyph">03 · TAP</span>
+        <h3>Break orbit</h3>
+        <p>One tap launches you across the gap. Perfect landings chain into a combo multiplier up to 5x, and hazards end the run on contact.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">What is waiting out there</p>
+      <h2>An endless climb through three neon zones</h2>
+    </div>
+    <div class="grid">
+      <div class="card"><h3><span class="dot" style="background:var(--accent)"></span>Classic and Daily</h3><p>Run endless Classic for your all-time best, or take on the Daily Challenge: the same deterministic layout for every player in the world, once per UTC day.</p></div>
+      <div class="card"><h3><span class="dot" style="background:var(--perfect)"></span>Perfect landings</h3><p>Land inside the pulsing inner zone to score double and grow your combo. Perfect chains are the difference between a run and a record.</p></div>
+      <div class="card"><h3><span class="dot" style="background:#ff315f"></span>Asteroids and pulse mines</h3><p>Hazards drift into your launch windows. Every layout is verified to keep a safe line open, so a clear shot always exists if you wait for it.</p></div>
+      <div class="card"><h3><span class="dot" style="background:var(--mint)"></span>Ion Veil, Nova Drift, Sunforge</h3><p>Climb far enough and the universe changes around you: new palettes, new music intensity, and a banner to welcome you in.</p></div>
+      <div class="card"><h3><span class="dot" style="background:var(--gold)"></span>Skill-based loadout</h3><p>Ships, trails, and planet themes unlock through play, never through purchases. Each locked item tells you exactly what it takes.</p></div>
+      <div class="card"><h3><span class="dot" style="background:var(--accent-soft)"></span>Game Center</h3><p>All-time, weekly, and daily leaderboards plus achievements, with original adaptive music, haptics, and a saveable score card for every run.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Screens</p>
+      <h2>Straight from the game</h2>
+    </div>
+    <div class="shots">
+      <figure><img src="assets/shot-01-home.jpg" alt="Home screen with Classic Run, Daily Challenge, Loadout, Leaderboard, and Settings above an idle orbiting ship" loading="lazy" width="640" height="1391"><figcaption>READY TO LAUNCH</figcaption></figure>
+      <figure><img src="assets/shot-02-perfect-launch.jpg" alt="A dashed trajectory guide with a double ring marking a perfect launch" loading="lazy" width="640" height="1391"><figcaption>THE PERFECT LINE</figcaption></figure>
+      <figure><img src="assets/shot-03-nova-hazards.jpg" alt="Nova Drift zone with an asteroid and a pulse mine between planets at a 5x combo" loading="lazy" width="640" height="1391"><figcaption>NOVA DRIFT, 5X COMBO</figcaption></figure>
+      <figure><img src="assets/shot-04-score-card.jpg" alt="Run summary showing a new best score with replay, save, and leaderboard actions" loading="lazy" width="640" height="1391"><figcaption>A NEW BEST</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Made with care</p>
+      <h2>Private by design. Playable by everyone.</h2>
+      <ul>
+        <li>No ads, no cross-app tracking, no analytics SDKs, and no account. Scores and settings stay on your iPhone.</li>
+        <li>Reduced motion, reduced screen shake, and a high-contrast trajectory guide are one toggle away.</li>
+        <li>Every critical signal is written in text, never carried by colour alone.</li>
+        <li>Export your own gameplay statistics to the Files app whenever you want them, or never.</li>
+      </ul>
+    </div>
+    <img class="scorecard" src="assets/og-card.jpg" alt="A saved Orbit Breaker score card showing a new best of 42 with landings, perfect landings, combo, and zone reached" loading="lazy" width="900" height="1125">
+  </div>
+</section>
+
+<section class="finale">
+  <div class="wrap">
+    <p class="eyebrow">Launching soon</p>
+    <h2>The next orbit is yours.</h2>
+    <p>Orbit Breaker is finishing its TestFlight run and heading to the App Store.</p>
+    <div class="cta-row">
+      <span class="pill primary">COMING SOON TO THE APP STORE</span>
+      <a class="pill ghost" href="support.html">GET SUPPORT</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Orbit Breaker</span>
+    <span class="spacer"></span>
+    <a href="support.html">Support</a>
+    <a href="privacy.html">Privacy policy</a>
+    <a href="https://github.com/fufunafu/Orbit-Breaker">Source on GitHub</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var canvas = document.getElementById("stars");
+  var context = canvas.getContext("2d");
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stars = [];
+  var height = 0, width = 0;
+  function resize() {
+    width = canvas.width = window.innerWidth * devicePixelRatio;
+    height = canvas.height = window.innerHeight * devicePixelRatio;
+  }
+  function seed() {
+    stars = [];
+    for (var i = 0; i < 140; i++) {
+      stars.push({
+        x: Math.random(), y: Math.random(),
+        r: (0.4 + Math.random() * 1.3) * devicePixelRatio,
+        a: 0.25 + Math.random() * 0.6,
+        tw: 0.5 + Math.random() * 2.2,
+        ph: Math.random() * Math.PI * 2
+      });
+    }
+  }
+  function draw(t) {
+    context.clearRect(0, 0, width, height);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var alpha = reduceMotion ? s.a : s.a * (0.6 + 0.4 * Math.sin(t / 1000 * s.tw + s.ph));
+      context.globalAlpha = Math.max(0.08, alpha);
+      context.fillStyle = "#9edfff";
+      context.beginPath();
+      context.arc(s.x * width, s.y * height, s.r, 0, Math.PI * 2);
+      context.fill();
+    }
+    if (!reduceMotion) requestAnimationFrame(draw);
+  }
+  window.addEventListener("resize", function () { resize(); seed(); draw(0); });
+  resize(); seed(); draw(0);
+})();
+</script>
+</body>
 </html>
