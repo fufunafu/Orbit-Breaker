@@ -2,7 +2,7 @@
 
 Status: Four screenshots re-captured on August 23, 2026 from the redesigned interface; four optional additions listed<br>
 Target platform: iPhone, portrait<br>
-Captured screenshots: 4 (`marketing/screenshots/01-home.png` through `04-score-card.png`), plus `05-share-card.png`, a 1080 by 1350 sample of the in-app share card that is not an App Store screenshot<br>
+Captured screenshots: 4 (`marketing/screenshots/01-home.png` through `04-score-card.png`), plus `marketing/share-card-sample.png`, a 1080 by 1350 sample of the in-app share card that is not an App Store screenshot<br>
 Capture tool: `tools/capture_marketing.gd`, which renders the game into an off-screen viewport using the project's canvas stretch so any display can produce a native 1320 by 2868 capture, and refuses to save a capture of any other size
 
 Captures come from macOS. Before submission, confirm the same four states on a

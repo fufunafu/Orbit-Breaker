@@ -91,7 +91,9 @@ func _capture_all() -> void:
 	await _capture("04-score-card.png")
 	var share_card: Image = await game.render_score_card_image(game.last_run_summary)
 	share_card.convert(Image.FORMAT_RGB8)
-	if share_card.save_png("%s/05-share-card.png" % SCREENSHOT_DIR) != OK:
+	# The share card sample lives outside the screenshots directory because
+	# release checks require every file there to be an App Store size.
+	if share_card.save_png("res://marketing/share-card-sample.png") != OK:
 		push_error("Unable to save the share card sample")
 		capture_failures += 1
 
